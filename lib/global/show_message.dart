@@ -34,7 +34,7 @@ Future<void> showErrorDialog(BuildContext context, String message) async {
   );
 }
 
-showToast(String message) {
+showToast({required String message,bool error=false}) {
   Fluttertoast.showToast(
       msg: message,
       toastLength: Toast.LENGTH_SHORT,

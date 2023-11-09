@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
@@ -134,7 +135,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: Get.height * 0.06,
                     width: Get.width,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        print(FirebaseAuth.instance.currentUser!.emailVerified);
+                      },
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.all(0),
                           backgroundColor: Colors.white,

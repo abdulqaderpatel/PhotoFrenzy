@@ -8,6 +8,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:photofrenzy/global/show_message.dart';
+import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   const VerifyEmailScreen({super.key});
@@ -21,30 +23,75 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
 
   var loadingIcons = 0;
   var loadingString = "";
+  var isVerified = false;
+  late Timer timer;
 
   void emailVerificationLoading() {
     const oneSec = Duration(seconds: 1);
     Timer.periodic(oneSec, (Timer t) {
-      if(loadingIcons==8)
-        {
+      if (isVerified == false) {
+        if (loadingIcons == 8) {
           setState(() {
-            loadingIcons=1;
-            loadingString=". ";
+            loadingIcons = 1;
+            loadingString = ". ";
+          });
+        } else {
+          setState(() {
+            loadingIcons++;
+            loadingString += ". ";
           });
         }
-      else{
-        setState(() {
-          loadingIcons++;
-          loadingString+=". ";
-        });
       }
     });
   }
 
+  Future sendVerificationEmail() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser!;
+      await user.sendEmailVerification();
+    } catch (e) {
+      showToast(message: e.toString());
+    }
+  }
+
   @override
   void initState() {
+    isVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    if (!isVerified) {
+      sendVerificationEmail();
+      timer = Timer.periodic(const Duration(seconds: 3), (timer) {
+        checkEmailVerified();
+      });
+    }
     emailVerificationLoading();
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  Future checkEmailVerified() async {
+    await FirebaseAuth.instance.currentUser!.reload();
+    setState(() {
+      isVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+    });
+    if (isVerified) {
+      setState(() {
+        svgImage = "assets/images/email_verified.svg";
+      });
+      timer.cancel();
+      await Future.delayed(const Duration(seconds: 2));
+      if (context.mounted) {
+        Navigator.pushReplacement(context,
+            MaterialPageRoute(builder: (context) {
+          return UserNavigationBar();
+        }));
+      }
+    }
   }
 
   @override
@@ -55,50 +102,73 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           margin: EdgeInsets.only(
               left: Get.width * 0.05, right: Get.width * 0.05, top: 10),
           child: Column(
-
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(
                 height: Get.height * 0.25,
                 child: SvgPicture.asset(svgImage, semanticsLabel: 'Acme Logo'),
               ),
-              Gap(Get.height * 0.03),
-              Text(
-                "Check your email",
-                style: Theme.of(context).textTheme.displayLarge,
-              ),
-              Gap(Get.height * 0.02),
-              const Text(
-                "A verification email has been sent to the email provided by you. Kindly confirm the email by tapping the button below",
-              ),
-              Gap(Get.height * 0.1),
-              SizedBox(
-                height: Get.height * 0.06,
-                width: Get.width,
-                child: ElevatedButton(
-                  onPressed: () {
-                    AndroidIntent intent = const AndroidIntent(
-                        action: 'android.intent.action.MAIN',
-                        category: 'android.intent.category.APP_EMAIL',
-                        flags: [Flag.FLAG_ACTIVITY_NEW_TASK]);
-                    intent.launch().catchError((e) {});
-                  },
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8))),
-                  child: Text(
-                    "Check Email",
-                    style: GoogleFonts.lato(
-                        letterSpacing: 0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 20),
-                  ),
-                ),
-              ),
-              Gap(Get.height * 0.05),
-              Text(loadingString,style: TextStyle(fontSize: 24,color: Colors.blue),)
+              isVerified
+                  ? Column(
+                      children: [
+                        Gap(
+                          Get.height * 0.05,
+                        ),
+                        Text(
+                          "Email Verified",style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                        Gap(Get.height*0.04),
+                        Text("Redirecting..",style: Theme.of(context).textTheme.displayMedium,),
+                        Gap(Get.height*0.05),
+                        CircularProgressIndicator()
+                      ],
+                    )
+                  : Column(
+                      children: [
+                        Gap(Get.height * 0.03),
+                        Text(
+                          "Check your email",
+                          style: Theme.of(context).textTheme.displayLarge,
+                        ),
+                        Gap(Get.height * 0.02),
+                        const Text(
+                          "A verification email has been sent to the email provided by you. Kindly confirm the email by tapping the button below",
+                        ),
+                        Gap(Get.height * 0.1),
+                        SizedBox(
+                          height: Get.height * 0.06,
+                          width: Get.width,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              AndroidIntent intent = const AndroidIntent(
+                                  action: 'android.intent.action.MAIN',
+                                  category: 'android.intent.category.APP_EMAIL',
+                                  flags: [Flag.FLAG_ACTIVITY_NEW_TASK]);
+                              intent.launch().catchError((e) {});
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8))),
+                            child: Text(
+                              "Check Email",
+                              style: GoogleFonts.lato(
+                                  letterSpacing: 0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20),
+                            ),
+                          ),
+                        ),
+                        Gap(Get.height * 0.05),
+                        Text(
+                          loadingString,
+                          style:
+                              const TextStyle(fontSize: 24, color: Colors.blue),
+                        ),
+                      ],
+                    ),
             ],
           ),
         ),
