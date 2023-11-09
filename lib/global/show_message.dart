@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 Future<void> showErrorDialog(BuildContext context, String message) async {
   return showDialog<void>(
@@ -18,7 +18,11 @@ Future<void> showErrorDialog(BuildContext context, String message) async {
         actions: <Widget>[
           Center(
             child: TextButton(
-              child: const Text('Ok',style: TextStyle(color: Colors.red,fontWeight: FontWeight.w600),),
+              child: const Text(
+                'Ok',
+                style:
+                    TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -28,4 +32,15 @@ Future<void> showErrorDialog(BuildContext context, String message) async {
       );
     },
   );
+}
+
+showToast(String message) {
+  Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      fontSize: 16.0);
 }

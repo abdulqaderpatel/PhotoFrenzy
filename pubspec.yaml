@@ -37,6 +37,10 @@ dependencies:
   http:
   google_fonts:
   gap:
+  flutter_svg:
+  fluttertoast:
+  android_intent_plus:
+  url_launcher:
 
 
   cupertino_icons: ^1.0.2
