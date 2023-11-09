@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photofrenzy/authentication/login.dart';
+import 'package:photofrenzy/global/show_dialog.dart';
 
 import '../global/theme_mode.dart';
 
@@ -19,10 +21,22 @@ class _SignupScreenState extends State<SignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  var buttonLoading = false;
+  var emailRegExp = RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+
+  Future registerWithEmailAndPassword(
+      String name, String password, String email) async {
+    UserCredential result = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(email: email, password: password);
+    User? user = result.user;
+    user!.updateDisplayName(nameController.text); //added this line
+    return user;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -73,7 +87,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   Gap(Get.height * 0.013),
                   TextField(
-                    controller: emailController,
+                    controller: usernameController,
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                         contentPadding:
@@ -116,11 +130,105 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: Get.height * 0.06,
                     width: Get.width,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        setState(() {
+                          buttonLoading=true;
+                        });
+                        if (nameController.text.isEmpty) {
+                          showErrorDialog(context,
+                              "Name cannot be empty. Please make sure all the details have been filled.");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else if (usernameController.text.isEmpty) {
+                          showErrorDialog(context,
+                              "username cannot be empty. Please make sure all the details have been filled.");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else if (emailController.text.isEmpty) {
+                          showErrorDialog(context,
+                              "email cannot be empty. Please make sure all the details have been filled.");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else if (passwordController.text.isEmpty) {
+                          showErrorDialog(context,
+                              "password cannot be empty. Please make sure all the details have been filled.");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                            .hasMatch(nameController.text)) {
+                          showErrorDialog(
+                              context, "The name entered is not valid");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                            .hasMatch(usernameController.text)) {
+                          showErrorDialog(
+                              context, "The username entered is not valid");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else if (!emailRegExp
+                            .hasMatch(emailController.text)) {
+                          showErrorDialog(
+                              context, "The email entered is not valid");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else if (passwordController.text.length < 5) {
+                          showErrorDialog(context,
+                              "password should be atleast 5 characters");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else {
+                          try {
+                            await registerWithEmailAndPassword(
+                                nameController.text,
+                                passwordController.text,
+                                emailController.text);
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == "email-already-in-use") {
+                              if(context.mounted) {
+                                showErrorDialog(context,
+                                    "password should be atleast 6 characters");
+                              }
+                              setState(() {
+                                buttonLoading = false;
+                              });
+                            } else if (e.code == "invalid-email") {
+                              if(context.mounted) {
+                                showErrorDialog(context,
+                                    "password should be atleast 6 characters");
+                              }
+                              setState(() {
+                                buttonLoading = false;
+                              });
+                            } else if (e.code == "weak-password") {
+                              if(context.mounted) {
+                                showErrorDialog(context,
+                                    "password should be atleast 6 characters");
+                              }
+                              setState(() {
+                                buttonLoading = false;
+                              });
+                            }
+                          }
+                        }
+                        setState(() {
+                          buttonLoading=false;
+                        });
+                      },
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                      child: Text(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8))),
+                      child:buttonLoading?const CircularProgressIndicator(color: Colors.blue,): Text(
                         "Create Account",
                         style: GoogleFonts.lato(
                             letterSpacing: 0,
