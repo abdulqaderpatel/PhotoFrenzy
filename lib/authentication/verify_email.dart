@@ -8,7 +8,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:photofrenzy/authentication/signup.dart';
 import 'package:photofrenzy/global/show_message.dart';
+import 'package:photofrenzy/global/theme_mode.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
@@ -84,11 +86,12 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         svgImage = "assets/images/email_verified.svg";
       });
       timer.cancel();
+      showToast(message: "Email verified Successfully");
       await Future.delayed(const Duration(seconds: 2));
       if (context.mounted) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) {
-          return UserNavigationBar();
+          return const UserNavigationBar();
         }));
       }
     }
@@ -104,6 +107,29 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  InkWell(onTap:(){Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+                    return SignupScreen();
+          }));},
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  const Gap(3),
+                  Text(
+                    "Go Back",
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: isDark(context) == true
+                            ? Colors.white
+                            : Colors.black),
+                  ),
+                ],
+              ),
+              Gap(Get.height*0.01),
               SizedBox(
                 height: Get.height * 0.25,
                 child: SvgPicture.asset(svgImage, semanticsLabel: 'Acme Logo'),
@@ -115,12 +141,16 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           Get.height * 0.05,
                         ),
                         Text(
-                          "Email Verified",style: Theme.of(context).textTheme.displayLarge,
+                          "Email Verified",
+                          style: Theme.of(context).textTheme.displayLarge,
                         ),
-                        Gap(Get.height*0.04),
-                        Text("Redirecting..",style: Theme.of(context).textTheme.displayMedium,),
-                        Gap(Get.height*0.05),
-                        CircularProgressIndicator()
+                        Gap(Get.height * 0.04),
+                        Text(
+                          "Redirecting..",
+                          style: Theme.of(context).textTheme.displayMedium,
+                        ),
+                        Gap(Get.height * 0.05),
+                        const CircularProgressIndicator()
                       ],
                     )
                   : Column(

@@ -193,7 +193,12 @@ class _SignupScreenState extends State<SignupScreen> {
                                 nameController.text,
                                 passwordController.text,
                                 emailController.text);
-                            Get.to(VerifyEmailScreen());
+                           if(context.mounted)
+                             {
+                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+                                 return VerifyEmailScreen();
+                               }));
+                             }
                           } on FirebaseAuthException catch (e) {
                             if (e.code == "email-already-in-use") {
                               if (context.mounted) {
