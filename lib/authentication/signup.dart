@@ -118,7 +118,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary),
+                          backgroundColor: Theme.of(context).colorScheme.primary,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
                       child: Text(
                         "Create Account",
                         style: GoogleFonts.lato(
