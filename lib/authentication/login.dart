@@ -4,6 +4,9 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photofrenzy/authentication/signup.dart';
+import 'package:photofrenzy/authentication/verify_email.dart';
+import 'package:photofrenzy/global/show_message.dart';
+import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
 
 import '../global/theme_mode.dart';
 
@@ -17,6 +20,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  var buttonLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -87,22 +91,85 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: Get.height * 0.06,
                     width: Get.width,
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              Theme.of(context).colorScheme.primary,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8))),
-                      child: Text(
-                        "Login",
-                        style: GoogleFonts.lato(
-                            letterSpacing: 0,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20),
-                      ),
-                    ),
+                    child:
+                         ElevatedButton(
+                            onPressed:buttonLoading?null: () async {
+
+                              setState(() {
+                                buttonLoading = true;
+                              });
+                              if (emailController.text.isEmpty) {
+                                showErrorDialog(
+                                    context, "Email cannot be empty");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else if (passwordController.text.isEmpty) {
+                                showErrorDialog(
+                                    context, "Password cannot be empty");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else {
+                                try {
+                                  await FirebaseAuth.instance
+                                      .signInWithEmailAndPassword(
+                                          email: emailController.text,
+                                          password: passwordController.text);
+                                  if(FirebaseAuth.instance.currentUser!.emailVerified)
+                                    {
+                                      if(context.mounted) {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context){
+                                        return UserNavigationBar();
+                                      }));
+                                      }
+                                    }
+                                  else{
+                                    if(context.mounted) {
+                                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                                        return VerifyEmailScreen();
+                                      }));
+                                    }
+                                  }
+                                  setState(() {
+                                    buttonLoading = false;
+                                  });
+                                } on FirebaseAuthException catch (e) {
+                                  print(e.toString());
+                                  if (e.code == "invalid-email") {
+                                    if (context.mounted) {
+                                      showErrorDialog(
+                                          context, "Invalid email entered");
+                                    }
+                                    setState(() {
+                                      buttonLoading = false;
+                                    });
+                                  } else if (e.code == "INVALID_LOGIN_CREDENTIALS") {
+                                    if (context.mounted) {
+                                      showErrorDialog(context,
+                                          "the email-password combination does not exist");
+                                    }
+                                    setState(() {
+                                      buttonLoading = false;
+                                    });
+                                  }
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8))),
+                            child:buttonLoading?CircularProgressIndicator(color: Colors.white,): Text(
+                              "Login",
+                              style: GoogleFonts.lato(
+                                  letterSpacing: 0,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20),
+                            ),
+                          ),
                   ),
                   Gap(Get.height * 0.05),
                   Row(

@@ -21,11 +21,11 @@ class _MyHomePageState extends State<UserNavigationBar> {
   // Create a list of pages or tabs
   List<Widget> _buildScreen() {
     return [
-      HomeScreen(),
-      SearchScreen(),
-      AddPostScreen(),
-      MessagesScreen(),
-      ProfileScreen(),
+      const HomeScreen(),
+      const SearchScreen(),
+      const AddPostScreen(),
+      const MessagesScreen(),
+      const ProfileScreen(),
     ];
   }
 
@@ -36,7 +36,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
           Icons.home,
           color:isDark(context)==true? Colors.white:Colors.black,
         ),
-        inactiveIcon: Icon(
+        inactiveIcon: const Icon(
           Icons.home_outlined,
           color: Colors.grey,
         ),
@@ -46,7 +46,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
           Icons.search,
           color:isDark(context)==true? Colors.white:Colors.black,
         ),
-        inactiveIcon: Icon(
+        inactiveIcon: const Icon(
           Icons.search_outlined,
           color: Colors.grey,
         ),
@@ -56,7 +56,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
           Icons.add,
           color:isDark(context)==true? Colors.white:Colors.black,
         ),
-        inactiveIcon: Icon(
+        inactiveIcon: const Icon(
           Icons.add,
           color: Colors.grey,
         ),
@@ -66,7 +66,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
           Icons.chat,
           color:isDark(context)==true? Colors.white:Colors.black,
         ),
-        inactiveIcon: Icon(
+        inactiveIcon: const Icon(
           Icons.chat,
           color: Colors.grey,
         ),
@@ -76,7 +76,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
           Icons.person_2,
           color:isDark(context)==true? Colors.white:Colors.black,
         ),
-        inactiveIcon: Icon(
+        inactiveIcon: const Icon(
           Icons.person_2_outlined,
           color: Colors.grey,
         ),
@@ -91,7 +91,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
         context,
         screens: _buildScreen(),
         items: _navBarItem(),
-        backgroundColor:isDark(context)==true? Color(0xff141C27):Colors.white,
+        backgroundColor:isDark(context)==true? const Color(0xff141C27):Colors.white,
         decoration: NavBarDecoration(borderRadius: BorderRadius.circular(1)),
         navBarStyle: NavBarStyle.style3,
         controller: controller,

@@ -132,7 +132,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: Get.height * 0.06,
                     width: Get.width,
                     child: ElevatedButton(
-                      onPressed: () async {
+                      onPressed:buttonLoading?null: () async {
                         setState(() {
                           buttonLoading = true;
                         });
@@ -236,11 +236,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               Theme.of(context).colorScheme.primary,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8))),
-                      child: buttonLoading
-                          ? const CircularProgressIndicator(
-                              color: Colors.blue,
-                            )
-                          : Text(
+                      child:buttonLoading?CircularProgressIndicator(): Text(
                               "Create Account",
                               style: GoogleFonts.lato(
                                   letterSpacing: 0,
