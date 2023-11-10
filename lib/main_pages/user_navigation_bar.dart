@@ -23,7 +23,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
     return [
       const HomeScreen(),
       const SearchScreen(),
-      const AddPostScreen(),
+     const AddPostScreen(),
       const MessagesScreen(),
       const ProfileScreen(),
     ];

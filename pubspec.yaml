@@ -42,6 +42,8 @@ dependencies:
   android_intent_plus:
   url_launcher:
   persistent_bottom_nav_bar_v2:
+  image_picker:
+  firebase_storage:
 
 
   cupertino_icons: ^1.0.2

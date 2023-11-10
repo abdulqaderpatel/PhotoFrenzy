@@ -9,6 +9,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photofrenzy/authentication/signup.dart';
+import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/global/theme_mode.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
@@ -87,11 +88,21 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       });
       timer.cancel();
       showToast(message: "Email verified Successfully");
-      await Future.delayed(const Duration(seconds: 2));
+      await FirebaseTable()
+          .usersTable
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set({
+        "id": FirebaseAuth.instance.currentUser!.uid,
+        "name": FirebaseAuth.instance.currentUser!.displayName,
+        "username": "",
+        "email": FirebaseAuth.instance.currentUser!.email,
+        "profile_picture": ""
+      });
+      await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
         Navigator.pushReplacement(context,
             MaterialPageRoute(builder: (context) {
-          return  UserNavigationBar();
+          return UserNavigationBar();
         }));
       }
     }
@@ -137,7 +148,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 Gap(Get.height * 0.01),
                 SizedBox(
                   height: Get.height * 0.25,
-                  child: SvgPicture.asset(svgImage, semanticsLabel: 'Acme Logo'),
+                  child:
+                      SvgPicture.asset(svgImage, semanticsLabel: 'Acme Logo'),
                 ),
                 isVerified
                     ? Column(
@@ -177,7 +189,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                               onPressed: () {
                                 AndroidIntent intent = const AndroidIntent(
                                     action: 'android.intent.action.MAIN',
-                                    category: 'android.intent.category.APP_EMAIL',
+                                    category:
+                                        'android.intent.category.APP_EMAIL',
                                     flags: [Flag.FLAG_ACTIVITY_NEW_TASK]);
                                 intent.launch().catchError((e) {});
                               },
@@ -199,8 +212,8 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                           Gap(Get.height * 0.05),
                           Text(
                             loadingString,
-                            style:
-                                const TextStyle(fontSize: 24, color: Colors.blue),
+                            style: const TextStyle(
+                                fontSize: 24, color: Colors.blue),
                           ),
                         ],
                       ),
