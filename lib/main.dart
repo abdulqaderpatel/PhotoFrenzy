@@ -31,14 +31,14 @@ class _MyAppState extends State<MyApp> {
   var user=FirebaseAuth.instance.currentUser;
   var isDataLoaded=true;
   var userExists=true;
-   var userVerified=true;
+  var userVerified=true;
   @override
   void initState() {
 
     if(user==null)
-      {
-        userExists=false;
-      }
+    {
+      userExists=false;
+    }
     else {
       if (user!.emailVerified == false) {
         userVerified = false;

@@ -263,8 +263,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                     : Colors.blueGrey)),
                         InkWell(
                           onTap: () {
-                            print(FirebaseAuth
-                                .instance.currentUser!.emailVerified);
+
                             Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) {
                               return const LoginScreen();
