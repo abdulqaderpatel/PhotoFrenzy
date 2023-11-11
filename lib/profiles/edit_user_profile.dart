@@ -1,15 +1,17 @@
 import 'dart:io';
 
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofrenzy/global/show_message.dart';
 
 import '../global/firebase_tables.dart';
+import '../global/theme_mode.dart';
 
 class EditUserProfileScreen extends StatefulWidget {
   const EditUserProfileScreen({super.key});
@@ -23,7 +25,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
 
   final nameController = TextEditingController();
 
-  final emailController = TextEditingController();
+  final bioController = TextEditingController();
 
   final phoneNumberController = TextEditingController();
 
@@ -65,8 +67,8 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
     });
     nameController.text = items[0]["name"];
     usernameController.text = items[0]["username"];
-    emailController.text = items[0]["email"];
-    phoneNumberController.text = items[0]["phone_number"].toString();
+    phoneNumberController.text = items[0]["phone_number"];
+    bioController.text = items[0]["bio"];
 
     setState(() {
       isLoaded = true;
@@ -74,7 +76,6 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
   }
 
   Future<bool> checkIfUsernameIsUnique(String username) async {
-
     var userData = await FirebaseTable()
         .usersTable
         .where('username', isEqualTo: username)
@@ -82,7 +83,6 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
 
     List<Map<String, dynamic>> adminTemp = [];
     List<Map<String, dynamic>> userTemp = [];
-
 
     for (var element in userData.docs) {
       setState(() {
@@ -106,200 +106,263 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      bottomNavigationBar: Container(
+          margin: EdgeInsets.only(
+            bottom: 15,
+          ),
+          padding: EdgeInsets.only(left: 12, right: 12),
+          width: Get.width * 0.8,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8))),
+            child:buttonLoader?CircularProgressIndicator(color: Colors.grey,): Text(
+              "Edit Profile",
+              style: GoogleFonts.roboto(
+                  letterSpacing: 0,
+                  color:Colors.white,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20),
+            ),
+            onPressed: () async {
+              setState(() {
+                buttonLoader = true;
+              });
+              if (nameController.text.isEmpty) {
+                showToast(message: "Name cannot be empty", error: true);
+                setState(() {
+                  buttonLoader = false;
+                });
+              } else if (usernameController.text.isEmpty) {
+                showToast(message: "Username cannot be empty", error: true);
+                setState(() {
+                  buttonLoader = false;
+                });
+              } else if (phoneNumberController.text.isEmpty) {
+                showToast(message: "Phone number cannot be empty", error: true);
+                setState(() {
+                  buttonLoader = false;
+                });
+              }
+              else if (bioController.text.isEmpty) {
+                showToast(message: "Your info cannot be empty", error: true);
+                setState(() {
+                  buttonLoader = false;
+                });
+              }
+              else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                  .hasMatch(nameController.text)) {
+                showToast(message: "Please enter a valid name", error: true);
+                setState(() {
+                  buttonLoader = false;
+                });
+              } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                  .hasMatch(usernameController.text)) {
+                showToast(
+                    message: "Please enter a valid username", error: true);
+                setState(() {
+                  buttonLoader = false;
+                });
+              } else if (!await checkIfUsernameIsUnique(
+                      usernameController.text) &&
+                  items[0]["username"] != usernameController.text) {
+                showToast(
+                    message: "Username has been already taken", error: true);
+                setState(() {
+                  buttonLoader = false;
+                });
+              } else if (phoneNumberController.text.length != 10 ||
+                  phoneNumberController.text.contains(".") ||
+                  phoneNumberController.text.contains(",")) {
+                showToast(message: "Invalid phone number", error: true);
+                setState(() {
+                  buttonLoader = false;
+                });
+              } else {
+                if (profileImage == null) {
+                  await FirebaseTable()
+                      .usersTable
+                      .doc(FirebaseAuth.instance.currentUser!.uid)
+                      .update({
+                    "username": usernameController.text,
+                    "name": nameController.text,
+                    "phone_number": phoneNumberController.text,
+                    "bio": bioController.text
+                  });
+                  showToast(message: "Profile updated successfully");
+                  setState(() {
+                    buttonLoader = false;
+                  });
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
+                } else {
+                  Reference ref = FirebaseStorage.instance.ref(
+                      "/${FirebaseAuth.instance.currentUser!.uid}/profile_picture");
+                  UploadTask uploadTask = ref.putFile(profileImage!.absolute);
+                  Future.value(uploadTask).then((value) async {
+                    var newUrl = await ref.getDownloadURL();
+                    await FirebaseTable()
+                        .usersTable
+                        .doc(FirebaseAuth.instance.currentUser!.uid)
+                        .update({
+                      "profile_picture": newUrl.toString(),
+                      "username": usernameController.text,
+                      "name": nameController.text,
+                      "phone_number": phoneNumberController.text,
+                      "bio": bioController.text
+                    });
+
+                    showToast(message: "Profile updated successfully");
+                    setState(() {
+                      buttonLoader = false;
+                    });
+
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  });
+                }
+              }
+            },
+          )),
       body: isLoaded
           ? SafeArea(
-        child: Container(color: const Color(0xff404354),
-          height: Get.height,
-
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                children: [
-
-
-                  Container(padding: const EdgeInsets.all(15),width: Get.width,color: const Color(0xff373A49),
+              child: SingleChildScrollView(
+                child: Container(
+                  margin: EdgeInsets.only(
+                      left: Get.width * 0.025, right: Get.width * 0.025),
+                  child: Center(
                     child: Column(
-                      children:[ const Text(
-                        "Edit Profile",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 25),
-                      ),
-                        InkWell(
-                          onTap: () {
-                            getImageGallery();
-                          },
-                          child: Container(
-                            width: 90,
-                            height: 90,
-                            margin: const EdgeInsets.only(top: 45, bottom: 30),
-                            padding: const EdgeInsets.all(2),
-                            decoration: BoxDecoration(
-
-                              borderRadius: BorderRadius.circular(70),
-
+                      children: [
+                        Column(
+                          children: [
+                            Text(
+                              "Edit Profile",
+                              style: TextStyle(
+                                  color:isDark(context) ? Colors.white : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25),
                             ),
-                            child: Container(
-                              padding: const EdgeInsets.all(2),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(80),
-                              ),
-                              child: profileImage != null
-                                  ? CircleAvatar(
-                                radius: 40,
-                                backgroundColor: Colors.white,
-                                backgroundImage: FileImage(
-                                  profileImage!,
+                            Gap(Get.height * 0.015),
+                            InkWell(
+                              onTap: () {
+                                getImageGallery();
+                              },
+                              child: Container(
+                                width: 80,
+                                height: 80,
+                                padding: const EdgeInsets.all(2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(70),
                                 ),
-                              )
-                                  : CircleAvatar(
-                                radius: 40,
-                                backgroundColor: Colors.white,
-                                backgroundImage: NetworkImage(
-                                  items[0]["profile_picture"],
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(80),
+                                  ),
+                                  child: profileImage != null
+                                      ? CircleAvatar(
+                                          radius: 40,
+                                          backgroundColor: Colors.white,
+                                          backgroundImage: FileImage(
+                                            profileImage!,
+                                          ),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 40,
+                                          backgroundColor: Colors.white,
+                                          backgroundImage: NetworkImage(
+                                            items[0]["profile_picture"],
+                                          ),
+                                        ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),],
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 40,
+                        ),
+                        TextField(
+                          controller: nameController,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                              contentPadding:
+                                  const EdgeInsets.only(top: 20, bottom: 20),
+                              prefixIcon: const Icon(Icons.person),
+                              hintText: "Enter Name",
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: InputBorder.none),
+                        ),
+                        Gap(Get.height * 0.013),
+                        TextField(
+                          controller: usernameController,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                              contentPadding:
+                                  const EdgeInsets.only(top: 20, bottom: 20),
+                              prefixIcon: const Icon(Icons.verified_user),
+                              hintText: "Enter Username",
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: InputBorder.none),
+                        ),
+                        Gap(Get.height * 0.013),
+                        TextField(
+                          controller: phoneNumberController,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                              contentPadding:
+                                  const EdgeInsets.only(top: 20, bottom: 20),
+                              prefixIcon: const Icon(Icons.phone),
+                              hintText: "Enter Phone number",
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: InputBorder.none),
+                        ),
+                        Gap(Get.height * 0.013),
+                        TextField(
+                          maxLines: 5,
+                          maxLength: 100,
+                          inputFormatters: [
+                            TextInputFormatter.withFunction(
+                                (oldValue, newValue) {
+                              int newLines = newValue.text.split('\n').length;
+                              if (newLines > 5) {
+                                return oldValue;
+                              } else {
+                                return newValue;
+                              }
+                            }),
+                          ],
+                          controller: bioController,
+                          textInputAction: TextInputAction.go,
+                          decoration: InputDecoration(
+                              contentPadding:
+                                  const EdgeInsets.only(top: 20, bottom: 20),
+                              prefixIcon: const Icon(Icons.info),
+                              hintText: "Write about yourself..",
+                              filled: true,
+                              fillColor: Theme.of(context).cardColor,
+                              border: InputBorder.none),
+                        ),
+                        Gap(Get.height * 0.013),
+                        const SizedBox(
+                          height: 90,
+                        ),
+                      ],
                     ),
                   ),
-
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  TextField(),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  TextField(),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  TextField(),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  TextField(),
-                  const SizedBox(
-                    height: 90,
-                  ),
-
-                  SizedBox(
-                      width: Get.width * 0.8,
-                      child: ElevatedButton(
-                     child: Text("submit"),
-
-                        onPressed: () async {
-                          setState(() {
-                            buttonLoader = true;
-                          });
-                          if (nameController.text.isEmpty) {
-                            showToast(message: "Name cannot be empty",error: true);
-                            setState(() {
-                              buttonLoader = false;
-                            });
-                          } else if (usernameController.text.isEmpty) {
-                            showToast(message: "Username cannot be empty",error: true);
-                            setState(() {
-                              buttonLoader = false;
-                            });
-                          } else if (phoneNumberController.text.isEmpty) {
-                            showToast(message: "Phone number cannot be empty",error: true);
-                            setState(() {
-                              buttonLoader = false;
-                            });
-                          } else if (!RegExp(r'^[a-zA-Z0-9]+$')
-                              .hasMatch(nameController.text)) {
-                            showToast(message: "Please enter a valid name",error: true);
-                            setState(() {
-                              buttonLoader = false;
-                            });
-                          } else if (!RegExp(r'^[a-zA-Z0-9]+$')
-                              .hasMatch(usernameController.text)) {
-                            showToast(message: "Please enter a valid username",error: true);
-                            setState(() {
-                              buttonLoader = false;
-                            });
-                          } else if (!await checkIfUsernameIsUnique(
-                              usernameController.text) &&
-                              items[0]["username"] !=
-                                  usernameController.text) {
-                            showToast(message: "Username has been already taken",error: true);
-                            setState(() {
-                              buttonLoader = false;
-                            });
-                          } else if (phoneNumberController.text.length !=
-                              10 ||
-                              phoneNumberController.text.contains(".") ||
-                              phoneNumberController.text.contains(",")) {
-                            showToast(message: "Invalid phone number",error: true);
-                            setState(() {
-                              buttonLoader = false;
-                            });
-                          } else {
-                            if (profileImage == null) {
-                              await FirebaseTable()
-                                  .usersTable
-                                  .doc(FirebaseAuth
-                                  .instance.currentUser!.uid)
-                                  .update({
-                                "username": usernameController.text,
-                                "name": nameController.text,
-                                "phone_number": phoneNumberController.text
-                              });
-                              showToast(message: "Profile updated successfully");
-                              setState(() {
-                                buttonLoader = false;
-                              });
-                              if(context.mounted) {
-                                Navigator.pop(context);
-                              }
-                            } else {
-                              Reference ref = FirebaseStorage.instance.ref(
-                                  "/${FirebaseAuth.instance.currentUser!.uid}/profile_picture");
-                              UploadTask uploadTask =
-                              ref.putFile(profileImage!.absolute);
-                              Future.value(uploadTask)
-                                  .then((value) async {
-                                var newUrl = await ref.getDownloadURL();
-                                await FirebaseTable()
-                                    .usersTable
-                                    .doc(FirebaseAuth
-                                    .instance.currentUser!.uid)
-                                    .update({
-                                  "image": newUrl.toString(),
-                                  "username": usernameController.text,
-                                  "name": nameController.text,
-                                  "phone_number":
-                                  phoneNumberController.text
-                                });
-
-                             showToast(message: "Profile updated successfully");
-                                setState(() {
-                                  buttonLoader = false;
-                                });
-
-                                if(context.mounted)
-                                  {
-                                    Navigator.pop(context);
-                                  }
-                              });
-                            }
-                          }
-                        },
-                      )),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-      )
+            )
           : const Center(
-        child: CircularProgressIndicator(),
-      ),
+              child: CircularProgressIndicator(),
+            ),
     );
   }
 }
