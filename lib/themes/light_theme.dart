@@ -25,7 +25,7 @@ ThemeData lightTheme = ThemeData(
     bodyLarge: TextStyle(
         fontSize: 17, color: Colors.black, fontWeight: FontWeight.w500),
     bodyMedium: TextStyle(
-        fontSize: 15, color: Color(0xffB2B5BC), fontWeight: FontWeight.w400),
+        fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w400),
     bodySmall: TextStyle(
         fontSize: 13, color: Color(0xffB2B5BC), fontWeight: FontWeight.w400),
   ),

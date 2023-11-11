@@ -61,55 +61,63 @@ class _AddPostScreenState extends State<AddPostScreen> {
             SizedBox(
               width: Get.width,
               child: ElevatedButton(
-                onPressed:buttonLoading?null: () async {
-                  setState(() {
-                    buttonLoading = true;
-                  });
-                  String id = DateTime.now().millisecondsSinceEpoch.toString();
-                  if (postImage!.path.isEmpty) {
-                    await FirebaseTable().postsTable.doc(id).set({
-                      "post_id": id,
-                      "creator_id": FirebaseAuth.instance.currentUser!.uid,
-                      "type": "text",
-                      "text": textController.text,
-                    });
-                    showToast(message: "Post created successfully");
-                    setState(() {
-                      buttonLoading = false;
-                    });
-                  } else {
-                    Reference ref = FirebaseStorage.instance.ref(
-                        "/${FirebaseAuth.instance.currentUser!.uid}/$id");
-                    UploadTask uploadTask = ref.putFile(postImage!.absolute);
-                    Future.value(uploadTask).then((value) async {
-                      var newUrl = await ref.getDownloadURL();
-                      await FirebaseTable().postsTable.doc(id).set({
-                        "post_id": id,
-                        "creator_id": FirebaseAuth.instance.currentUser!.uid,
-                        "type": "image",
-                        "text": textController.text,
-                        "imageurl": newUrl.toString()
-                      });
+                onPressed: buttonLoading
+                    ? null
+                    : () async {
+                        setState(() {
+                          buttonLoading = true;
+                        });
+                        String id =
+                            DateTime.now().millisecondsSinceEpoch.toString();
+                        if (postImage!.path.isEmpty) {
+                          await FirebaseTable().postsTable.doc(id).set({
+                            "post_id": id,
+                            "creator_id":
+                                FirebaseAuth.instance.currentUser!.uid,
+                            "type": "text",
+                            "text": textController.text,
+                          });
+                          showToast(message: "Post created successfully");
+                          setState(() {
+                            buttonLoading = false;
+                          });
+                        } else {
+                          Reference ref = FirebaseStorage.instance.ref(
+                              "/${FirebaseAuth.instance.currentUser!.uid}/$id");
+                          UploadTask uploadTask =
+                              ref.putFile(postImage!.absolute);
+                          Future.value(uploadTask).then((value) async {
+                            var newUrl = await ref.getDownloadURL();
+                            await FirebaseTable().postsTable.doc(id).set({
+                              "post_id": id,
+                              "creator_id":
+                                  FirebaseAuth.instance.currentUser!.uid,
+                              "type": "image",
+                              "text": textController.text,
+                              "imageurl": newUrl.toString()
+                            });
 
-                      showToast(message: "Post created successfully");
-                      setState(() {
-                        buttonLoading = false;
-                      });
-                    });
-                  }
-                },
+                            showToast(message: "Post created successfully");
+                            setState(() {
+                              buttonLoading = false;
+                            });
+                          });
+                        }
+                      },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8))),
-                child:buttonLoading?CircularProgressIndicator(): Text(
-                  "Create Post",
-                  style: GoogleFonts.lato(
-                      letterSpacing: 0,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 20),
-                ),
+                child: buttonLoading
+                    ? CircularProgressIndicator()
+                    : Text(
+                        "Create Post",
+                        style: GoogleFonts.lato(
+                            letterSpacing: 0,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 20),
+                      ),
               ),
             ),
           ],

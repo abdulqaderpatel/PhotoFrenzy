@@ -22,7 +22,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
   List<Widget> _buildScreen() {
     return [
       const HomeScreen(),
-      const SearchScreen(),
+       SearchScreen(),
      const AddPostScreen(),
       const MessagesScreen(),
       const ProfileScreen(),
