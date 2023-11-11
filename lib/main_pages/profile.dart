@@ -7,12 +7,13 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:photofrenzy/authentication/login.dart';
 import 'package:photofrenzy/global/show_message.dart';
+import 'package:photofrenzy/profiles/edit_user_profile.dart';
+
 import 'package:photofrenzy/user_posts/image_posts.dart';
 import 'package:photofrenzy/user_posts/text_posts.dart';
 
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
-import '../profiles/edit_user_profile.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -37,6 +38,43 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     var tabController = TabController(vsync: this, length: 2);
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Gap(50),
+            Text("Profile"),
+            PopupMenuButton(
+                icon: const Icon(Icons.menu),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                        onTap: () {
+                          Future.delayed(Duration.zero, () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const EditUserProfileScreen();
+                            }));
+                          });
+                        },
+                        child: const Text("Edit profile")),
+                    PopupMenuItem(
+                        onTap: () async {
+                          showToast(message: "Logged out successfully");
+                          await FirebaseAuth.instance.signOut();
+                          if(context.mounted) {
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const LoginScreen();
+                            }));
+                          }
+                        },
+                        child: const Text("Logout"))
+                  ];
+                })
+          ],
+        ),
+      ),
       body: ListView(
         children: [
           SafeArea(
@@ -51,11 +89,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                   if (snapshot.hasData) {
                     final clients = snapshot.data?.docs;
                     for (var client in clients!) {
-                      final clientWidget = Container(height: Get.height*1.35,
+                      final clientWidget = Container(
+                        height: Get.height * 1.28,
                         child: Center(
                           child: Column(
                             children: [
-
                               Container(
                                 padding: EdgeInsets.only(
                                     left: Get.width * 0.025,
@@ -189,28 +227,36 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         ),
                                       ],
                                     ),
-                                    Gap(10),
-                                    Container(
-                                      height: 50,
-                                      child: TabBar(
-                                          controller: tabController,
-                                          tabs: [
-                                            Icon(Icons.text_format,color: isDark(context)?Colors.white:Colors.black,),
-                                            Icon(Icons.image,color:isDark(context)?Colors.white:Colors.black,),
-                                          ]),
-                                    ),
-                                   Container(height:Get.height*0.80,
-                                     child: TabBarView(
-                                     controller: tabController,
-                                     children: const [
-                                       TextPostsScreen(),
-                                       ImagePostsScreen(),
-                                     ]),
-                                   )
-
+                                    Gap(5),
                                   ],
                                 ),
                               ),
+                              Container(
+                                height: 50,
+                                child: TabBar(controller: tabController, tabs: [
+                                  Icon(
+                                    Icons.text_format,
+                                    color: isDark(context)
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                  Icon(
+                                    Icons.image,
+                                    color: isDark(context)
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
+                                ]),
+                              ),
+                              Flexible(
+                                flex: 1,
+                                child: TabBarView(
+                                    controller: tabController,
+                                    children: const [
+                                      TextPostsScreen(),
+                                      ImagePostsScreen(),
+                                    ]),
+                              )
                             ],
                           ),
                         ),
