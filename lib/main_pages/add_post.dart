@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -64,13 +65,34 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 onPressed: buttonLoading
                     ? null
                     : () async {
+
+                  List<Map<String, dynamic>> temp = [];
+                  var data = await FirebaseTable()
+                      .usersTable
+                      .where("id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .get();
+
+                  for (var element in data.docs) {
+                    setState(() {
+                      temp.add(element.data());
+                    });
+                  }
+
+                  String id =
+                  DateTime.now().millisecondsSinceEpoch.toString();
+
+
+
                         setState(() {
                           buttonLoading = true;
                         });
-                        String id =
-                            DateTime.now().millisecondsSinceEpoch.toString();
+
                         if (postImage!.path.isEmpty) {
                           await FirebaseTable().postsTable.doc(id).set({
+                            "creator_name":temp[0]["name"],
+                            "creator_username":temp[0]["username"],
+                            "creator_profile_picture":temp[0]["profile_picture"],
+
                             "post_id": id,
                             "creator_id":
                                 FirebaseAuth.instance.currentUser!.uid,
@@ -89,6 +111,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           Future.value(uploadTask).then((value) async {
                             var newUrl = await ref.getDownloadURL();
                             await FirebaseTable().postsTable.doc(id).set({
+                              "creator_name":temp[0]["name"],
+                              "creator_username":temp[0]["username"],
+                              "creator_profile_picture":temp[0]["profile_picture"],
                               "post_id": id,
                               "creator_id":
                                   FirebaseAuth.instance.currentUser!.uid,

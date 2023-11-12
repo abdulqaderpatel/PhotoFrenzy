@@ -62,7 +62,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         onTap: () async {
                           showToast(message: "Logged out successfully");
                           await FirebaseAuth.instance.signOut();
-                          if(context.mounted) {
+                          if (context.mounted) {
                             Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) {
                               return const LoginScreen();
@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     final clients = snapshot.data?.docs;
                     for (var client in clients!) {
                       final clientWidget = Container(
-                        height: Get.height * 1.28,
+                        height: Get.height * 1.30,
                         child: Center(
                           child: Column(
                             children: [
@@ -213,7 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                       children: [
                                         Flexible(
                                           child: SizedBox(
-                                            height: Get.height * 0.13,
+                                            height: Get.height * 0.14,
                                             child: Text(
                                               client["bio"],
                                               style: TextStyle(
