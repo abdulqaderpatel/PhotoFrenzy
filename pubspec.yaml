@@ -44,6 +44,7 @@ dependencies:
   persistent_bottom_nav_bar_v2:
   image_picker:
   firebase_storage:
+  scrollable_positioned_list:
 
 
   cupertino_icons: ^1.0.2
