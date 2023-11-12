@@ -8,7 +8,8 @@ import 'image_posts_list.dart';
 
 
 class ImagePostsScreen extends StatefulWidget {
-  const ImagePostsScreen({super.key});
+  final String id;
+  const ImagePostsScreen({required this.id,super.key});
 
   @override
   State<ImagePostsScreen> createState() => _ImagePostsScreenState();
@@ -26,7 +27,7 @@ class _ImagePostsScreenState extends State<ImagePostsScreen> {
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
         .postsTable
-        .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid).where("type",isEqualTo: "image")
+        .where("creator_id", isEqualTo: widget.id).where("type",isEqualTo: "image")
         .get();
 
     for (var element in data.docs) {

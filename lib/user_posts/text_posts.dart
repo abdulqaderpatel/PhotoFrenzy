@@ -10,7 +10,8 @@ import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
 
 class TextPostsScreen extends StatefulWidget {
-  const TextPostsScreen({super.key});
+  final String id;
+  const TextPostsScreen({required this.id,super.key});
 
   @override
   State<TextPostsScreen> createState() => _TextPostsScreenState();
@@ -26,7 +27,7 @@ class _TextPostsScreenState extends State<TextPostsScreen> {
             stream: FirebaseTable()
                 .postsTable
                 .where("creator_id",
-                    isEqualTo: FirebaseAuth.instance.currentUser!.uid).where("type",isEqualTo: "text")
+                    isEqualTo: widget.id).where("type",isEqualTo: "text")
                 .snapshots(),
             builder: (context, snapshot) {
               List<Container> clientWidgets = [];
@@ -75,7 +76,7 @@ class _TextPostsScreenState extends State<TextPostsScreen> {
                                 Text(
                                   "@${client["creator_username"]}",
                                   style:
-                                  TextStyle(fontSize: 17,color: isDark(context)?Colors.blueGrey:Colors.grey),
+                                  TextStyle(fontSize: 17,color: isDark(context)?Colors.white:Colors.grey),
                                 ),
                                 const SizedBox(
                                   height: 15,

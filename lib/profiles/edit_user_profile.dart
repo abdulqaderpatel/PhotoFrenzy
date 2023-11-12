@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -190,6 +191,19 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                     "phone_number": phoneNumberController.text,
                     "bio": bioController.text
                   });
+
+                  WriteBatch batch = FirebaseFirestore.instance.batch();
+
+                  QuerySnapshot postsQuery = await FirebaseTable().postsTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                  for (QueryDocumentSnapshot postDoc in postsQuery.docs) {
+                    DocumentReference postDocRef = FirebaseTable().postsTable.doc(postDoc.id);
+                    batch.update(postDocRef, {'creator_username':usernameController.text,
+                      'creator_name':nameController.text});
+                  }
+
+                  await batch.commit();
+
+
                   showToast(message: "Profile updated successfully");
                   setState(() {
                     buttonLoader = false;
@@ -213,6 +227,20 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                       "phone_number": phoneNumberController.text,
                       "bio": bioController.text
                     });
+
+                    WriteBatch batch = FirebaseFirestore.instance.batch();
+
+                    QuerySnapshot postsQuery = await FirebaseTable().postsTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                    for (QueryDocumentSnapshot postDoc in postsQuery.docs) {
+                      DocumentReference postDocRef = FirebaseTable().postsTable.doc(postDoc.id);
+                      batch.update(postDocRef, {'creator_username':usernameController.text,
+                        'creator_name':nameController.text,
+                      'creator_profile_picture':newUrl.toString()});
+                    }
+
+                    await batch.commit();
+
+
 
                     showToast(message: "Profile updated successfully");
                     setState(() {

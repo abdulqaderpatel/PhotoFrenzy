@@ -15,14 +15,18 @@ import 'package:photofrenzy/user_posts/text_posts.dart';
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class RandomUserProfileScreen extends StatefulWidget {
+  final String id;
+   RandomUserProfileScreen({required this.id,super.key}) {
+
+
+   }
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<RandomUserProfileScreen> createState() => _RandomUserProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
+class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
     with TickerProviderStateMixin {
   final usernameController = TextEditingController();
 
@@ -53,8 +57,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                           Future.delayed(Duration.zero, () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                              return const EditUserProfileScreen();
-                            }));
+                                  return const EditUserProfileScreen();
+                                }));
                           });
                         },
                         child: const Text("Edit profile")),
@@ -65,8 +69,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                           if (context.mounted) {
                             Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) {
-                              return const LoginScreen();
-                            }));
+                                  return const LoginScreen();
+                                }));
                           }
                         },
                         child: const Text("Logout"))
@@ -82,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 stream: FirebaseTable()
                     .usersTable
                     .where("id",
-                        isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                    isEqualTo: widget.id)
                     .snapshots(),
                 builder: (context, snapshot) {
                   List<Container> clientWidgets = [];
@@ -106,22 +110,22 @@ class _ProfileScreenState extends State<ProfileScreen>
                                           border: Border.all(
                                               color: Colors.grey, width: 0.8),
                                           borderRadius:
-                                              BorderRadius.circular(80)),
+                                          BorderRadius.circular(80)),
                                       child: client["profile_picture"] == ""
                                           ? const CircleAvatar(
-                                              radius: 40,
-                                              backgroundColor: Colors.white,
-                                              backgroundImage: AssetImage(
-                                                "assets/images/profile_picture.png",
-                                              ),
-                                            )
+                                        radius: 40,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: AssetImage(
+                                          "assets/images/profile_picture.png",
+                                        ),
+                                      )
                                           : CircleAvatar(
-                                              radius: 40,
-                                              backgroundColor: Colors.white,
-                                              backgroundImage: NetworkImage(
-                                                client["profile_picture"],
-                                              ),
-                                            ),
+                                        radius: 40,
+                                        backgroundColor: Colors.white,
+                                        backgroundImage: NetworkImage(
+                                          client["profile_picture"],
+                                        ),
+                                      ),
                                     ),
                                     Gap(10),
                                     Text(
@@ -139,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                           horizontal: Get.width * 0.0),
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Column(
                                             children: [
