@@ -393,19 +393,19 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                         .uid +
                                                                     widget.data["id"];
                                                               }
-                                                              // Navigator.push(
-                                                              //     context,
-                                                              //     MaterialPageRoute(
-                                                              //         builder:
-                                                              //             (context) {
-                                                              //   return IndividualChatScreen(
-                                                              //     combinedId:
-                                                              //         chatId,
-                                                              //     receiverInfo:
-                                                              //         widget
-                                                              //             .data,
-                                                              //   );
-                                                              // }));
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder:
+                                                                          (context) {
+                                                                return IndividualChatScreen(
+                                                                  combinedId:
+                                                                      chatId,
+                                                                  receiverInfo:
+                                                                      widget
+                                                                          .data,
+                                                                );
+                                                              }));
                                                             },
                                                             child: const Text(
                                                                 "Message")),
