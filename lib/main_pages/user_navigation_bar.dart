@@ -24,10 +24,12 @@ class _MyHomePageState extends State<UserNavigationBar> {
   List<Widget> _buildScreen() {
     return [
       const HomeScreen(),
-       SearchScreen(),
-     const AddPostScreen(),
+      SearchScreen(),
+      const AddPostScreen(),
       const MessagesScreen(),
-      ProfileScreen(id: FirebaseAuth.instance.currentUser!.uid,),
+      ProfileScreen(
+        id: FirebaseAuth.instance.currentUser!.uid,
+      ),
     ];
   }
 
@@ -36,7 +38,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
       PersistentBottomNavBarItem(
         icon: Icon(
           Icons.home,
-          color:isDark(context)==true? Colors.white:Colors.black,
+          color: isDark(context) == true ? Colors.white : Colors.black,
         ),
         inactiveIcon: const Icon(
           Icons.home_outlined,
@@ -46,7 +48,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
       PersistentBottomNavBarItem(
         icon: Icon(
           Icons.search,
-          color:isDark(context)==true? Colors.white:Colors.black,
+          color: isDark(context) == true ? Colors.white : Colors.black,
         ),
         inactiveIcon: const Icon(
           Icons.search_outlined,
@@ -56,7 +58,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
       PersistentBottomNavBarItem(
         icon: Icon(
           Icons.add,
-          color:isDark(context)==true? Colors.white:Colors.black,
+          color: isDark(context) == true ? Colors.white : Colors.black,
         ),
         inactiveIcon: const Icon(
           Icons.add,
@@ -66,7 +68,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
       PersistentBottomNavBarItem(
         icon: Icon(
           Icons.chat,
-          color:isDark(context)==true? Colors.white:Colors.black,
+          color: isDark(context) == true ? Colors.white : Colors.black,
         ),
         inactiveIcon: const Icon(
           Icons.chat,
@@ -76,7 +78,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
       PersistentBottomNavBarItem(
         icon: Icon(
           Icons.person_2,
-          color:isDark(context)==true? Colors.white:Colors.black,
+          color: isDark(context) == true ? Colors.white : Colors.black,
         ),
         inactiveIcon: const Icon(
           Icons.person_2_outlined,
@@ -93,7 +95,8 @@ class _MyHomePageState extends State<UserNavigationBar> {
         context,
         screens: _buildScreen(),
         items: _navBarItem(),
-        backgroundColor:isDark(context)==true? const Color(0xff141C27):Colors.white,
+        backgroundColor:
+            isDark(context) == true ? const Color(0xff141C27) : Colors.white,
         decoration: NavBarDecoration(borderRadius: BorderRadius.circular(1)),
         navBarStyle: NavBarStyle.style3,
         controller: controller,

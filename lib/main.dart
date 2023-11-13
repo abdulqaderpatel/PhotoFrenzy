@@ -26,25 +26,23 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  var user = FirebaseAuth.instance.currentUser;
+  var isDataLoaded = true;
+  var userExists = true;
+  var userVerified = true;
 
-  var user=FirebaseAuth.instance.currentUser;
-  var isDataLoaded=true;
-  var userExists=true;
-  var userVerified=true;
   @override
   void initState() {
-
-    if(user==null)
-    {
-      userExists=false;
-    }
-    else {
+    if (user == null) {
+      userExists = false;
+    } else {
       if (user!.emailVerified == false) {
         userVerified = false;
       }
     }
     super.initState();
   }
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -54,7 +52,9 @@ class _MyAppState extends State<MyApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      home:userExists==false? LoginScreen():(userVerified==false?VerifyEmailScreen():UserNavigationBar()),
+      home: userExists == false
+          ? LoginScreen()
+          : (userVerified == false ? VerifyEmailScreen() : UserNavigationBar()),
     );
   }
 }

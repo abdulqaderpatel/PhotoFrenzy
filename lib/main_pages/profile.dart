@@ -87,6 +87,43 @@ print(imagePosts);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Gap(50),
+            Text("Profile"),
+            PopupMenuButton(
+                icon: const Icon(Icons.menu),
+                itemBuilder: (context) {
+                  return [
+                    PopupMenuItem(
+                        onTap: () {
+                          Future.delayed(Duration.zero, () {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const EditUserProfileScreen();
+                                }));
+                          });
+                        },
+                        child: const Text("Edit profile")),
+                    PopupMenuItem(
+                        onTap: () async {
+                          showToast(message: "Logged out successfully");
+                          await FirebaseAuth.instance.signOut();
+                          if (context.mounted) {
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (context) {
+                                  return const LoginScreen();
+                                }));
+                          }
+                        },
+                        child: const Text("Logout"))
+                  ];
+                })
+          ],
+        ),
+      ),
 
       body: isLoading
           ? Center(

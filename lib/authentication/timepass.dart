@@ -1,281 +1,552 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:gap/gap.dart';
-import 'package:get/get.dart';
-import 'package:photofrenzy/authentication/login.dart';
-import 'package:photofrenzy/global/show_message.dart';
-import 'package:photofrenzy/profiles/edit_user_profile.dart';
 
-import 'package:photofrenzy/user_posts/image_posts.dart';
-import 'package:photofrenzy/user_posts/text_posts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../global/firebase_tables.dart';
-import '../global/theme_mode.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+
+class ChatScreen extends StatefulWidget {
+  final String ids;
+  final Map<String, dynamic> oppUser;
+
+  const ChatScreen(this.ids, this.oppUser, {super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen>
-    with TickerProviderStateMixin {
-  final usernameController = TextEditingController();
+class _ChatScreenState extends State<ChatScreen> {
+  final messageController = TextEditingController();
+  final ScrollController scrollController = ScrollController();
+  List<Color> colors = [
+    Colors.redAccent,
+    Colors.pink,
+    Colors.green,
+    Colors.blue
+  ];
+  int swipe = 0;
 
-  final firstNameController = TextEditingController();
-
-  final lastNameController = TextEditingController();
-
-  final phoneNumberController = TextEditingController();
-
-  FirebaseStorage storage = FirebaseStorage.instance;
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 50), () {
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var tabController = TabController(vsync: this, length: 2);
     return Scaffold(
+      backgroundColor: Colors.grey,
       appBar: AppBar(
+        elevation: 0,
+        automaticallyImplyLeading: false,
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Gap(50),
-            Text("Profile"),
-            PopupMenuButton(
-                icon: const Icon(Icons.menu),
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                        onTap: () {
-                          Future.delayed(Duration.zero, () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                                  return const EditUserProfileScreen();
-                                }));
-                          });
-                        },
-                        child: const Text("Edit profile")),
-                    PopupMenuItem(
-                        onTap: () async {
-                          showToast(message: "Logged out successfully");
-                          await FirebaseAuth.instance.signOut();
-                          if (context.mounted) {
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) {
-                                  return const LoginScreen();
-                                }));
-                          }
-                        },
-                        child: const Text("Logout"))
-                  ];
-                })
+            InkWell(
+              onTap: () => Navigator.pop(context),
+              child: const Icon(Icons.arrow_back),
+            ),
+            SizedBox(
+              width: 300,
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(widget.oppUser["image"]),
+                ),
+                title: Text(
+                  widget.oppUser["name"],
+                  maxLines: 1,
+                  style: const TextStyle(
+                      overflow: TextOverflow.ellipsis,
+                      color: Colors.white,
+                      fontSize: 20),
+                ),
+              ),
+            ),
+            const Spacer(),
+            InkWell(
+                onTap: () {
+                  if (swipe == 3) {
+                    setState(() {
+                      swipe = 0;
+                    });
+                  } else {
+                    setState(() {
+                      swipe++;
+                    });
+                  }
+                },
+                child: Container(
+                  height: 30,
+                  width: 30,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: swipe == 3 ? colors[0] : colors[swipe + 1]),
+                ))
           ],
         ),
       ),
-      body: ListView(
-        children: [
-          SafeArea(
-            child: StreamBuilder<QuerySnapshot>(
-                stream: FirebaseTable()
-                    .usersTable
-                    .where("id",
-                    isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  List<Container> clientWidgets = [];
-                  if (snapshot.hasData) {
-                    final clients = snapshot.data?.docs;
-                    for (var client in clients!) {
-                      final clientWidget = Container(
-                        height: Get.height * 1.30,
-                        child: Center(
-                          child: Column(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.only(
-                                    left: Get.width * 0.025,
-                                    right: Get.width * 0.025,
-                                    top: 10),
-                                child: Column(
-                                  children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.grey, width: 0.8),
-                                          borderRadius:
-                                          BorderRadius.circular(80)),
-                                      child: client["profile_picture"] == ""
-                                          ? const CircleAvatar(
-                                        radius: 40,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: AssetImage(
-                                          "assets/images/profile_picture.png",
-                                        ),
-                                      )
-                                          : CircleAvatar(
-                                        radius: 40,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: NetworkImage(
-                                          client["profile_picture"],
-                                        ),
-                                      ),
-                                    ),
-                                    Gap(10),
-                                    Text(
-                                      client["name"],
-                                      style: TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.w500,
-                                          color: isDark(context)
-                                              ? Colors.white
-                                              : Colors.black),
-                                    ),
-                                    Gap(20),
-                                    Container(
-                                      margin: EdgeInsets.symmetric(
-                                          horizontal: Get.width * 0.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Text("0",
-                                                  style: TextStyle(
-                                                      fontSize: 19,
-                                                      color: isDark(context)
-                                                          ? Colors.white
-                                                          : Colors.black)),
-                                              Text(
-                                                "Posts",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                          Gap(45),
-                                          Column(
-                                            children: [
-                                              Text("0",
-                                                  style: TextStyle(
-                                                      fontSize: 19,
-                                                      color: isDark(context)
-                                                          ? Colors.white
-                                                          : Colors.black)),
-                                              Text(
-                                                "Followers",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                          Gap(45),
-                                          Column(
-                                            children: [
-                                              Text("0",
-                                                  style: TextStyle(
-                                                      fontSize: 19,
-                                                      color: isDark(context)
-                                                          ? Colors.white
-                                                          : Colors.black)),
-                                              Text(
-                                                "Following",
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Gap(20),
-                                    Row(
-                                      children: [
-                                        Text(
-                                          client["username"],
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: isDark(context)
-                                                  ? Colors.white
-                                                  : Colors.black),
-                                        ),
-                                      ],
-                                    ),
-                                    Gap(5),
-                                    Row(
-                                      children: [
-                                        Flexible(
-                                          child: SizedBox(
-                                            height: Get.height * 0.14,
-                                            child: Text(
-                                              client["bio"],
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: isDark(context)
-                                                      ? Colors.white
-                                                      : Colors.black),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Gap(5),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: 50,
-                                child: TabBar(controller: tabController, tabs: [
-                                  Icon(
-                                    Icons.text_format,
-                                    color: isDark(context)
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                  Icon(
-                                    Icons.image,
-                                    color: isDark(context)
-                                        ? Colors.white
-                                        : Colors.black,
-                                  ),
-                                ]),
-                              ),
-                              Flexible(
-                                flex: 1,
-                                child: TabBarView(
-                                    controller: tabController,
-                                    children: [
-                                      TextPostsScreen(id: client["id"],),
-                                      ImagePostsScreen(id: client["id"],),
-                                    ]),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
-                      clientWidgets.add(clientWidget);
-                    }
-                  } else {
-                    final clientWidget = Container(
-                      color: const Color(0xff111111),
-                    );
-                    clientWidgets.add(clientWidget);
-                  }
+      body: GestureDetector(
+        onHorizontalDragEnd: (details) {
+          if (details.primaryVelocity! > 0) {
+            if (swipe == 3) {
+              setState(() {
+                swipe = 0;
+              });
+            } else {
+              setState(() {
+                swipe++;
+              });
+            }
+          }
 
-                  return Column(
-                    children: clientWidgets,
-                  );
-                }),
+          if (details.primaryVelocity! < 0) {
+            if (swipe == 0) {
+              setState(() {
+                swipe = 3;
+              });
+            } else {
+              setState(() {
+                swipe--;
+              });
+            }
+          }
+        },
+        child: Container(
+          constraints: BoxConstraints(minWidth: Get.width),
+          height: Get.height,
+          color: const Color(0xff0F1A20),
+          child: Stack(
+            children: [
+              Positioned(
+                child: SingleChildScrollView(
+                  child: Container(
+                    height: Get.height * 0.8,
+                    padding: const EdgeInsets.only(bottom: 20),
+                    margin: EdgeInsets.only(
+                        top: 20,
+                        left: Get.width * 0.05,
+                        right: Get.width * 0.05),
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseTable()
+                              .chatTable
+                              .doc(widget.ids)
+                              .collection("messages")
+                              .snapshots(),
+                          builder: (context, snapshot) {
+                            List<Row> clientWidgets = [];
+                            if (snapshot.hasData) {
+                              final clients = snapshot.data?.docs;
+                              for (var client in clients!) {
+                                final clientWidget = client["sender"] ==
+                                    FirebaseAuth.instance.currentUser!.email
+                                    ? (client["isText"] == true
+                                    ? Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.end,
+                                  children: [
+                                    AnimatedContainer(
+                                      duration: const Duration(
+                                          milliseconds: 300),
+                                      decoration: BoxDecoration(
+                                          color: colors[swipe],
+                                          borderRadius:
+                                          const BorderRadius.only(
+                                            topLeft:
+                                            Radius.circular(10),
+                                            topRight:
+                                            Radius.circular(10),
+                                            bottomLeft:
+                                            Radius.circular(10),
+                                          )),
+                                      padding:
+                                      const EdgeInsets.all(10),
+                                      constraints: BoxConstraints(
+                                          minWidth: 50,
+                                          maxWidth: Get.width * 0.75,
+                                          minHeight: 45),
+                                      margin: const EdgeInsets.only(
+                                          bottom: 20),
+                                      child: Text(
+                                        client["message"],
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight:
+                                            FontWeight.w400),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                    : Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.end,
+                                  children: [
+                                    InkWell(
+                                      onTap: () => Get.to(() =>
+                                          EventDetailsScreen({
+                                            "admin_image":
+                                            client["admin_image"],
+                                            "description":
+                                            client["description"],
+                                            "emails":
+                                            client["emails"],
+                                            "end_time":
+                                            client["end_time"],
+                                            "event_creator": client[
+                                            "event_creator"],
+                                            "id": client["id"],
+                                            "image": client["image"],
+                                            "location":
+                                            client["location"],
+                                            "max_participants": client[
+                                            "max_participants"],
+                                            "name": client["name"],
+                                            "participants": client[
+                                            "participants"],
+                                            "price": client["price"],
+                                            "start_time":
+                                            client["start_time"],
+                                            "username":
+                                            client["username"],
+                                          })),
+                                      child: AnimatedContainer(
+                                        duration: const Duration(
+                                            milliseconds: 300),
+                                        margin: const EdgeInsets.only(
+                                            bottom: 20),
+                                        width: Get.width * 0.6,
+                                        child: Column(
+                                          children: [
+                                            AnimatedContainer(
+                                              duration:
+                                              const Duration(
+                                                  milliseconds:
+                                                  300),
+                                              height:
+                                              Get.height * 0.2,
+                                              width: Get.width,
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      fit: BoxFit
+                                                          .cover,
+                                                      image: NetworkImage(
+                                                          client[
+                                                          "image"]))),
+                                            ),
+                                            AnimatedContainer(
+                                              duration:
+                                              const Duration(
+                                                  milliseconds:
+                                                  300),
+                                              padding:
+                                              const EdgeInsets
+                                                  .all(10),
+                                              color: colors[swipe],
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        client[
+                                                        "name"],
+                                                        style: const TextStyle(
+                                                            color: Colors
+                                                                .white,
+                                                            fontSize:
+                                                            20,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        client[
+                                                        "location"],
+                                                        style: const TextStyle(
+                                                            color: Colors
+                                                                .white,
+                                                            fontSize:
+                                                            15,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500),
+                                                      ),
+                                                      Text(
+                                                        " - ${DateFormat("hh:mm a").format(
+                                                          DateTime
+                                                              .parse(
+                                                            client[
+                                                            "start_time"],
+                                                          ),
+                                                        )}",
+                                                        style: const TextStyle(
+                                                            color: Colors
+                                                                .white,
+                                                            fontSize:
+                                                            15,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ))
+                                    : (client["isText"] == true
+                                    ? Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.start,
+                                  children: [
+                                    AnimatedContainer(
+                                      duration: const Duration(
+                                          milliseconds: 300),
+                                      decoration: const BoxDecoration(
+                                          color: Color(0xff3E4649),
+                                          borderRadius:
+                                          BorderRadius.only(
+                                            topLeft:
+                                            Radius.circular(10),
+                                            topRight:
+                                            Radius.circular(10),
+                                            bottomRight:
+                                            Radius.circular(10),
+                                          )),
+                                      padding:
+                                      const EdgeInsets.all(10),
+                                      constraints: BoxConstraints(
+                                          minWidth: 50,
+                                          maxWidth: Get.width * 0.75,
+                                          minHeight: 45),
+                                      margin: const EdgeInsets.only(
+                                          bottom: 20),
+                                      child: Text(
+                                        client["message"],
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight:
+                                            FontWeight.w400),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                                    : Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.start,
+                                  children: [
+                                    InkWell(
+                                      onTap: () => Get.to(() =>
+                                          EventDetailsScreen({
+                                            "admin_image":
+                                            client["admin_image"],
+                                            "description":
+                                            client["description"],
+                                            "emails":
+                                            client["emails"],
+                                            "end_time":
+                                            client["end_time"],
+                                            "event_creator": client[
+                                            "event_creator"],
+                                            "id": client["id"],
+                                            "image": client["image"],
+                                            "location":
+                                            client["location"],
+                                            "max_participants": client[
+                                            "max_participants"],
+                                            "name": client["name"],
+                                            "participants": client[
+                                            "participants"],
+                                            "price": client["price"],
+                                            "start_time":
+                                            client["start_time"],
+                                            "username":
+                                            client["username"],
+                                          })),
+                                      child: AnimatedContainer(
+                                        duration: const Duration(
+                                            milliseconds: 300),
+                                        margin: const EdgeInsets.only(
+                                            bottom: 20),
+                                        width: Get.width * 0.6,
+                                        child: Column(
+                                          children: [
+                                            AnimatedContainer(
+                                              duration:
+                                              const Duration(
+                                                  milliseconds:
+                                                  300),
+                                              height:
+                                              Get.height * 0.2,
+                                              width: Get.width,
+                                              decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                      fit: BoxFit
+                                                          .cover,
+                                                      image: NetworkImage(
+                                                          client[
+                                                          "image"]))),
+                                            ),
+                                            AnimatedContainer(
+                                              duration:
+                                              const Duration(
+                                                  milliseconds:
+                                                  300),
+                                              padding:
+                                              const EdgeInsets
+                                                  .all(10),
+                                              color:
+                                              const Color(0xff3E4649),
+                                              child: Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        client[
+                                                        "name"],
+                                                        style: const TextStyle(
+                                                            color: Colors
+                                                                .white,
+                                                            fontSize:
+                                                            20,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 10,
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Text(
+                                                        client[
+                                                        "location"],
+                                                        style: const TextStyle(
+                                                            color: Colors
+                                                                .white,
+                                                            fontSize:
+                                                            15,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500),
+                                                      ),
+                                                      Text(
+                                                        " - ${DateFormat("hh:mm a").format(
+                                                          DateTime
+                                                              .parse(
+                                                            client[
+                                                            "start_time"],
+                                                          ),
+                                                        )}",
+                                                        style: const TextStyle(
+                                                            color: Colors
+                                                                .white,
+                                                            fontSize:
+                                                            15,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ));
+                                clientWidgets.add(clientWidget);
+                              }
+                            }
+                            return Column(
+                              children: clientWidgets,
+                            );
+                          }),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  height: 100,
+                  margin: EdgeInsets.only(
+                    left: Get.width * 0.05,
+                    right: Get.width * 0.05,
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(
+                          width: Get.width * 0.75,
+                          child: TextFormField(
+                            style: const TextStyle(color: Colors.white),
+                            decoration: const InputDecoration(
+                                hintText: "Message",
+                                hintStyle: TextStyle(color: Colors.grey)),
+                            controller: messageController,
+                          )),
+                      const SizedBox(
+                        width: 19,
+                      ),
+                      InkWell(
+                          onTap: () async {
+                            if (messageController.text != "") {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              String message = messageController.text;
+                              messageController.clear();
+                              String time = DateTime.now()
+                                  .millisecondsSinceEpoch
+                                  .toString();
+                              await FirebaseTable()
+                                  .chatTable
+                                  .doc(widget.ids)
+                                  .collection("messages")
+                                  .doc(time)
+                                  .set({
+                                "sender":
+                                FirebaseAuth.instance.currentUser!.email,
+                                "reciever": widget.oppUser["email"],
+                                "time": time,
+                                "message": message,
+                                "isText": true,
+                              });
+
+                              scrollController.jumpTo(
+                                  scrollController.position.maxScrollExtent);
+                            }
+                          },
+                          child: const Icon(
+                            Icons.send,
+                            size: 32,
+                            color: Colors.white,
+                          )),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
