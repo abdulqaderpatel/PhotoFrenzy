@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:photofrenzy/global/theme_mode.dart';
@@ -25,7 +27,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
        SearchScreen(),
      const AddPostScreen(),
       const MessagesScreen(),
-      const ProfileScreen(),
+      ProfileScreen(id: FirebaseAuth.instance.currentUser!.uid,),
     ];
   }
 

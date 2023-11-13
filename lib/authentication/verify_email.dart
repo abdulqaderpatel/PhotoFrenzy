@@ -98,7 +98,9 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
         "email": FirebaseAuth.instance.currentUser!.email,
         "profile_picture": "",
         "bio":"",
-       "phone_number":""
+       "phone_number":"",
+        "followers":[],
+        "following":[]
       });
       await Future.delayed(const Duration(seconds: 1));
       if (context.mounted) {
