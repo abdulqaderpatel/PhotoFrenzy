@@ -24,7 +24,6 @@ class _SearchScreenState extends State<SearchScreen> {
     return Scaffold(
         body: SafeArea(
       child: Container(
-        color: const Color(0xff0A171F),
         child: Container(
           height: Get.height,
           margin: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
@@ -109,12 +108,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             client["followers"],
                                                         "following":
                                                             client["following"],
-                                                        "bio": client[
-                                                            "bio"],
-                                                        "email": client[
-                                                            "email"],
+                                                        "bio": client["bio"],
+                                                        "email":
+                                                            client["email"],
                                                         "phone_number": client[
-                                                        "phone_number"],
+                                                            "phone_number"],
                                                       },
                                                     );
                                                   }),
@@ -126,11 +124,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   color:
                                                       const Color(0xff0A171F),
                                                   child: ListTile(
-                                                    leading: CircleAvatar(
-                                                      backgroundImage:
-                                                          NetworkImage(client[
-                                                              "profile_picture"]),
-                                                    ),
+                                                    leading:
+                                                        client["profile_picture"] ==
+                                                                ""
+                                                            ? CircleAvatar(
+                                                                backgroundImage:
+                                                                    AssetImage(
+                                                                        "assets/images/profile_picture.png"),
+                                                              )
+                                                            : CircleAvatar(
+                                                                backgroundImage:
+                                                                    NetworkImage(
+                                                                        client[
+                                                                            "profile_picture"]),
+                                                              ),
                                                     title: Text(
                                                       client["username"],
                                                       style: const TextStyle(

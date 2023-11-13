@@ -18,7 +18,7 @@ import '../user_posts/comments.dart';
 import '../user_posts/image_posts_list.dart';
 
 class RandomUserProfileScreen extends StatefulWidget {
-  final Map<dynamic,dynamic> data;
+  final Map<dynamic, dynamic> data;
 
   RandomUserProfileScreen({required this.data});
 
@@ -270,22 +270,30 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                   .uid)
                                                           ? SizedBox(
                                                               width: Get.width *
-                                                                  0.46,height: Get.height*0.05,
+                                                                  0.46,
+                                                              height:
+                                                                  Get.height *
+                                                                      0.05,
                                                               child:
                                                                   ElevatedButton(
-                                                                      style: ElevatedButton.styleFrom(
-                                                                          minimumSize: Size(
-                                                                              Get
-                                                                                  .width,
-                                                                              40),
-                                                                          backgroundColor: Colors
-                                                                              .red,
-                                                                          textStyle: const TextStyle(
-                                                                              fontSize:
-                                                                                  15,
-                                                                              fontWeight: FontWeight
-                                                                                  .w500) // Background color
-                                                                          ),
+                                                                      style: ElevatedButton
+                                                                          .styleFrom(
+                                                                        minimumSize: Size(
+                                                                            Get.width,
+                                                                            40),
+                                                                        backgroundColor:
+                                                                            Colors.red,
+                                                                        textStyle: const TextStyle(
+                                                                            fontSize:
+                                                                                15,
+                                                                            fontWeight:
+                                                                                FontWeight.w600),
+                                                                        primary:
+                                                                            Colors.blue,
+                                                                        onPrimary:
+                                                                            Colors.white,
+                                                                        // Background color
+                                                                      ),
                                                                       onPressed:
                                                                           () {
                                                                         FirebaseTable()
@@ -311,24 +319,31 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                           "Unfollow")),
                                                             )
                                                           : SizedBox(
-                                                        height: Get.height*0.05,
+                                                              height:
+                                                                  Get.height *
+                                                                      0.05,
                                                               width: Get.width *
                                                                   0.46,
                                                               child:
                                                                   ElevatedButton(
-                                                                      style: ElevatedButton.styleFrom(
-                                                                          minimumSize: Size(
-                                                                              Get
-                                                                                  .width,
-                                                                              40),
-                                                                          backgroundColor: Colors
-                                                                              .green,
-                                                                          textStyle: const TextStyle(
-                                                                              fontSize:
-                                                                                  15,
-                                                                              fontWeight: FontWeight
-                                                                                  .w500) // Background color
-                                                                          ),
+                                                                      style: ElevatedButton
+                                                                          .styleFrom(
+                                                                        minimumSize: Size(
+                                                                            Get.width,
+                                                                            40),
+                                                                        backgroundColor:
+                                                                            Colors.green,
+                                                                        textStyle: const TextStyle(
+                                                                            fontSize:
+                                                                                15,
+                                                                            fontWeight:
+                                                                                FontWeight.w600),
+                                                                        primary:
+                                                                            Colors.blue,
+                                                                        onPrimary:
+                                                                            Colors.white,
+                                                                        // Background color
+                                                                      ),
                                                                       onPressed:
                                                                           () async {
                                                                         FirebaseTable()
@@ -351,10 +366,12 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                         });
                                                                       },
                                                                       child: const Text(
-                                                                          "follow")),
+                                                                          "Follow")),
                                                             ),
-                                                      Gap(Get.width*0.03),
-                                                      SizedBox(height: Get.height*0.05,
+                                                      Gap(Get.width * 0.03),
+                                                      SizedBox(
+                                                        height:
+                                                            Get.height * 0.05,
                                                         width: Get.width * 0.46,
                                                         child: ElevatedButton(
                                                             style:
@@ -381,7 +398,8 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                               .data["id"]) ==
                                                                   1) {
                                                                 chatId = widget
-                                                                        .data["id"] +
+                                                                            .data[
+                                                                        "id"] +
                                                                     FirebaseAuth
                                                                         .instance
                                                                         .currentUser!
@@ -391,7 +409,8 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                         .instance
                                                                         .currentUser!
                                                                         .uid +
-                                                                    widget.data["id"];
+                                                                    widget.data[
+                                                                        "id"];
                                                               }
                                                               Navigator.push(
                                                                   context,
