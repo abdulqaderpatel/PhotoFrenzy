@@ -10,7 +10,7 @@ class ImagePostsListScreen extends StatefulWidget {
   final List<dynamic> images;
   final int count;
 
-  ImagePostsListScreen(this.images, this.count);
+  const ImagePostsListScreen(this.images, this.count);
 
   @override
   State<ImagePostsListScreen> createState() => _ImagePostsListScreenState();
@@ -140,7 +140,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                   const SizedBox(
                                     width: 3,
                                   ),
-                                  Text(
+                                  const Text(
                                       "0",
                                     ),
 
@@ -152,7 +152,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) {
-                                                  return CommentsScreen();
+                                                  return const CommentsScreen();
                                                 }));
                                       },
                                       child: const Icon(
@@ -160,7 +160,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                   const SizedBox(
                                     width: 3,
                                   ),
-                                Text(
+                                const Text(
                                      "0",
                                     ),
 

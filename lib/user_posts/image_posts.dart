@@ -56,12 +56,12 @@ class _ImagePostsScreenState extends State<ImagePostsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return isLoading?Center(child: CircularProgressIndicator(),):Scaffold(
+    return isLoading?const Center(child: CircularProgressIndicator(),):Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: GridView.builder(
           itemCount: items.length,
           gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+          const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {

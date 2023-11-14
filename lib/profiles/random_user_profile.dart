@@ -89,10 +89,10 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile"),
+        title: const Text("Profile"),
       ),
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : SafeArea(
@@ -169,7 +169,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                     ),
                                                                   ),
                                                           ),
-                                                          Gap(5),
+                                                          const Gap(5),
                                                           Text(
                                                             client["name"],
                                                             style: TextStyle(
@@ -212,7 +212,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                               ),
                                                             ],
                                                           ),
-                                                          Gap(40),
+                                                          const Gap(40),
                                                           Column(
                                                             children: [
                                                               Text("0",
@@ -234,7 +234,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                               ),
                                                             ],
                                                           ),
-                                                          Gap(40),
+                                                          const Gap(40),
                                                           Column(
                                                             children: [
                                                               Text("0",
@@ -260,7 +260,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       ),
                                                     ],
                                                   ),
-                                                  Gap(20),
+                                                  const Gap(20),
                                                   Row(
                                                     children: [
                                                       client["followers"].contains(
@@ -431,7 +431,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       ),
                                                     ],
                                                   ),
-                                                  Gap(20),
+                                                  const Gap(20),
                                                   Row(
                                                     children: [
                                                       Text(
@@ -447,7 +447,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       ),
                                                     ],
                                                   ),
-                                                  Gap(5),
+                                                  const Gap(5),
                                                   Row(
                                                     children: [
                                                       Flexible(
@@ -472,7 +472,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       ),
                                                     ],
                                                   ),
-                                                  Gap(5),
+                                                  const Gap(5),
                                                 ],
                                               ),
                                             ),
@@ -499,10 +499,10 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                         TabBar(
                           controller: _tabController,
                           tabs: [
-                            Tab(
+                            const Tab(
                               icon: Icon(Icons.text_fields),
                             ),
-                            Tab(
+                            const Tab(
                               icon: Icon(Icons.image),
                             )
                           ],
@@ -619,7 +619,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                             const SizedBox(
                                               width: 3,
                                             ),
-                                            Text("0"),
+                                            const Text("0"),
                                             SizedBox(
                                               width: Get.width * 0.1,
                                             ),
@@ -628,16 +628,16 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                   Navigator.push(context,
                                                       MaterialPageRoute(
                                                     builder: (context) {
-                                                      return CommentsScreen();
+                                                      return const CommentsScreen();
                                                     },
                                                   ));
                                                 },
-                                                child: Icon(
+                                                child: const Icon(
                                                     Icons.chat_bubble_outline)),
                                             const SizedBox(
                                               width: 3,
                                             ),
-                                            Text(
+                                            const Text(
                                               "0",
                                             ),
                                             SizedBox(
@@ -676,7 +676,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                       slivers: [
                         SliverGrid(
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
                           ),
                           delegate: SliverChildBuilderDelegate(

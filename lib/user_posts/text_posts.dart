@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
+
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:photofrenzy/user_posts/comments.dart';
 
 import '../global/firebase_tables.dart';
@@ -119,7 +119,7 @@ class _TextPostsScreenState extends State<TextPostsScreen> {
                                   const SizedBox(
                                     width: 3,
                                   ),
-                                  Text(
+                                  const Text(
                                    "0"
                                   ),
                                   SizedBox(
@@ -129,15 +129,15 @@ class _TextPostsScreenState extends State<TextPostsScreen> {
                                       onTap: () {
                                         Navigator.push(context, MaterialPageRoute(
                                           builder: (context) {
-                                            return CommentsScreen();
+                                            return const CommentsScreen();
                                           },
                                         ));
                                       },
-                                      child: Icon(Icons.chat_bubble_outline)),
+                                      child: const Icon(Icons.chat_bubble_outline)),
                                   const SizedBox(
                                     width: 3,
                                   ),
-                                  Text(
+                                  const Text(
                                      "0",
                                     ),
 

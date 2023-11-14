@@ -91,8 +91,8 @@ print(imagePosts);
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Gap(50),
-            Text("Profile"),
+            const Gap(50),
+            const Text("Profile"),
             PopupMenuButton(
                 icon: const Icon(Icons.menu),
                 itemBuilder: (context) {
@@ -126,7 +126,7 @@ print(imagePosts);
       ),
 
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : NestedScrollView(
@@ -192,7 +192,7 @@ print(imagePosts);
                                                               ),
                                                             ),
                                                 ),
-                                                Gap(10),
+                                                const Gap(10),
                                                 Text(
                                                   client["name"],
                                                   style: TextStyle(
@@ -203,7 +203,7 @@ print(imagePosts);
                                                           ? Colors.white
                                                           : Colors.black),
                                                 ),
-                                                Gap(20),
+                                                const Gap(20),
                                                 Container(
                                                   margin: EdgeInsets.symmetric(
                                                       horizontal:
@@ -233,7 +233,7 @@ print(imagePosts);
                                                           ),
                                                         ],
                                                       ),
-                                                      Gap(45),
+                                                      const Gap(45),
                                                       Column(
                                                         children: [
                                                           Text("0",
@@ -254,7 +254,7 @@ print(imagePosts);
                                                           ),
                                                         ],
                                                       ),
-                                                      Gap(45),
+                                                      const Gap(45),
                                                       Column(
                                                         children: [
                                                           Text("0",
@@ -278,7 +278,7 @@ print(imagePosts);
                                                     ],
                                                   ),
                                                 ),
-                                                Gap(20),
+                                                const Gap(20),
                                                 Row(
                                                   children: [
                                                     Text(
@@ -293,7 +293,7 @@ print(imagePosts);
                                                     ),
                                                   ],
                                                 ),
-                                                Gap(5),
+                                                const Gap(5),
                                                 Row(
                                                   children: [
                                                     Flexible(
@@ -317,7 +317,7 @@ print(imagePosts);
                                                     ),
                                                   ],
                                                 ),
-                                                Gap(5),
+                                                const Gap(5),
                                               ],
                                             ),
                                           ),
@@ -344,10 +344,10 @@ print(imagePosts);
                       TabBar(
                         controller: _tabController,
                         tabs: [
-                          Tab(
+                          const Tab(
                             icon: Icon(Icons.text_fields),
                           ),
-                          Tab(
+                          const Tab(
                             icon: Icon(Icons.image),
                           )
                         ],
@@ -453,7 +453,7 @@ print(imagePosts);
                                           const SizedBox(
                                             width: 3,
                                           ),
-                                          Text(
+                                          const Text(
                                               "0"
                                           ),
                                           SizedBox(
@@ -463,15 +463,15 @@ print(imagePosts);
                                               onTap: () {
                                                 Navigator.push(context, MaterialPageRoute(
                                                   builder: (context) {
-                                                    return CommentsScreen();
+                                                    return const CommentsScreen();
                                                   },
                                                 ));
                                               },
-                                              child: Icon(Icons.chat_bubble_outline)),
+                                              child: const Icon(Icons.chat_bubble_outline)),
                                           const SizedBox(
                                             width: 3,
                                           ),
-                                          Text(
+                                          const Text(
                                             "0",
                                           ),
 
@@ -509,7 +509,7 @@ print(imagePosts);
                   CustomScrollView(
                     slivers: [
                       SliverGrid(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
 
                         ),

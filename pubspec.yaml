@@ -45,6 +45,7 @@ dependencies:
   image_picker:
   firebase_storage:
   scrollable_positioned_list:
+  matrix2d:
 
 
   cupertino_icons: ^1.0.2
