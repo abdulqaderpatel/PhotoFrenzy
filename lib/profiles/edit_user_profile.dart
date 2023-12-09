@@ -108,17 +108,17 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: Container(
-          margin: EdgeInsets.only(
+          margin: const EdgeInsets.only(
             bottom: 15,
           ),
-          padding: EdgeInsets.only(left: 12, right: 12),
+          padding: const EdgeInsets.only(left: 12, right: 12),
           width: Get.width * 0.8,
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8))),
-            child:buttonLoader?CircularProgressIndicator(color: Colors.grey,): Text(
+            child:buttonLoader?const CircularProgressIndicator(color: Colors.grey,): Text(
               "Edit Profile",
               style: GoogleFonts.roboto(
                   letterSpacing: 0,
@@ -239,8 +239,6 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                     }
 
                     await batch.commit();
-
-
 
                     showToast(message: "Profile updated successfully");
                     setState(() {

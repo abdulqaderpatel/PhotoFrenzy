@@ -10,7 +10,7 @@ class ImagePostsListScreen extends StatefulWidget {
   final List<dynamic> images;
   final int count;
 
-  const ImagePostsListScreen(this.images, this.count);
+  const ImagePostsListScreen(this.images, this.count, {super.key});
 
   @override
   State<ImagePostsListScreen> createState() => _ImagePostsListScreenState();

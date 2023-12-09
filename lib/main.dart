@@ -7,7 +7,6 @@ import 'package:photofrenzy/authentication/verify_email.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
 import 'package:photofrenzy/themes/dark_theme.dart';
 import 'package:photofrenzy/themes/light_theme.dart';
-
 import 'firebase_options.dart';
 
 void main() async {
@@ -53,8 +52,8 @@ class _MyAppState extends State<MyApp> {
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
       home: userExists == false
-          ? LoginScreen()
-          : (userVerified == false ? VerifyEmailScreen() : UserNavigationBar()),
+          ? const LoginScreen()
+          : (userVerified == false ? const VerifyEmailScreen() : UserNavigationBar()),
     );
   }
 }

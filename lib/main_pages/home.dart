@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       }));
                                     },
                                     child: Center(
-                                      child: Text(client["title"]),
+                                      child: Text(client["name"]),
                                     ),
                                   ),
                                 );

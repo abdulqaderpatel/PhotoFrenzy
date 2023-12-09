@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'dart:math' as math;
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -35,10 +34,7 @@ class _IndividualCompetitionsScreenState
   List<Map<String, dynamic>> items = [];
   bool isLoaded = false;
 
-  late var z;
 
-  late int row;
-  late int column;
   void incrementCounter() async {
     setState(() {
       isLoaded = true;
@@ -58,26 +54,7 @@ class _IndividualCompetitionsScreenState
 
     items = temp;
 
-   row = 4;
-   print(items.length/4);
-     column = (items.length / 4).ceil();
-    z = items.reshape(4,column);
-    print(z.length);
 
-    print(z);
-
-
-
-
-    var x=4-items.length%4;
-
-    if(items.length%4!=0) {
-      for (int i = 0; i < x; i++) {
-        z[3].add({
-          "image": null,
-        });
-      }
-    }
 
 
     setState(() {
@@ -104,47 +81,31 @@ class _IndividualCompetitionsScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoaded
-          ? Center(child: CircularProgressIndicator(),)
+          ? const Center(
+        child: CircularProgressIndicator(),
+      )
           : SingleChildScrollView(
         child: SafeArea(
           child: Column(
             children: [
               Container(
-                height: Get.height * 0.9,
+                height: Get.height * 0.8,
                 color: Colors.blue,
                 child: Expanded(
-                  child: TwoDimensionalGridView(
-                    mainAxis: Axis.horizontal,
-                    diagonalDragBehavior: DiagonalDragBehavior.free,
-                    delegate: TwoDimensionalChildBuilderDelegate(
-                        maxXIndex: column-1,
-                        maxYIndex: row-1,
-                        builder: (BuildContext context, ChildVicinity vicinity) {
-                          return z[vicinity.yIndex][vicinity.xIndex]["image"] ==
-                              null ? Container(
-                            color: Colors.red, width: MediaQuery
-                              .of(context)
-                              .size
-                              .width*0.9,
-                            height: 200,):Container(margin: EdgeInsets.only(left: 20,right: 20),
-                              child: Column(
-                                children: [
-                          Container(height:150,
-                            margin: const EdgeInsets.only(
-                                top: 3, bottom: 3, left: 1.5, right: 1.5),
-                            child: Image.network(
-                              z[vicinity.yIndex][vicinity.xIndex]["image"]
-                          , // Replace with the path to your image
-                              fit: BoxFit
-                                  .fill, // Use BoxFit.fill to force the image to fill the container
-                            ),
-                          ),                  Text("${z[vicinity.yIndex][vicinity.xIndex]["id"]} "),
-                                  SizedBox(height: 20,),
-                          ],
-                              ),
-                            );
-                        }),
-                  ),
+                    child: GridView.builder(
+                      itemCount: items.length,
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3, // 3 images per row
+                        crossAxisSpacing: 8.0, // Space between images horizontally
+                        mainAxisSpacing: 8.0, // Space between images vertically
+                      ),
+                      itemBuilder: (BuildContext context, int index) {
+                        return Image.network(
+                          items[index]["image"],
+                          fit: BoxFit.cover,
+                        );
+                      },
+                    ),
                 ),
               ),
               InkWell(
@@ -170,24 +131,28 @@ class _IndividualCompetitionsScreenState
                       minHeight: Get.height * 0.4,
                       maxHeight: Get.height * 0.5),
                   margin: const EdgeInsets.only(top: 10),
-                  child: Center(
+                  child: const Center(
                     child: Icon(Icons.camera),
                   ),
                 ),
               ),
               ElevatedButton(
-                  onPressed: buttonLoading ? null : () {
+                  onPressed: buttonLoading
+                      ? null
+                      : () {
                     setState(() {
                       buttonLoading = true;
                     });
-                    int time = DateTime
-                        .now()
-                        .millisecondsSinceEpoch;
+                    int time =
+                        DateTime
+                            .now()
+                            .millisecondsSinceEpoch;
 
-                    Reference ref =
-                    FirebaseStorage.instance.ref("/${widget.id}/$time");
+                    Reference ref = FirebaseStorage.instance
+                        .ref("/${widget.id}/$time");
 
-                    UploadTask uploadTask = ref.putFile(postImage!.absolute);
+                    UploadTask uploadTask =
+                    ref.putFile(postImage!.absolute);
 
                     Future.value(uploadTask).then((value) async {
                       var newUrl = await ref.getDownloadURL();
@@ -201,14 +166,16 @@ class _IndividualCompetitionsScreenState
                         "image": newUrl.toString()
                       });
 
-                      showToast(message: "Post created successfully");
+                      showToast(
+                          message: "Post created successfully");
                       setState(() {
                         buttonLoading = false;
                       });
                     });
                   },
-                  child: buttonLoading ? CircularProgressIndicator() : Text(
-                      "Add image"))
+                  child: buttonLoading
+                      ? const CircularProgressIndicator()
+                      : const Text("Add image"))
             ],
           ),
         ),
@@ -216,7 +183,6 @@ class _IndividualCompetitionsScreenState
     );
   }
 }
-
 
 class TwoDimensionalGridView extends TwoDimensionalScrollView {
   const TwoDimensionalGridView({
@@ -249,7 +215,6 @@ class TwoDimensionalGridView extends TwoDimensionalScrollView {
     );
   }
 }
-
 
 class TwoDimensionalGridViewport extends TwoDimensionalViewport {
   const TwoDimensionalGridViewport({
