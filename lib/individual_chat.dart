@@ -292,7 +292,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                         MainAxisAlignment
                                             .end,
                                         children: [
-                                          SenderText(
+                                          SenderText(time: client["time"],
                                             message: client[
                                             "message"],
                                             textColor: Color(int
@@ -315,7 +315,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                         MainAxisAlignment
                                             .start,
                                         children: [
-                                          ReceiverText(
+                                          ReceiverText(time: client["time"],
                                             message: client[
                                             "message"],
                                             textColor: Color(int
