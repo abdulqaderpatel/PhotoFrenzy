@@ -6,17 +6,20 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:matrix2d/matrix2d.dart';
 
 import '../global/show_message.dart';
+import '../global/theme_mode.dart';
 
 class IndividualCompetitionsScreen extends StatefulWidget {
-  final String id;
+  final Map<String, dynamic> competitionDetails;
 
-  const IndividualCompetitionsScreen({required this.id, super.key});
+  const IndividualCompetitionsScreen(
+      {required this.competitionDetails, super.key});
 
   @override
   State<IndividualCompetitionsScreen> createState() =>
@@ -34,7 +37,6 @@ class _IndividualCompetitionsScreenState
   List<Map<String, dynamic>> items = [];
   bool isLoaded = false;
 
-
   void incrementCounter() async {
     setState(() {
       isLoaded = true;
@@ -42,7 +44,7 @@ class _IndividualCompetitionsScreenState
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
         .competitionsTable
-        .doc(widget.id)
+        .doc(widget.competitionDetails["id"])
         .collection("Images")
         .get();
 
@@ -53,9 +55,6 @@ class _IndividualCompetitionsScreenState
     }
 
     items = temp;
-
-
-
 
     setState(() {
       isLoaded = false;
@@ -79,252 +78,282 @@ class _IndividualCompetitionsScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(floatingActionButton: FloatingActionButton(onPressed: (){
+      showModalBottomSheet<void>(isScrollControlled: true,
+        context: context,
+        builder: (BuildContext context) {
+          return SingleChildScrollView(
+            child: SizedBox(
+              height: 900,
+              child: Center(
+                child: Column(
+
+
+                  children: <Widget>[
+                    InkWell(
+                      onTap: () {
+                        getImageGallery();
+                      },
+                      child: postImage!.path.isNotEmpty
+                          ? Container(
+                        constraints: BoxConstraints(
+                            minWidth: Get.width,
+                            minHeight: Get.height * 0.4,
+                            maxHeight: Get.height * 0.5),
+                        margin: const EdgeInsets.only(top: 10),
+                        child: Image.file(
+                          postImage!, // Replace with the path to your image
+                          fit: BoxFit
+                              .fill, // Use BoxFit.fill to force the image to fill the container
+                        ),
+                      )
+                          : Container(
+                        constraints: BoxConstraints(
+                            minWidth: Get.width,
+                            minHeight: Get.height * 0.4,
+                            maxHeight: Get.height * 0.5),
+                        margin: const EdgeInsets.only(top: 10),
+                        child: const Center(
+                          child: Icon(Icons.camera),
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                        onPressed: buttonLoading
+                            ? null
+                            : () {
+                          setState(() {
+                            buttonLoading = true;
+                          });
+                          int time =
+                              DateTime.now().millisecondsSinceEpoch;
+            
+                          Reference ref = FirebaseStorage.instance.ref(
+                              "/${widget.competitionDetails["id"]}/$time");
+            
+                          UploadTask uploadTask =
+                          ref.putFile(postImage!.absolute);
+            
+                          Future.value(uploadTask).then((value) async {
+                            var newUrl = await ref.getDownloadURL();
+                            await FirebaseTable()
+                                .competitionsTable
+                                .doc(widget.competitionDetails["id"])
+                                .collection("Images")
+                                .doc(time.toString())
+                                .set({
+                              "id": time.toString(),
+                              "image": newUrl.toString()
+                            });
+            
+                            showToast(
+                                message: "Post created successfully");
+                            setState(() {
+                              buttonLoading = false;
+                            });
+                          });
+                        },
+                        child: buttonLoading
+                            ? const CircularProgressIndicator()
+                            : const Text("Add image"))
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    },child: Icon(Icons.image),),
       body: isLoaded
           ? const Center(
-        child: CircularProgressIndicator(),
-      )
+              child: CircularProgressIndicator(),
+            )
           : SingleChildScrollView(
-        child: SafeArea(
-          child: Column(
-            children: [
-              Container(
-                height: Get.height * 0.8,
-                color: Colors.blue,
-                child: Expanded(
-                    child: GridView.builder(
-                      itemCount: items.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, // 3 images per row
-                        crossAxisSpacing: 8.0, // Space between images horizontally
-                        mainAxisSpacing: 8.0, // Space between images vertically
-                      ),
-                      itemBuilder: (BuildContext context, int index) {
-                        return Image.network(
-                          items[index]["image"],
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(25),
+                              bottomRight: Radius.circular(25))),
+                      height: Get.height * 0.4,
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(25),
+                            bottomRight: Radius.circular(25)),
+                        child: Image.network(
+                          widget.competitionDetails["image"],
                           fit: BoxFit.cover,
-                        );
-                      },
+                        ),
+                      ),
                     ),
+                    Container(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Text(
+                            widget.competitionDetails["name"],
+                            style: TextStyle(
+                                color: isDark(context)
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 25),
+                          ),
+                          Gap(10),
+                          Text(
+                            "Theme: ${widget.competitionDetails["type"]}",
+                            style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey),
+                          ),
+                          Gap(15),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Description",
+                              style: TextStyle(
+                                  color: isDark(context)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25),
+                            ),
+                          ),
+                          Gap(10),
+                          Text(
+                            widget.competitionDetails["description"],
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 17),
+                          ),
+                          Gap(15),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              "Prize Distribution",
+                              style: TextStyle(
+                                  color: isDark(context)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25),
+                            ),
+                          ),
+                          Gap(10),
+                          Text(
+                            "1st prize wins 50% of the total prize money: \$ ${(widget.competitionDetails["prize_money"] * 0.5).toStringAsFixed(0)}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 20),
+                          ),
+                          Text(
+                            "2nd prize wins 30% of the total prize money: \$ ${(widget.competitionDetails["prize_money"] * 0.3).toStringAsFixed(0)}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 20),
+                          ),
+                          Text(
+                            "3rd prize wins 20% of the total prize money: \$ ${(widget.competitionDetails["prize_money"] * 0.2).toStringAsFixed(0)}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.w500, fontSize: 20),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: Get.height * 0.8,
+                      color: Colors.blue,
+                      child: Expanded(
+                        child: GridView.builder(
+                          itemCount: items.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            // 3 images per row
+                            crossAxisSpacing: 8.0,
+                            // Space between images horizontally
+                            mainAxisSpacing:
+                                8.0, // Space between images vertically
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return Image.network(
+                              items[index]["image"],
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () {
+                        getImageGallery();
+                      },
+                      child: postImage!.path.isNotEmpty
+                          ? Container(
+                              constraints: BoxConstraints(
+                                  minWidth: Get.width,
+                                  minHeight: Get.height * 0.4,
+                                  maxHeight: Get.height * 0.5),
+                              margin: const EdgeInsets.only(top: 10),
+                              child: Image.file(
+                                postImage!, // Replace with the path to your image
+                                fit: BoxFit
+                                    .fill, // Use BoxFit.fill to force the image to fill the container
+                              ),
+                            )
+                          : Container(
+                              constraints: BoxConstraints(
+                                  minWidth: Get.width,
+                                  minHeight: Get.height * 0.4,
+                                  maxHeight: Get.height * 0.5),
+                              margin: const EdgeInsets.only(top: 10),
+                              child: const Center(
+                                child: Icon(Icons.camera),
+                              ),
+                            ),
+                    ),
+                    ElevatedButton(
+                        onPressed: buttonLoading
+                            ? null
+                            : () {
+                                setState(() {
+                                  buttonLoading = true;
+                                });
+                                int time =
+                                    DateTime.now().millisecondsSinceEpoch;
+
+                                Reference ref = FirebaseStorage.instance.ref(
+                                    "/${widget.competitionDetails["id"]}/$time");
+
+                                UploadTask uploadTask =
+                                    ref.putFile(postImage!.absolute);
+
+                                Future.value(uploadTask).then((value) async {
+                                  var newUrl = await ref.getDownloadURL();
+                                  await FirebaseTable()
+                                      .competitionsTable
+                                      .doc(widget.competitionDetails["id"])
+                                      .collection("Images")
+                                      .doc(time.toString())
+                                      .set({
+                                    "id": time.toString(),
+                                    "image": newUrl.toString()
+                                  });
+
+                                  showToast(
+                                      message: "Post created successfully");
+                                  setState(() {
+                                    buttonLoading = false;
+                                  });
+                                });
+                              },
+                        child: buttonLoading
+                            ? const CircularProgressIndicator()
+                            : const Text("Add image"))
+                  ],
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  getImageGallery();
-                },
-                child: postImage!.path.isNotEmpty
-                    ? Container(
-                  constraints: BoxConstraints(
-                      minWidth: Get.width,
-                      minHeight: Get.height * 0.4,
-                      maxHeight: Get.height * 0.5),
-                  margin: const EdgeInsets.only(top: 10),
-                  child: Image.file(
-                    postImage!, // Replace with the path to your image
-                    fit: BoxFit
-                        .fill, // Use BoxFit.fill to force the image to fill the container
-                  ),
-                )
-                    : Container(
-                  constraints: BoxConstraints(
-                      minWidth: Get.width,
-                      minHeight: Get.height * 0.4,
-                      maxHeight: Get.height * 0.5),
-                  margin: const EdgeInsets.only(top: 10),
-                  child: const Center(
-                    child: Icon(Icons.camera),
-                  ),
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: buttonLoading
-                      ? null
-                      : () {
-                    setState(() {
-                      buttonLoading = true;
-                    });
-                    int time =
-                        DateTime
-                            .now()
-                            .millisecondsSinceEpoch;
-
-                    Reference ref = FirebaseStorage.instance
-                        .ref("/${widget.id}/$time");
-
-                    UploadTask uploadTask =
-                    ref.putFile(postImage!.absolute);
-
-                    Future.value(uploadTask).then((value) async {
-                      var newUrl = await ref.getDownloadURL();
-                      await FirebaseTable()
-                          .competitionsTable
-                          .doc(widget.id)
-                          .collection("Images")
-                          .doc(time.toString())
-                          .set({
-                        "id": time.toString(),
-                        "image": newUrl.toString()
-                      });
-
-                      showToast(
-                          message: "Post created successfully");
-                      setState(() {
-                        buttonLoading = false;
-                      });
-                    });
-                  },
-                  child: buttonLoading
-                      ? const CircularProgressIndicator()
-                      : const Text("Add image"))
-            ],
-          ),
-        ),
-      ),
+            ),
     );
-  }
-}
-
-class TwoDimensionalGridView extends TwoDimensionalScrollView {
-  const TwoDimensionalGridView({
-    super.key,
-    super.primary,
-    super.mainAxis = Axis.vertical,
-    super.verticalDetails = const ScrollableDetails.vertical(),
-    super.horizontalDetails = const ScrollableDetails.horizontal(),
-    required TwoDimensionalChildBuilderDelegate delegate,
-    super.cacheExtent,
-    super.diagonalDragBehavior = DiagonalDragBehavior.none,
-    super.dragStartBehavior = DragStartBehavior.start,
-    super.keyboardDismissBehavior = ScrollViewKeyboardDismissBehavior.manual,
-    super.clipBehavior = Clip.hardEdge,
-  }) : super(delegate: delegate);
-
-  @override
-  Widget buildViewport(BuildContext context,
-      ViewportOffset verticalOffset,
-      ViewportOffset horizontalOffset,) {
-    return TwoDimensionalGridViewport(
-      horizontalOffset: horizontalOffset,
-      horizontalAxisDirection: horizontalDetails.direction,
-      verticalOffset: verticalOffset,
-      verticalAxisDirection: verticalDetails.direction,
-      mainAxis: mainAxis,
-      delegate: delegate as TwoDimensionalChildBuilderDelegate,
-      cacheExtent: cacheExtent,
-      clipBehavior: clipBehavior,
-    );
-  }
-}
-
-class TwoDimensionalGridViewport extends TwoDimensionalViewport {
-  const TwoDimensionalGridViewport({
-    super.key,
-    required super.verticalOffset,
-    required super.verticalAxisDirection,
-    required super.horizontalOffset,
-    required super.horizontalAxisDirection,
-    required TwoDimensionalChildBuilderDelegate super.delegate,
-    required super.mainAxis,
-    super.cacheExtent,
-    super.clipBehavior = Clip.hardEdge,
-  });
-
-  @override
-  RenderTwoDimensionalViewport createRenderObject(BuildContext context) {
-    return RenderTwoDimensionalGridViewport(
-      horizontalOffset: horizontalOffset,
-      horizontalAxisDirection: horizontalAxisDirection,
-      verticalOffset: verticalOffset,
-      verticalAxisDirection: verticalAxisDirection,
-      mainAxis: mainAxis,
-      delegate: delegate as TwoDimensionalChildBuilderDelegate,
-      childManager: context as TwoDimensionalChildManager,
-      cacheExtent: cacheExtent,
-      clipBehavior: clipBehavior,
-    );
-  }
-
-  @override
-  void updateRenderObject(BuildContext context,
-      RenderTwoDimensionalGridViewport renderObject,) {
-    renderObject
-      ..horizontalOffset = horizontalOffset
-      ..horizontalAxisDirection = horizontalAxisDirection
-      ..verticalOffset = verticalOffset
-      ..verticalAxisDirection = verticalAxisDirection
-      ..mainAxis = mainAxis
-      ..delegate = delegate
-      ..cacheExtent = cacheExtent
-      ..clipBehavior = clipBehavior;
-  }
-}
-
-class RenderTwoDimensionalGridViewport extends RenderTwoDimensionalViewport {
-  RenderTwoDimensionalGridViewport({
-    required super.horizontalOffset,
-    required super.horizontalAxisDirection,
-    required super.verticalOffset,
-    required super.verticalAxisDirection,
-    required TwoDimensionalChildBuilderDelegate delegate,
-    required super.mainAxis,
-    required super.childManager,
-    super.cacheExtent,
-    super.clipBehavior = Clip.hardEdge,
-  }) : super(delegate: delegate);
-
-  @override
-  void layoutChildSequence() {
-    final double horizontalPixels = horizontalOffset.pixels;
-    final double verticalPixels = verticalOffset.pixels;
-    final double viewportWidth = viewportDimension.width + cacheExtent;
-    final double viewportHeight = viewportDimension.height + cacheExtent;
-    final TwoDimensionalChildBuilderDelegate builderDelegate =
-    delegate as TwoDimensionalChildBuilderDelegate;
-
-    final int maxRowIndex = builderDelegate.maxYIndex!;
-    final int maxColumnIndex = builderDelegate.maxXIndex!;
-
-    final int leadingColumn = math.max((horizontalPixels / 200).floor(), 0);
-    final int leadingRow = math.max((verticalPixels / 200).floor(), 0);
-    final int trailingColumn = math.min(
-      ((horizontalPixels + viewportWidth) / 200).ceil(),
-      maxColumnIndex,
-    );
-    final int trailingRow = math.min(
-      ((verticalPixels + viewportHeight) / 200).ceil(),
-      maxRowIndex,
-    );
-
-    double xLayoutOffset = (leadingColumn * 200) - horizontalOffset.pixels;
-    for (int column = leadingColumn; column <= trailingColumn; column++) {
-      double yLayoutOffset = (leadingRow * 200) - verticalOffset.pixels;
-      for (int row = leadingRow; row <= trailingRow; row++) {
-        final ChildVicinity vicinity =
-        ChildVicinity(xIndex: column, yIndex: row);
-        final RenderBox child = buildOrObtainChildFor(vicinity)!;
-        child.layout(constraints.loosen());
-
-        // Subclasses only need to set the normalized layout offset. The super
-        // class adjusts for reversed axes.
-        parentDataOf(child).layoutOffset = Offset(xLayoutOffset, yLayoutOffset);
-        yLayoutOffset += 200;
-      }
-      xLayoutOffset += 200;
-    }
-
-    // Set the min and max scroll extents for each axis.
-    final double verticalExtent = 200 * (maxRowIndex + 1);
-    verticalOffset.applyContentDimensions(
-      0.0,
-      clampDouble(
-          verticalExtent - viewportDimension.height, 0.0, double.infinity),
-    );
-    final double horizontalExtent = 200 * (maxColumnIndex + 1);
-    horizontalOffset.applyContentDimensions(
-      0.0,
-      clampDouble(
-          horizontalExtent - viewportDimension.width, 0.0, double.infinity),
-    );
-    // Super class handles garbage collection too!
   }
 }

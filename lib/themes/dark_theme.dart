@@ -28,6 +28,6 @@ ThemeData darkTheme = ThemeData(
     bodySmall: TextStyle(fontSize: 13, color: Color(0xff505863)),
   ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: Colors.black, // FAB background color
+    backgroundColor: Color(0xffADD8E6), // FAB background color
   ),
 );

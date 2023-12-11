@@ -44,12 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void loadData()async
-  {
+  void loadData() async {
     items = [];
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference collectionReference =
-    firestore.collection('Competitions');
+        firestore.collection('Competitions');
     QuerySnapshot querySnapshot = await collectionReference.get();
 
     for (QueryDocumentSnapshot doc in querySnapshot.docs) {
@@ -57,10 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         items.add(data);
       });
-
     }
     print(items);
-
   }
 
   @override
@@ -78,8 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
     Colors.green,
     Colors.blue,
     Colors.green,
-    Colors.green,
-    Colors.yellow,
   ];
 
   @override
@@ -142,15 +137,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   width: Get.width,
                                                   decoration: BoxDecoration(
                                                       borderRadius:
-                                                          BorderRadius
-                                                              .circular(20)),
+                                                          BorderRadius.circular(
+                                                              20)),
                                                   child: ClipRRect(
                                                       borderRadius:
                                                           const BorderRadius
                                                               .only(
                                                               topRight: Radius
-                                                                  .circular(
-                                                                      20),
+                                                                  .circular(20),
                                                               topLeft: Radius
                                                                   .circular(
                                                                       20)),
@@ -231,9 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         MainAxisAlignment
                                                             .center,
                                                     children: [
-                                                      Text(
-                                                          items[index]
-                                                              ["name"],
+                                                      Text(items[index]["name"],
                                                           style: TextStyle(
                                                               fontSize: 23,
                                                               fontWeight:
@@ -241,8 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                       .w600,
                                                               color: isDark(
                                                                       context)
-                                                                  ? Colors
-                                                                      .white
+                                                                  ? Colors.white
                                                                   : Colors
                                                                       .black)),
                                                     ],
@@ -263,8 +254,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     children: [
                                                       const Row(
                                                         children: [
-                                                          Icon(Icons
-                                                              .date_range),
+                                                          Icon(
+                                                              Icons.date_range),
                                                           Gap(3),
                                                           Text("Entry Fee",
                                                               style: TextStyle(
@@ -278,8 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       Text(
                                                         "\$ ${items[index]["entry_fee"]}",
                                                         style: const TextStyle(
-                                                            color:
-                                                                Colors.white,
+                                                            color: Colors.white,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w700),
@@ -294,11 +284,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     children: [
                                                       const Row(
                                                         children: [
-                                                          Icon(Icons
-                                                              .date_range),
+                                                          Icon(
+                                                              Icons.date_range),
                                                           Gap(3),
-                                                          Text(
-                                                              "Starting Time",
+                                                          Text("Starting Time",
                                                               style: TextStyle(
                                                                   color: Colors
                                                                       .white,
@@ -310,13 +299,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       Text(
                                                         "${DateFormat("hh:mm a").format(
                                                           DateTime.parse(
-                                                            items[index][
-                                                                "start_time"],
+                                                            items[index]
+                                                                ["start_time"],
                                                           ),
                                                         )}",
                                                         style: const TextStyle(
-                                                            color:
-                                                                Colors.white,
+                                                            color: Colors.white,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w700),
@@ -331,8 +319,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     children: [
                                                       const Row(
                                                         children: [
-                                                          Icon(Icons
-                                                              .date_range),
+                                                          Icon(
+                                                              Icons.date_range),
                                                           Gap(3),
                                                           Text("Ending Time",
                                                               style: TextStyle(
@@ -351,8 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ),
                                                         )}",
                                                         style: const TextStyle(
-                                                            color:
-                                                                Colors.white,
+                                                            color: Colors.white,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w700),
@@ -367,8 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           color: Colors.white,
                                                           fontSize: 18,
                                                           fontWeight:
-                                                              FontWeight
-                                                                  .w600),
+                                                              FontWeight.w600),
                                                     ),
                                                   ),
                                                   const Gap(3),
@@ -380,8 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         color: Colors.black,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(
-                                                                    15)),
+                                                                .circular(15)),
                                                     width: 200,
                                                     child: Center(
                                                       child: Text(
@@ -389,8 +374,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             .toString(),
                                                         style: const TextStyle(
                                                             fontSize: 24,
-                                                            color:
-                                                                Colors.white,
+                                                            color: Colors.white,
                                                             fontWeight:
                                                                 FontWeight
                                                                     .w800),
@@ -399,72 +383,109 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                   const Gap(10),
                                                   items[index]["participants"]
-                                                          .contains(
-                                                              FirebaseAuth
-                                                                  .instance
-                                                                  .currentUser!
-                                                                  .uid)
+                                                          .contains(FirebaseAuth
+                                                              .instance
+                                                              .currentUser!
+                                                              .uid)
                                                       ? ElevatedButton(
-                                                          style:
-                                                              ElevatedButton
-                                                                  .styleFrom(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
                                                             minimumSize: Size(
-                                                                Get.width,
-                                                                40),
+                                                                Get.width, 40),
                                                             backgroundColor:
-                                                                Color(0xffff9248),
-                                                            textStyle: const TextStyle(
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600),
+                                                                Color(
+                                                                    0xffff9248),
+                                                            textStyle:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600),
                                                             primary:
                                                                 Colors.blue,
                                                             onPrimary:
                                                                 Colors.white,
                                                             // Background color
                                                           ),
-                                                          onPressed:
-                                                              ()  {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(builder: (context) {
-                                                                    return IndividualCompetitionsScreen(
-                                                                        id: items[index]["id"]);
-                                                                  }),
+                                                          onPressed: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) {
+                                                                return IndividualCompetitionsScreen(
+                                                                  competitionDetails: {
+                                                                    "id": items[
+                                                                            index]
+                                                                        ["id"],
+                                                                    "name": items[
+                                                                            index]
+                                                                        [
+                                                                        "name"],
+                                                                    "image": items[
+                                                                            index]
+                                                                        [
+                                                                        "image"],
+                                                                    "entry_price":
+                                                                        items[index]
+                                                                            [
+                                                                            "entry_price"],
+                                                                    "prize_money":
+                                                                        items[index]
+                                                                            [
+                                                                            "prize_money"],
+                                                                    "start_time":
+                                                                        items[index]
+                                                                            [
+                                                                            "start_time"],
+                                                                    "end_time":
+                                                                        items[index]
+                                                                            [
+                                                                            "end_time"],
+                                                                    "type": items[
+                                                                            index]
+                                                                        [
+                                                                        "type"],
+                                                                    "description":
+                                                                        items[index]
+                                                                            [
+                                                                            "description"]
+                                                                  },
                                                                 );
+                                                              }),
+                                                            );
                                                           },
                                                           child: const Text(
                                                               "View Details"))
                                                       : ElevatedButton(
-                                                          style:
-                                                              ElevatedButton
-                                                                  .styleFrom(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
                                                             minimumSize: Size(
-                                                                Get.width,
-                                                                40),
+                                                                Get.width, 40),
                                                             backgroundColor:
                                                                 Colors.orange,
-                                                            textStyle: const TextStyle(
-                                                                fontSize: 15,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600),
+                                                            textStyle:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        15,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600),
                                                             primary:
                                                                 Colors.blue,
                                                             onPrimary:
                                                                 Colors.white,
                                                             // Background color
                                                           ),
-                                                          onPressed:
-                                                              () async {
+                                                          onPressed: () async {
                                                             await FirebaseFirestore
                                                                 .instance
                                                                 .collection(
                                                                     "Competitions")
-                                                                .doc(items[
-                                                                        index]
-                                                                    ["id"])
+                                                                .doc(
+                                                                    items[index]
+                                                                        ["id"])
                                                                 .update({
                                                               "participants":
                                                                   FieldValue
@@ -475,7 +496,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     .uid
                                                               ])
                                                             });
-                                                         loadData();
+                                                            loadData();
                                                           },
                                                           child: const Text(
                                                               "Compete")),

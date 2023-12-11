@@ -30,6 +30,6 @@ ThemeData lightTheme = ThemeData(
         fontSize: 13, color: Color(0xffB2B5BC), fontWeight: FontWeight.w400),
   ),
   floatingActionButtonTheme: const FloatingActionButtonThemeData(
-    backgroundColor: Colors.black, // FAB background color
+    backgroundColor: Colors.blue, // FAB background color
   ),
 );
