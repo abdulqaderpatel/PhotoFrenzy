@@ -39,7 +39,6 @@ class _HomeScreenState extends State<HomeScreen> {
       Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
       items.add(data);
     }
-    print(items);
 
     setState(() {
       isLoading = false;
@@ -59,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
         items.add(data);
       });
     }
-    print(items);
   }
 
   @override
@@ -68,16 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
-  var colors = [
-    Colors.green,
-    Colors.blue,
-    Colors.green,
-    Colors.green,
-    Colors.yellow,
-    Colors.green,
-    Colors.blue,
-    Colors.green,
-  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -98,9 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             children: [
                               Container(
                                 height: Get.height * 0.9,
-                                decoration: BoxDecoration(
-                                    color: colors[index],
-                                    gradient: const LinearGradient(
+                                decoration: const BoxDecoration(
+
+                                    gradient: LinearGradient(
                                       colors: [
                                         Color(0xfffc466b),
                                         Color(0xff3f5efb)
@@ -365,7 +354,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         const EdgeInsets.all(
                                                             10),
                                                     decoration: BoxDecoration(
-                                                        color: Colors.black,
+                                                        color: Colors.purple,
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(15)),
@@ -392,10 +381,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ? ElevatedButton(
                                                           style: ElevatedButton
                                                               .styleFrom(
-                                                            minimumSize: Size(
+                                                            foregroundColor: Colors.white, minimumSize: Size(
                                                                 Get.width, 40),
                                                             backgroundColor:
-                                                                Color(
+                                                                const Color(
                                                                     0xffff9248),
                                                             textStyle:
                                                                 const TextStyle(
@@ -406,8 +395,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                             .w600),
                                                             primary:
                                                                 Colors.blue,
-                                                            onPrimary:
-                                                                Colors.white,
                                                             // Background color
                                                           ),
                                                           onPressed: () {
