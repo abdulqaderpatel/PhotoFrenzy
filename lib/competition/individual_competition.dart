@@ -1,18 +1,18 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'dart:math' as math;
 import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/gestures.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
-import 'package:matrix2d/matrix2d.dart';
 
+import 'package:http/http.dart' as http;
 import '../global/show_message.dart';
 import '../global/theme_mode.dart';
 
@@ -62,6 +62,10 @@ class _IndividualCompetitionsScreenState
     });
   }
 
+  var imageResponse=[];
+
+  var effects = ["grayscale", "cartoon", "sketched", "blur"];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -79,6 +83,34 @@ class _IndividualCompetitionsScreenState
               builder: (context) {
                 return StatefulBuilder(builder: (BuildContext context,
                     StateSetter setModalState /*You can rename this!*/) {
+                  Future<void> fetchData(File? image) async {
+                    imageResponse.clear();
+                    for(var element in effects) {
+                      var request = http.MultipartRequest('POST',
+                          Uri.parse("http://10.0.2.2:5000/user/$element"));
+                      request.files.add(
+                          await http.MultipartFile.fromPath('file',
+                              image!.path));
+                      try {
+                        var streamedResponse = await request.send();
+                        var response =
+                        await http.Response.fromStream(streamedResponse);
+                        print(response.statusCode);
+
+                          imageResponse.add(response.bodyBytes);
+
+
+                        print(imageResponse);
+                        // Display the processed image
+                      } catch (e) {
+                        print(e.toString());
+                      }
+                    }
+                    setModalState(() {
+
+                    });
+                  }
+
                   Future getImageGallery() async {
                     final pickedFile =
                         await picker.pickImage(source: ImageSource.gallery);
@@ -86,11 +118,12 @@ class _IndividualCompetitionsScreenState
                       setModalState(() {
                         postImage = File(pickedFile.path);
                       });
+                      await fetchData(postImage);
                     }
                   }
 
                   return Container(
-                    margin: EdgeInsets.all(10),
+                    margin: const EdgeInsets.all(10),
                     child: Column(
                       children: [
                         InkWell(
@@ -99,7 +132,8 @@ class _IndividualCompetitionsScreenState
                           },
                           child: postImage!.path.isNotEmpty
                               ? Container(
-                                  margin: EdgeInsets.symmetric(horizontal: 10),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                   constraints: BoxConstraints(
                                       minWidth: Get.width,
                                       minHeight: Get.height * 0.4,
@@ -115,8 +149,8 @@ class _IndividualCompetitionsScreenState
                                   strokeWidth: 1,
                                   dashPattern: [3, 3, 3, 3],
                                   child: Container(
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 10),
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
                                     constraints: BoxConstraints(
                                         minWidth: Get.width,
                                         minHeight: Get.height * 0.4,
@@ -163,28 +197,61 @@ class _IndividualCompetitionsScreenState
                             child: buttonLoading
                                 ? const CircularProgressIndicator()
                                 : const Text("Add image")),
-                        SingleChildScrollView(scrollDirection: Axis.horizontal,
-                          child: Row(
-                              children: [3,43,434,343,34,34,34,343].map((e) {
-                                return InkWell(
-                                  onTap: () {
-
-                                  },
-                                  child: Row(
+                        imageResponse.length==0
+                            ? SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                    children: [3, 43, 434, 343, 34, 34, 34, 343]
+                                        .map((e) {
+                                  return Row(
                                     children: [
-                                      Container(
-                                  height: 150,width: 120,
-
-                                           decoration: new BoxDecoration( color:  Colors.blue,
-                                        image: new DecorationImage(
-                                          image: ExactAssetImage('assets/images/testing.jpeg'),
-                                          fit: BoxFit.cover
+                                      InkWell(
+                                        onTap: () async {
+                                          await fetchData(postImage);
+                                        },
+                                        child: Container(
+                                          height: 150,
+                                          width: 120,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.blue,
+                                            image: DecorationImage(
+                                                image: ExactAssetImage(
+                                                    'assets/images/testing.jpeg'),
+                                                fit: BoxFit.cover),
+                                          ),
                                         ),
                                       ),
-                                          ),
                                       const SizedBox(width: 5),
                                     ],
-                                  ),
+                                  );
+                                }).toList()),
+                              )
+                            : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                              children: effects
+                                  .map((e) {
+                                    var a=effects.indexOf(e);
+                                return Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () async {
+                                        await fetchData(postImage);
+                                      },
+                                      child: Container(
+                                        height: 150,
+                                        width: 120,
+                                        decoration:  BoxDecoration(
+                                          color: Colors.blue,
+                                          image: DecorationImage(
+                                              image: MemoryImage(
+                                                  imageResponse[a]),
+                                              fit: BoxFit.cover),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                  ],
                                 );
                               }).toList()),
                         ),
@@ -295,25 +362,23 @@ class _IndividualCompetitionsScreenState
                     Container(
                       height: Get.height * 0.8,
                       color: Colors.blue,
-                      child: Expanded(
-                        child: GridView.builder(
-                          itemCount: items.length,
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            // 3 images per row
-                            crossAxisSpacing: 8.0,
-                            // Space between images horizontally
-                            mainAxisSpacing:
-                                8.0, // Space between images vertically
-                          ),
-                          itemBuilder: (BuildContext context, int index) {
-                            return Image.network(
-                              items[index]["image"],
-                              fit: BoxFit.cover,
-                            );
-                          },
+                      child: GridView.builder(
+                        itemCount: items.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          // 3 images per row
+                          crossAxisSpacing: 8.0,
+                          // Space between images horizontally
+                          mainAxisSpacing:
+                              8.0, // Space between images vertically
                         ),
+                        itemBuilder: (BuildContext context, int index) {
+                          return Image.network(
+                            items[index]["image"],
+                            fit: BoxFit.cover,
+                          );
+                        },
                       ),
                     ),
                     InkWell(
