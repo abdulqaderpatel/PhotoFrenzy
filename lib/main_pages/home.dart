@@ -23,6 +23,8 @@ class _HomeScreenState extends State<HomeScreen> {
   var isLoading = false;
   var items = [];
 
+
+
   void getData() async {
     setState(() {
       isLoading = true;
@@ -255,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       const Row(
                                                         children: [
                                                           Icon(
-                                                              Icons.date_range),
+                                                              Icons.monetization_on_sharp),
                                                           Gap(3),
                                                           Text("Entry Fee",
                                                               style: TextStyle(
@@ -285,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       const Row(
                                                         children: [
                                                           Icon(
-                                                              Icons.date_range),
+                                                              Icons.timer),
                                                           Gap(3),
                                                           Text("Starting Time",
                                                               style: TextStyle(
@@ -320,7 +322,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       const Row(
                                                         children: [
                                                           Icon(
-                                                              Icons.date_range),
+                                                              Icons.timer_outlined),
                                                           Gap(3),
                                                           Text("Ending Time",
                                                               style: TextStyle(

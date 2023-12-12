@@ -33,6 +33,8 @@ class _IndividualCompetitionsScreenState
   var buttonLoading = false;
   final picker = ImagePicker();
 
+  var selectedFilteredImageType = "";
+
   FirebaseStorage storage = FirebaseStorage.instance;
 
   List<Map<String, dynamic>> items = [];
@@ -62,7 +64,7 @@ class _IndividualCompetitionsScreenState
     });
   }
 
-  var imageResponse=[];
+  var imageResponse = [];
 
   var effects = ["grayscale", "cartoon", "sketched", "blur"];
 
@@ -78,6 +80,7 @@ class _IndividualCompetitionsScreenState
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
+              showDragHandle: true,
               isScrollControlled: true,
               context: context,
               builder: (context) {
@@ -85,33 +88,30 @@ class _IndividualCompetitionsScreenState
                     StateSetter setModalState /*You can rename this!*/) {
                   Future<void> fetchData(File? image) async {
                     imageResponse.clear();
-                    for(var element in effects) {
+                    for (var element in effects) {
                       var request = http.MultipartRequest('POST',
                           Uri.parse("http://10.0.2.2:5000/user/$element"));
-                      request.files.add(
-                          await http.MultipartFile.fromPath('file',
-                              image!.path));
+                      request.files.add(await http.MultipartFile.fromPath(
+                          'file', image!.path));
                       try {
                         var streamedResponse = await request.send();
                         var response =
-                        await http.Response.fromStream(streamedResponse);
-                        print(response.statusCode);
+                            await http.Response.fromStream(streamedResponse);
 
-                          imageResponse.add(response.bodyBytes);
+                        imageResponse.add(response.bodyBytes);
 
-
-                        print(imageResponse);
                         // Display the processed image
                       } catch (e) {
                         print(e.toString());
                       }
                     }
-                    setModalState(() {
-
-                    });
+                    setModalState(() {});
                   }
 
                   Future getImageGallery() async {
+                    setState(() {
+                      selectedFilteredImageType = "";
+                    });
                     final pickedFile =
                         await picker.pickImage(source: ImageSource.gallery);
                     if (pickedFile != null) {
@@ -122,140 +122,163 @@ class _IndividualCompetitionsScreenState
                     }
                   }
 
-                  return Container(
-                    margin: const EdgeInsets.all(10),
-                    child: Column(
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            getImageGallery();
-                          },
-                          child: postImage!.path.isNotEmpty
-                              ? Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  constraints: BoxConstraints(
-                                      minWidth: Get.width,
-                                      minHeight: Get.height * 0.4,
-                                      maxHeight: Get.height * 0.5),
-                                  child: Image.file(
-                                    postImage!, // Replace with the path to your image
-                                    fit: BoxFit
-                                        .fill, // Use BoxFit.fill to force the image to fill the container
-                                  ),
-                                )
-                              : DottedBorder(
-                                  color: Colors.grey,
-                                  strokeWidth: 1,
-                                  dashPattern: [3, 3, 3, 3],
-                                  child: Container(
+                  return SingleChildScrollView(
+                    child: Container(
+                      margin: const EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          Text(
+                            "Select an image",
+                            style: TextStyle(
+                                color: isDark(context)
+                                    ? Colors.white
+                                    : Colors.black,
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600),
+                          ),
+                          Text("You can only submit one image per competition"),
+                          Gap(15),
+                          InkWell(
+                            onTap: () {
+                              getImageGallery();
+                            },
+                            child: postImage!.path.isNotEmpty
+                                ? Container(
                                     margin: const EdgeInsets.symmetric(
                                         horizontal: 10),
                                     constraints: BoxConstraints(
                                         minWidth: Get.width,
                                         minHeight: Get.height * 0.4,
                                         maxHeight: Get.height * 0.5),
-                                    child: const Center(
-                                      child: Icon(Icons.camera),
+                                    child: selectedFilteredImageType != ""
+                                        ? Image.memory(
+                                            imageResponse[effects.indexOf(
+                                                selectedFilteredImageType)],
+                                            fit: BoxFit.fill,
+                                          )
+                                        : Image.file(
+                                            postImage!,
+                                            // Replace with the path to your image
+                                            fit: BoxFit
+                                                .fill, // Use BoxFit.fill to force the image to fill the container
+                                          ),
+                                  )
+                                : DottedBorder(
+                                    color: Colors.grey,
+                                    strokeWidth: 1,
+                                    dashPattern: [3, 3, 3, 3],
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      constraints: BoxConstraints(
+                                          minWidth: Get.width,
+                                          minHeight: Get.height * 0.4,
+                                          maxHeight: Get.height * 0.5),
+                                      child: const Center(
+                                        child: Icon(Icons.camera),
+                                      ),
                                     ),
                                   ),
+                          ),
+                          Gap(50),
+                          SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: imageResponse.length == 4
+                                      ? Row(
+                                          children: effects.map((e) {
+                                          var a = effects.indexOf(e);
+                                          return Container(margin: EdgeInsets.only(right: 10),
+                                            child: Column(
+                                              children: [
+
+                                                Row(
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        await fetchData(postImage);
+                                                        setModalState(() {
+                                                          selectedFilteredImageType =
+                                                              e;
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        height: 150,
+                                                        width: 120,
+                                                        decoration: BoxDecoration(
+
+                                                          image: DecorationImage(
+                                                              image: MemoryImage(
+                                                                  imageResponse[a]),
+                                                              fit: BoxFit.cover),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 5),
+                                                  ],
+                                                ),
+                                                Gap(2),
+                                                Text(e)
+                                              ],
+                                            ),
+                                          );
+                                        }).toList())
+                                      : Container(),
                                 ),
-                        ),
-                        ElevatedButton(
-                            onPressed: buttonLoading
-                                ? null
-                                : () {
-                                    setState(() {
-                                      buttonLoading = true;
-                                    });
-                                    int time =
-                                        DateTime.now().millisecondsSinceEpoch;
-
-                                    Reference ref = FirebaseStorage.instance.ref(
-                                        "/${widget.competitionDetails["id"]}/$time");
-
-                                    UploadTask uploadTask =
-                                        ref.putFile(postImage!.absolute);
-
-                                    Future.value(uploadTask)
-                                        .then((value) async {
-                                      var newUrl = await ref.getDownloadURL();
-                                      await FirebaseTable()
-                                          .competitionsTable
-                                          .doc(widget.competitionDetails["id"])
-                                          .collection("Images")
-                                          .doc(time.toString())
-                                          .set({
-                                        "id": time.toString(),
-                                        "image": newUrl.toString()
+                          Gap(30),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                minimumSize: Size(Get.width, 40),
+                                backgroundColor: Colors.orange,
+                                textStyle: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w600),
+                                primary: Colors.blue,
+                                onPrimary: Colors.white,
+                                // Background color
+                              ),
+                              onPressed: buttonLoading
+                                  ? null
+                                  : () {
+                                      setState(() {
+                                        buttonLoading = true;
                                       });
+                                      int time =
+                                          DateTime.now().millisecondsSinceEpoch;
 
-                                      showToast(
-                                          message: "Post created successfully");
-                                    });
-                                  },
-                            child: buttonLoading
-                                ? const CircularProgressIndicator()
-                                : const Text("Add image")),
-                        imageResponse.length==0
-                            ? SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                    children: [3, 43, 434, 343, 34, 34, 34, 343]
-                                        .map((e) {
-                                  return Row(
-                                    children: [
-                                      InkWell(
-                                        onTap: () async {
-                                          await fetchData(postImage);
-                                        },
-                                        child: Container(
-                                          height: 150,
-                                          width: 120,
-                                          decoration: const BoxDecoration(
-                                            color: Colors.blue,
-                                            image: DecorationImage(
-                                                image: ExactAssetImage(
-                                                    'assets/images/testing.jpeg'),
-                                                fit: BoxFit.cover),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                    ],
-                                  );
-                                }).toList()),
-                              )
-                            : SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                              children: effects
-                                  .map((e) {
-                                    var a=effects.indexOf(e);
-                                return Row(
-                                  children: [
-                                    InkWell(
-                                      onTap: () async {
-                                        await fetchData(postImage);
-                                      },
-                                      child: Container(
-                                        height: 150,
-                                        width: 120,
-                                        decoration:  BoxDecoration(
-                                          color: Colors.blue,
-                                          image: DecorationImage(
-                                              image: MemoryImage(
-                                                  imageResponse[a]),
-                                              fit: BoxFit.cover),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 5),
-                                  ],
-                                );
-                              }).toList()),
-                        ),
-                      ],
+                                      Reference ref = FirebaseStorage.instance.ref(
+                                          "/${widget.competitionDetails["id"]}/$time");
+
+                                      UploadTask uploadTask =
+                                          selectedFilteredImageType != ""
+                                              ? ref.putData(imageResponse[
+                                                  effects.indexOf(
+                                                      selectedFilteredImageType)])
+                                              : ref
+                                                  .putFile(postImage!.absolute);
+
+                                      Future.value(uploadTask)
+                                          .then((value) async {
+                                        var newUrl = await ref.getDownloadURL();
+                                        await FirebaseTable()
+                                            .competitionsTable
+                                            .doc(
+                                                widget.competitionDetails["id"])
+                                            .collection("Images")
+                                            .doc(time.toString())
+                                            .set({
+                                          "id": time.toString(),
+                                          "image": newUrl.toString()
+                                        });
+
+                                        showToast(
+                                            message:
+                                                "Post created successfully");
+                                      });
+                                    },
+                              child: buttonLoading
+                                  ? const CircularProgressIndicator()
+                                  : const Text("Submit image")),
+                        ],
+                      ),
                     ),
                   );
                 });
@@ -381,70 +404,6 @@ class _IndividualCompetitionsScreenState
                         },
                       ),
                     ),
-                    InkWell(
-                      onTap: () {},
-                      child: postImage!.path.isNotEmpty
-                          ? Container(
-                              constraints: BoxConstraints(
-                                  minWidth: Get.width,
-                                  minHeight: Get.height * 0.4,
-                                  maxHeight: Get.height * 0.5),
-                              margin: const EdgeInsets.only(top: 10),
-                              child: Image.file(
-                                postImage!, // Replace with the path to your image
-                                fit: BoxFit
-                                    .fill, // Use BoxFit.fill to force the image to fill the container
-                              ),
-                            )
-                          : Container(
-                              constraints: BoxConstraints(
-                                  minWidth: Get.width,
-                                  minHeight: Get.height * 0.4,
-                                  maxHeight: Get.height * 0.5),
-                              margin: const EdgeInsets.only(top: 10),
-                              child: const Center(
-                                child: Icon(Icons.camera),
-                              ),
-                            ),
-                    ),
-                    ElevatedButton(
-                        onPressed: buttonLoading
-                            ? null
-                            : () {
-                                setState(() {
-                                  buttonLoading = true;
-                                });
-                                int time =
-                                    DateTime.now().millisecondsSinceEpoch;
-
-                                Reference ref = FirebaseStorage.instance.ref(
-                                    "/${widget.competitionDetails["id"]}/$time");
-
-                                UploadTask uploadTask =
-                                    ref.putFile(postImage!.absolute);
-
-                                Future.value(uploadTask).then((value) async {
-                                  var newUrl = await ref.getDownloadURL();
-                                  await FirebaseTable()
-                                      .competitionsTable
-                                      .doc(widget.competitionDetails["id"])
-                                      .collection("Images")
-                                      .doc(time.toString())
-                                      .set({
-                                    "id": time.toString(),
-                                    "image": newUrl.toString()
-                                  });
-
-                                  showToast(
-                                      message: "Post created successfully");
-                                  setState(() {
-                                    buttonLoading = false;
-                                  });
-                                });
-                              },
-                        child: buttonLoading
-                            ? const CircularProgressIndicator()
-                            : const Text("Add image"))
                   ],
                 ),
               ),
