@@ -47,6 +47,7 @@ dependencies:
   scrollable_positioned_list:
   matrix2d:
   intl:
+  dotted_border:
 
 
   cupertino_icons: ^1.0.2
