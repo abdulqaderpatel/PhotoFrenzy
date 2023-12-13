@@ -226,7 +226,7 @@ class _IndividualCompetitionsScreenState
                             var request = http.MultipartRequest(
                                 'POST',
                                 Uri.parse(
-                                    "http://10.0.2.2:5000/user/$element"));
+                                    "$BASE_URL/user/$element"));
                             request.files.add(await http.MultipartFile.fromPath(
                                 'file', image!.path));
                             try {

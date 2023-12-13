@@ -7,11 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:photofrenzy/models/text_post.dart';
 
 import '../authentication/login.dart';
+import '../controllers/user_controller.dart';
 import '../global/firebase_tables.dart';
 import '../global/show_message.dart';
 import '../global/theme_mode.dart';
+import '../models/image_post.dart';
 import '../profiles/edit_user_profile.dart';
 import '../user_posts/comments.dart';
 import '../user_posts/image_posts_list.dart';
@@ -19,11 +22,13 @@ import '../user_posts/image_posts_list.dart';
 class ProfileScreen extends StatefulWidget {
   final String id;
 
-  ProfileScreen({required this.id});
+  const ProfileScreen({super.key, required this.id});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
+
+final UserController userController = Get.put(UserController());
 
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
@@ -31,10 +36,9 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   var isLoading = false;
 
-  List<Map<String, dynamic>> textPosts = [];
-  List<Map<String, dynamic>> imagePosts = [];
-
   void getPosts() async {
+    userController.textposts.clear();
+    userController.imageposts.clear();
     setState(() {
       isLoading = true;
     });
@@ -48,13 +52,22 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     for (var element in data.docs) {
       setState(() {
+        userController.textposts.add(TextPost(
+          element.data()["creator_id"],
+          element.data()["creator_name"],
+          element.data()["creator_profile_picture"],
+          element.data()["creator_username"],
+          element.data()["post_id"],
+          element.data()["text"],
+          element.data()["type"],
+        ));
         temp.add(element.data());
       });
     }
-      textPosts = temp;
-    temp=[];
 
-   data = await FirebaseTable()
+    temp = [];
+
+    data = await FirebaseTable()
         .postsTable
         .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .where("type", isEqualTo: "image")
@@ -62,13 +75,18 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     for (var element in data.docs) {
       setState(() {
-        temp.add(element.data());
+        userController.imageposts.add(ImagePost(
+          element.data()["creator_id"],
+          element.data()["creator_name"],
+          element.data()["creator_profile_picture"],
+          element.data()["creator_username"],
+          element.data()["imageurl"],
+          element.data()["post_id"],
+          element.data()["text"],
+          element.data()["type"],
+        ));
       });
     }
-    imagePosts = temp;
-
-print(textPosts);
-print(imagePosts);
 
     setState(() {
       isLoading = false;
@@ -81,7 +99,6 @@ print(imagePosts);
 
     _tabController = TabController(length: 2, vsync: this);
     getPosts();
-
   }
 
   @override
@@ -102,8 +119,8 @@ print(imagePosts);
                           Future.delayed(Duration.zero, () {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {
-                                  return const EditUserProfileScreen();
-                                }));
+                              return const EditUserProfileScreen();
+                            }));
                           });
                         },
                         child: const Text("Edit profile")),
@@ -114,8 +131,8 @@ print(imagePosts);
                           if (context.mounted) {
                             Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) {
-                                  return const LoginScreen();
-                                }));
+                              return const LoginScreen();
+                            }));
                           }
                         },
                         child: const Text("Logout"))
@@ -124,7 +141,6 @@ print(imagePosts);
           ],
         ),
       ),
-
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
@@ -363,155 +379,171 @@ print(imagePosts);
                   // Text Posts Tab
                   CustomScrollView(
                     slivers: [
-
-                      SliverList(
+                      Obx(()=>SliverList(
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
                             // Build your text posts here
                             // ...
                             return Column(
-                              children: [
-                                Row(
                                   children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: Colors.grey, width: 0.8),
-                                          borderRadius:
-                                          BorderRadius.circular(80)),
-                                      child: textPosts[index]["creator_profile_picture"] == ""
-                                          ? const CircleAvatar(
-                                        radius: 23,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: AssetImage(
-                                          "assets/images/profile_picture.png",
-                                        ),
-                                      )
-                                          : CircleAvatar(
-                                        radius: 23,
-                                        backgroundColor: Colors.white,
-                                        backgroundImage: NetworkImage(
-                                          textPosts[index]["creator_profile_picture"],
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: Get.width * 0.04,
-                                    ),
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                    Row(
                                       children: [
-                                        Text(
-                                          textPosts[index]["creator_name"],
-                                          style:
-                                          TextStyle(fontSize: 19,color: isDark(context)?Colors.white:Colors.black),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey,
+                                                  width: 0.8),
+                                              borderRadius:
+                                                  BorderRadius.circular(80)),
+                                          child: userController.textposts[index]
+                                                      .creator_profile_picture ==
+                                                  ""
+                                              ? const CircleAvatar(
+                                                  radius: 23,
+                                                  backgroundColor: Colors.white,
+                                                  backgroundImage: AssetImage(
+                                                    "assets/images/profile_picture.png",
+                                                  ),
+                                                )
+                                              : CircleAvatar(
+                                                  radius: 23,
+                                                  backgroundColor: Colors.white,
+                                                  backgroundImage: NetworkImage(
+                                                    userController
+                                                        .textposts[index]
+                                                        .creator_profile_picture!,
+                                                  ),
+                                                ),
                                         ),
-                                        Text(
-                                          "@${textPosts[index]["creator_username"]}",
-                                          style:
-                                          TextStyle(fontSize: 17,color: isDark(context)?Colors.white:Colors.grey),
+                                        SizedBox(
+                                          width: Get.width * 0.04,
                                         ),
-                                        const SizedBox(
-                                          height: 15,
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              userController.textposts[index]
+                                                  .creator_name!,
+                                              style: TextStyle(
+                                                  fontSize: 19,
+                                                  color: isDark(context)
+                                                      ? Colors.white
+                                                      : Colors.black),
+                                            ),
+                                            Text(
+                                              "@${userController.textposts[index].creator_username}",
+                                              style: TextStyle(
+                                                  fontSize: 17,
+                                                  color: isDark(context)
+                                                      ? Colors.white
+                                                      : Colors.grey),
+                                            ),
+                                            const SizedBox(
+                                              height: 15,
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: Get.height * 0.01,
-                                ),
-                                Container(
-                                  margin: EdgeInsets.only(left: Get.width * 0.17),
-                                  child: Column(
-                                    children: [
-                                      Row(
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: Get.width * 0.17),
+                                      child: Column(
                                         children: [
-                                          Flexible(
-                                            child: Text(
-                                              textPosts[index]["text"],
-                                              style:
-                                              Theme.of(context).textTheme.bodyMedium,
-                                            ),
+                                          Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  userController
+                                                      .textposts[index].text!,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Row(
-                                        children: [
-                                          InkWell(
-                                              onTap: () async {
-
-                                              },
-                                              child: Icon(textPosts[index]["creator_name"]=="fdsfds"
-
-                                                  ? Icons.favorite_outline
-                                                  : Icons.favorite)),
                                           const SizedBox(
-                                            width: 3,
+                                            height: 10,
                                           ),
-                                          const Text(
-                                              "0"
-                                          ),
-                                          SizedBox(
-                                            width: Get.width * 0.1,
-                                          ),
-                                          InkWell(
-                                              onTap: () {
-                                                Navigator.push(context, MaterialPageRoute(
-                                                  builder: (context) {
-                                                    return const CommentsScreen();
+                                          Row(
+                                            children: [
+                                              InkWell(
+                                                  onTap: () async {},
+                                                  child: Icon(userController
+                                                              .textposts[index]
+                                                              .creator_name ==
+                                                          "fdsfds"
+                                                      ? Icons.favorite_outline
+                                                      : Icons.favorite)),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              const Text("0"),
+                                              SizedBox(
+                                                width: Get.width * 0.1,
+                                              ),
+                                              InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                      builder: (context) {
+                                                        return const CommentsScreen();
+                                                      },
+                                                    ));
                                                   },
-                                                ));
-                                              },
-                                              child: const Icon(Icons.chat_bubble_outline)),
-                                          const SizedBox(
-                                            width: 3,
-                                          ),
-                                          const Text(
-                                            "0",
-                                          ),
-
-                                          SizedBox(
-                                            width: Get.width * 0.1,
-                                          ),
-                                          const Icon(Icons.replay_outlined),
-                                          const SizedBox(
-                                            width: 3,
-                                          ),
-                                          const Text(
-                                            "0",
+                                                  child: const Icon(Icons
+                                                      .chat_bubble_outline)),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              const Text(
+                                                "0",
+                                              ),
+                                              SizedBox(
+                                                width: Get.width * 0.1,
+                                              ),
+                                              const Icon(Icons.replay_outlined),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              const Text(
+                                                "0",
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 5,
-                                ),
-                                const Divider(
-                                  color: Colors.grey,
-                                )
-                              ],
-                            );
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    const Divider(
+                                      color: Colors.grey,
+                                    )
+                                  ],
+                                );
                           },
-                          childCount: textPosts.length, // Replace with your actual post count
+                          childCount: userController.textposts
+                              .length, // Replace with your actual post count
                         ),
-                      ),
+                      ),),
                     ],
                   ),
 
                   // Image Posts Tab
                   CustomScrollView(
                     slivers: [
-                      SliverGrid(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      Obx(()=>SliverGrid(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
-
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
@@ -519,25 +551,28 @@ print(imagePosts);
                             // ...
                             return InkWell(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) {
-                                  return ImagePostsListScreen(imagePosts, index);
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return ImagePostsListScreen(
+                                      userController.imageposts, index);
                                 }));
                               },
                               child: Container(
                                 margin: const EdgeInsets.only(
                                     top: 3, bottom: 3, left: 1.5, right: 1.5),
                                 child: Image.network(
-                                  imagePosts[index]
-                                  ["imageurl"], // Replace with the path to your image
+                                  userController.imageposts[index].imageurl!,
+                                  // Replace with the path to your image
                                   fit: BoxFit
                                       .fill, // Use BoxFit.fill to force the image to fill the container
                                 ),
                               ),
                             );
                           },
-                          childCount: imagePosts.length, // Replace with your actual post count
+                          childCount: userController.imageposts
+                              .length, // Replace with your actual post count
                         ),
-                      ),
+                      ),),
                     ],
                   ),
                 ],

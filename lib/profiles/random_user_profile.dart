@@ -8,6 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:photofrenzy/individual_chat.dart';
+import 'package:photofrenzy/main_pages/profile.dart';
 
 import '../authentication/login.dart';
 import '../global/firebase_tables.dart';
@@ -688,7 +689,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
                                     return ImagePostsListScreen(
-                                        imagePosts, index);
+                                        userController.imageposts, index);
                                   }));
                                 },
                                 child: Container(

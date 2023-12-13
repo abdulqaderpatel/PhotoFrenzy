@@ -1,16 +1,17 @@
-
 import 'dart:io';
 
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'package:photofrenzy/controllers/user_controller.dart';
 
 import 'package:photofrenzy/global/show_message.dart';
+import 'package:photofrenzy/models/image_post.dart';
+import 'package:photofrenzy/models/text_post.dart';
 
 import '../global/firebase_tables.dart';
 
@@ -65,34 +66,35 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 onPressed: buttonLoading
                     ? null
                     : () async {
+                        List<Map<String, dynamic>> temp = [];
+                        var data = await FirebaseTable()
+                            .usersTable
+                            .where("id",
+                                isEqualTo:
+                                    FirebaseAuth.instance.currentUser!.uid)
+                            .get();
 
-                  List<Map<String, dynamic>> temp = [];
-                  var data = await FirebaseTable()
-                      .usersTable
-                      .where("id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
-                      .get();
+                        for (var element in data.docs) {
+                          setState(() {
+                            temp.add(element.data());
+                          });
+                        }
 
-                  for (var element in data.docs) {
-                    setState(() {
-                      temp.add(element.data());
-                    });
-                  }
-
-                  String id =
-                  DateTime.now().millisecondsSinceEpoch.toString();
-
-
+                        String id =
+                            DateTime.now().millisecondsSinceEpoch.toString();
 
                         setState(() {
                           buttonLoading = true;
                         });
 
+                        UserController userController =
+                            Get.put(UserController());
                         if (postImage!.path.isEmpty) {
                           await FirebaseTable().postsTable.doc(id).set({
-                            "creator_name":temp[0]["name"],
-                            "creator_username":temp[0]["username"],
-                            "creator_profile_picture":temp[0]["profile_picture"],
-
+                            "creator_name": temp[0]["name"],
+                            "creator_username": temp[0]["username"],
+                            "creator_profile_picture": temp[0]
+                                ["profile_picture"],
                             "post_id": id,
                             "creator_id":
                                 FirebaseAuth.instance.currentUser!.uid,
@@ -100,6 +102,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             "text": textController.text,
                           });
                           showToast(message: "Post created successfully");
+                          userController.textposts.add(TextPost(
+                              FirebaseAuth.instance.currentUser!.uid,
+                              FirebaseAuth.instance.currentUser!.displayName,
+                              temp[0]["profile_picture"],
+                              temp[0]["username"],
+                              id,
+                              textController.text,
+                              "text"));
                           setState(() {
                             buttonLoading = false;
                           });
@@ -111,9 +121,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           Future.value(uploadTask).then((value) async {
                             var newUrl = await ref.getDownloadURL();
                             await FirebaseTable().postsTable.doc(id).set({
-                              "creator_name":temp[0]["name"],
-                              "creator_username":temp[0]["username"],
-                              "creator_profile_picture":temp[0]["profile_picture"],
+                              "creator_name": temp[0]["name"],
+                              "creator_username": temp[0]["username"],
+                              "creator_profile_picture": temp[0]
+                                  ["profile_picture"],
                               "post_id": id,
                               "creator_id":
                                   FirebaseAuth.instance.currentUser!.uid,
@@ -123,6 +134,15 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             });
 
                             showToast(message: "Post created successfully");
+                            userController.imageposts.add(ImagePost(
+                                FirebaseAuth.instance.currentUser!.uid,
+                                FirebaseAuth.instance.currentUser!.displayName,
+                                temp[0]["profile_picture"],
+                                temp[0]["username"],
+                                newUrl.toString(),
+                                id,
+                                "image",
+                                "text"));
                             setState(() {
                               buttonLoading = false;
                             });
