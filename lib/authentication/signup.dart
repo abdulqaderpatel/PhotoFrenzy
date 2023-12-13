@@ -132,111 +132,117 @@ class _SignupScreenState extends State<SignupScreen> {
                     height: Get.height * 0.06,
                     width: Get.width,
                     child: ElevatedButton(
-                      onPressed:buttonLoading?null: () async {
-                        setState(() {
-                          buttonLoading = true;
-                        });
-                        if (nameController.text.isEmpty) {
-                          showErrorDialog(context,
-                              "Name cannot be empty. Please make sure all the details have been filled.");
-                          setState(() {
-                            buttonLoading = false;
-                          });
-                        } else if (usernameController.text.isEmpty) {
-                          showErrorDialog(context,
-                              "username cannot be empty. Please make sure all the details have been filled.");
-                          setState(() {
-                            buttonLoading = false;
-                          });
-                        } else if (emailController.text.isEmpty) {
-                          showErrorDialog(context,
-                              "email cannot be empty. Please make sure all the details have been filled.");
-                          setState(() {
-                            buttonLoading = false;
-                          });
-                        } else if (passwordController.text.isEmpty) {
-                          showErrorDialog(context,
-                              "password cannot be empty. Please make sure all the details have been filled.");
-                          setState(() {
-                            buttonLoading = false;
-                          });
-                        } else if (!RegExp(r'^[a-zA-Z0-9]+$')
-                            .hasMatch(nameController.text)) {
-                          showErrorDialog(
-                              context, "The name entered is not valid");
-                          setState(() {
-                            buttonLoading = false;
-                          });
-                        } else if (!RegExp(r'^[a-zA-Z0-9]+$')
-                            .hasMatch(usernameController.text)) {
-                          showErrorDialog(
-                              context, "The username entered is not valid");
-                          setState(() {
-                            buttonLoading = false;
-                          });
-                        } else if (!emailRegExp
-                            .hasMatch(emailController.text)) {
-                          showErrorDialog(
-                              context, "The email entered is not valid");
-                          setState(() {
-                            buttonLoading = false;
-                          });
-                        } else if (passwordController.text.length < 5) {
-                          showErrorDialog(context,
-                              "password should be atleast 6 characters");
-                          setState(() {
-                            buttonLoading = false;
-                          });
-                        } else {
-                          try {
-                            await registerWithEmailAndPassword(
-                                nameController.text,
-                                passwordController.text,
-                                emailController.text);
-                           if(context.mounted)
-                             {
-                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
-                                 return VerifyEmailScreen();
-                               }));
-                             }
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == "email-already-in-use") {
-                              if (context.mounted) {
+                      onPressed: buttonLoading
+                          ? null
+                          : () async {
+                              setState(() {
+                                buttonLoading = true;
+                              });
+                              if (nameController.text.isEmpty) {
                                 showErrorDialog(context,
-                                    "the email is already in use");
+                                    "Name cannot be empty. Please make sure all the details have been filled.");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else if (usernameController.text.isEmpty) {
+                                showErrorDialog(context,
+                                    "username cannot be empty. Please make sure all the details have been filled.");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else if (emailController.text.isEmpty) {
+                                showErrorDialog(context,
+                                    "email cannot be empty. Please make sure all the details have been filled.");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else if (passwordController.text.isEmpty) {
+                                showErrorDialog(context,
+                                    "password cannot be empty. Please make sure all the details have been filled.");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                                  .hasMatch(nameController.text)) {
+                                showErrorDialog(
+                                    context, "The name entered is not valid");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                                  .hasMatch(usernameController.text)) {
+                                showErrorDialog(context,
+                                    "The username entered is not valid");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else if (!emailRegExp
+                                  .hasMatch(emailController.text)) {
+                                showErrorDialog(
+                                    context, "The email entered is not valid");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else if (passwordController.text.length < 5) {
+                                showErrorDialog(context,
+                                    "password should be atleast 6 characters");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              } else {
+                                try {
+                                  await registerWithEmailAndPassword(
+                                      nameController.text,
+                                      passwordController.text,
+                                      emailController.text);
+                                  if (context.mounted) {
+                                    Navigator.pushReplacement(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return VerifyEmailScreen(
+                                        username: usernameController.text,
+                                      );
+                                    }));
+                                  }
+                                } on FirebaseAuthException catch (e) {
+                                  if (e.code == "email-already-in-use") {
+                                    if (context.mounted) {
+                                      showErrorDialog(context,
+                                          "the email is already in use");
+                                    }
+                                    setState(() {
+                                      buttonLoading = false;
+                                    });
+                                  } else if (e.code == "invalid-email") {
+                                    if (context.mounted) {
+                                      showErrorDialog(context,
+                                          "the email entered is invalid");
+                                    }
+                                    setState(() {
+                                      buttonLoading = false;
+                                    });
+                                  } else if (e.code == "weak-password") {
+                                    if (context.mounted) {
+                                      showErrorDialog(context,
+                                          "the password entered is weak");
+                                    }
+                                    setState(() {
+                                      buttonLoading = false;
+                                    });
+                                  }
+                                }
                               }
                               setState(() {
                                 buttonLoading = false;
                               });
-                            } else if (e.code == "invalid-email") {
-                              if (context.mounted) {
-                                showErrorDialog(context,
-                                    "the email entered is invalid");
-                              }
-                              setState(() {
-                                buttonLoading = false;
-                              });
-                            } else if (e.code == "weak-password") {
-                              if (context.mounted) {
-                                showErrorDialog(context,
-                                    "the password entered is weak");
-                              }
-                              setState(() {
-                                buttonLoading = false;
-                              });
-                            }
-                          }
-                        }
-                        setState(() {
-                          buttonLoading = false;
-                        });
-                      },
+                            },
                       style: ElevatedButton.styleFrom(
                           backgroundColor:
                               Theme.of(context).colorScheme.primary,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8))),
-                      child:buttonLoading?CircularProgressIndicator(): Text(
+                      child: buttonLoading
+                          ? CircularProgressIndicator()
+                          : Text(
                               "Create Account",
                               style: GoogleFonts.lato(
                                   letterSpacing: 0,
@@ -259,7 +265,6 @@ class _SignupScreenState extends State<SignupScreen> {
                                     : Colors.blueGrey)),
                         InkWell(
                           onTap: () {
-
                             Navigator.pushReplacement(context,
                                 MaterialPageRoute(builder: (context) {
                               return const LoginScreen();

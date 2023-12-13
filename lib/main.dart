@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
       themeMode: ThemeMode.system,
       home: userExists == false
           ? const LoginScreen()
-          : (userVerified == false ? const VerifyEmailScreen() : UserNavigationBar()),
+          : (userVerified == false ? const VerifyEmailScreen(username: "timepass",) : UserNavigationBar()),
     );
   }
 }

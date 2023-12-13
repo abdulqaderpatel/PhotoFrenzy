@@ -15,7 +15,8 @@ import 'package:photofrenzy/global/theme_mode.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
-  const VerifyEmailScreen({super.key});
+  final String username;
+  const VerifyEmailScreen({super.key,required this.username});
 
   @override
   State<VerifyEmailScreen> createState() => _VerifyEmailScreenState();
@@ -94,7 +95,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
           .set({
         "id": FirebaseAuth.instance.currentUser!.uid,
         "name": FirebaseAuth.instance.currentUser!.displayName,
-        "username": "",
+        "username":widget.username,
         "email": FirebaseAuth.instance.currentUser!.email,
         "profile_picture": "",
         "bio":"",

@@ -127,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   else{
                                     if(context.mounted) {
                                       Navigator.push(context, MaterialPageRoute(builder: (context){
-                                        return VerifyEmailScreen();
+                                        return VerifyEmailScreen(username: "testing",);
                                       }));
                                     }
                                   }
