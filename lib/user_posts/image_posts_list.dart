@@ -1,7 +1,11 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:photofrenzy/controllers/user_controller.dart';
+import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/models/image_post.dart';
 import 'package:photofrenzy/user_posts/comments.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -17,6 +21,7 @@ class ImagePostsListScreen extends StatefulWidget {
 }
 
 class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
+  UserController userController = Get.put(UserController());
   ItemScrollController itemScrollController = ItemScrollController();
 
   @override
@@ -124,17 +129,50 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                           Row(
                             children: [
                               InkWell(
-                                  onTap: () async {},
-                                  child: Icon(widget.images[index]
-                                              .creator_profile_picture ==
-                                          "false"
-                                      ? Icons.favorite_outline
-                                      : Icons.favorite)),
+                                onTap: () async {
+                                  if (!widget.images[index].likers.contains(
+                                      FirebaseAuth.instance.currentUser!.uid)) {
+                                    await FirebaseTable()
+                                        .postsTable
+                                        .doc(widget.images[index].post_id)
+                                        .update({
+                                      "likes": FieldValue.increment(1),
+                                      "likers": FieldValue.arrayUnion([
+                                        FirebaseAuth.instance.currentUser!.uid
+                                      ])
+                                    });
+                                    setState(() {
+                                      widget.images[index].likes++;
+                                      widget.images[index].likers.add(FirebaseAuth.instance.currentUser!.uid);
+                                    });
+
+                                  } else {
+                                    await FirebaseTable()
+                                        .postsTable
+                                        .doc(widget.images[index].post_id)
+                                        .update({
+                                      "likes": FieldValue.increment(-1),
+                                      "likers": FieldValue.arrayRemove([
+                                        FirebaseAuth.instance.currentUser!.uid
+                                      ])
+                                    });
+                                    setState(() {
+                                      widget.images[index].likes--;
+                                      widget.images[index].likers.remove(FirebaseAuth.instance.currentUser!.uid);
+                                    });
+                                  }
+                                },
+                                child: Icon(widget.images[index].likers
+                                        .contains(FirebaseAuth
+                                            .instance.currentUser!.uid)
+                                    ? Icons.favorite
+                                    : Icons.favorite_outline),
+                              ),
                               const SizedBox(
                                 width: 3,
                               ),
-                              const Text(
-                                "0",
+                               Text(
+                                widget.images[index].likes.toString(),
                               ),
                               SizedBox(
                                 width: Get.width * 0.1,

@@ -100,6 +100,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                 FirebaseAuth.instance.currentUser!.uid,
                             "type": "text",
                             "text": textController.text,
+                            "likes": 0,
+                            "likers": [],
+                            "comments": 0
                           });
                           showToast(message: "Post created successfully");
                           userController.textposts.add(TextPost(
@@ -109,7 +112,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               temp[0]["username"],
                               id,
                               textController.text,
-                              "text"));
+                              "text",
+                              0,
+                              [],
+                              0));
                           setState(() {
                             buttonLoading = false;
                           });
@@ -130,7 +136,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                   FirebaseAuth.instance.currentUser!.uid,
                               "type": "image",
                               "text": textController.text,
-                              "imageurl": newUrl.toString()
+                              "imageurl": newUrl.toString(),
+                              "likes": 0,
+                              "likers": [],
+                              "comments": 0
                             });
 
                             showToast(message: "Post created successfully");
@@ -142,7 +151,10 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                 newUrl.toString(),
                                 id,
                                 "image",
-                                "text"));
+                                "text",
+                                0,
+                                [],
+                                0));
                             setState(() {
                               buttonLoading = false;
                             });

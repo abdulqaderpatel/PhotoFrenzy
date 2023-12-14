@@ -7,7 +7,20 @@ class ImagePost {
   final String? post_id;
   final String? text;
   final String? type;
+  int likes;
+  List<dynamic> likers;
+  int comments;
 
-  ImagePost(this.creator_id, this.creator_name, this.creator_profile_picture,
-      this.creator_username, this.imageurl, this.post_id, this.text, this.type);
+  ImagePost(
+      this.creator_id,
+      this.creator_name,
+      this.creator_profile_picture,
+      this.creator_username,
+      this.imageurl,
+      this.post_id,
+      this.text,
+      this.type,
+      this.likes,
+      this.likers,
+      this.comments);
 }

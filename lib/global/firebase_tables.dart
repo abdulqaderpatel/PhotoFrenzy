@@ -5,6 +5,7 @@ class  FirebaseTable extends StatelessWidget {
 
   final usersTable=FirebaseFirestore.instance.collection("Users");
   final postsTable=FirebaseFirestore.instance.collection("Posts");
+  final likesTable=FirebaseFirestore.instance.collection("Likes");
   final commentsTable=FirebaseFirestore.instance.collection("Comments");
   final repliesTable=FirebaseFirestore.instance.collection("Replies");
   final chatsTable=FirebaseFirestore.instance.collection("Chats");

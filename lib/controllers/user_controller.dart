@@ -11,6 +11,9 @@ class UserController extends GetxController {
   RxList<ImagePost> imageposts = <ImagePost>[].obs;
   RxList<User> chattingUsers = <User>[].obs;
 
+  //for likes,comments,replies
+  RxList<int> userLikes = <int>[].obs;
+
   void addTextPost(TextPost textPost) {
     textposts.add(textPost);
   }

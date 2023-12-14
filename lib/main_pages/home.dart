@@ -90,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
         : Scaffold(
             key: _scaffoldKey,
             appBar: AppBar(
-              backgroundColor: Theme.of(context).primaryColor,
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
               automaticallyImplyLeading: false,
             ),
             endDrawer: Drawer(
