@@ -578,8 +578,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             const SizedBox(
                                               width: 3,
                                             ),
-                                            const Text(
-                                              "0",
+                                             Text(
+                                              userController.textposts[index].comments.toString(),
                                             ),
                                             SizedBox(
                                               width: Get.width * 0.1,

@@ -9,10 +9,13 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/show_message.dart';
 
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
+import '../models/image_post.dart';
+import '../models/text_post.dart';
 
 class EditUserProfileScreen extends StatefulWidget {
   const EditUserProfileScreen({super.key});
@@ -29,6 +32,8 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
   final bioController = TextEditingController();
 
   final phoneNumberController = TextEditingController();
+
+  UserController userController=Get.put(UserController());
 
   FirebaseStorage storage = FirebaseStorage.instance;
 
@@ -201,7 +206,80 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                       'creator_name':nameController.text});
                   }
 
+                  QuerySnapshot commentsQuery = await FirebaseTable().commentsTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                  for (QueryDocumentSnapshot postDoc in commentsQuery.docs) {
+                    DocumentReference postDocRef = FirebaseTable().commentsTable.doc(postDoc.id);
+                    batch.update(postDocRef, {'username':usernameController.text,
+                      'name':nameController.text,
+                     });
+                  }
+
+
+                  QuerySnapshot repliesQuery = await FirebaseTable().repliesTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                  for (QueryDocumentSnapshot postDoc in repliesQuery.docs) {
+                    DocumentReference postDocRef = FirebaseTable().repliesTable.doc(postDoc.id);
+                    batch.update(postDocRef, {'username':usernameController.text,
+                      'name':nameController.text,
+                      });
+
+                  }
+
                   await batch.commit();
+
+                  userController.textposts.clear();
+                  userController.imageposts.clear();
+
+
+                  List<Map<String, dynamic>> temp = [];
+                  var data = await FirebaseTable()
+                      .postsTable
+                      .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .where("type", isEqualTo: "text")
+                      .get();
+
+                  for (var element in data.docs) {
+                    setState(() {
+                      userController.textposts.add(TextPost(
+                          element.data()["creator_id"],
+                          element.data()["creator_name"],
+                          element.data()["creator_profile_picture"],
+                          element.data()["creator_username"],
+                          element.data()["post_id"],
+                          element.data()["text"],
+                          element.data()["type"],
+                          element.data()["likes"],
+                          element.data()["likers"],
+                          element.data()["comments"]));
+                      temp.add(element.data());
+                    });
+                  }
+
+                  temp = [];
+
+                  data = await FirebaseTable()
+                      .postsTable
+                      .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .where("type", isEqualTo: "image")
+                      .get();
+
+                  for (var element in data.docs) {
+                    setState(() {
+                      userController.imageposts.add(ImagePost(
+                          element.data()["creator_id"],
+                          element.data()["creator_name"],
+                          element.data()["creator_profile_picture"],
+                          element.data()["creator_username"],
+                          element.data()["imageurl"],
+                          element.data()["post_id"],
+                          element.data()["text"],
+                          element.data()["type"],
+                          element.data()["likes"],
+                          element.data()["likers"],
+                          element.data()["comments"]));
+                    });
+                  }
+
+
 
 
                   showToast(message: "Profile updated successfully");
@@ -238,7 +316,76 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                       'creator_profile_picture':newUrl.toString()});
                     }
 
+                    QuerySnapshot commentsQuery = await FirebaseTable().commentsTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                    for (QueryDocumentSnapshot postDoc in commentsQuery.docs) {
+                      DocumentReference postDocRef = FirebaseTable().commentsTable.doc(postDoc.id);
+                      batch.update(postDocRef, {'username':usernameController.text,
+                        'name':nameController.text,
+                        'profile_picture':newUrl.toString()});
+                    }
+
+
+                    QuerySnapshot repliesQuery = await FirebaseTable().repliesTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                    for (QueryDocumentSnapshot postDoc in repliesQuery.docs) {
+                      DocumentReference postDocRef = FirebaseTable().repliesTable.doc(postDoc.id);
+                      batch.update(postDocRef, {'username':usernameController.text,
+                        'name':nameController.text,
+                        'profile_picture':newUrl.toString()});
+                    }
                     await batch.commit();
+
+                    userController.textposts.clear();
+                    userController.imageposts.clear();
+
+
+                    List<Map<String, dynamic>> temp = [];
+                    var data = await FirebaseTable()
+                        .postsTable
+                        .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .where("type", isEqualTo: "text")
+                        .get();
+
+                    for (var element in data.docs) {
+                      setState(() {
+                        userController.textposts.add(TextPost(
+                            element.data()["creator_id"],
+                            element.data()["creator_name"],
+                            element.data()["creator_profile_picture"],
+                            element.data()["creator_username"],
+                            element.data()["post_id"],
+                            element.data()["text"],
+                            element.data()["type"],
+                            element.data()["likes"],
+                            element.data()["likers"],
+                            element.data()["comments"]));
+                        temp.add(element.data());
+                      });
+                    }
+
+                    temp = [];
+
+                    data = await FirebaseTable()
+                        .postsTable
+                        .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .where("type", isEqualTo: "image")
+                        .get();
+
+                    for (var element in data.docs) {
+                      setState(() {
+                        userController.imageposts.add(ImagePost(
+                            element.data()["creator_id"],
+                            element.data()["creator_name"],
+                            element.data()["creator_profile_picture"],
+                            element.data()["creator_username"],
+                            element.data()["imageurl"],
+                            element.data()["post_id"],
+                            element.data()["text"],
+                            element.data()["type"],
+                            element.data()["likes"],
+                            element.data()["likers"],
+                            element.data()["comments"]));
+                      });
+                    }
 
                     showToast(message: "Profile updated successfully");
                     setState(() {

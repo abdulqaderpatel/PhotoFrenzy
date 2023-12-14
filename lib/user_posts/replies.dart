@@ -4,25 +4,25 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
-import 'package:photofrenzy/main_pages/profile.dart';
-import 'package:photofrenzy/user_posts/replies.dart';
 
-class CommentsScreen extends StatefulWidget {
+class RepliesScreen extends StatefulWidget {
   final String postId;
+  final String commentId;
   final String description;
   final String imageurl;
 
-  const CommentsScreen(
+  const RepliesScreen(
       {required this.postId,
+      required this.commentId,
       required this.description,
       super.key,
       this.imageurl = ""});
 
   @override
-  State<CommentsScreen> createState() => _CommentsScreenState();
+  State<RepliesScreen> createState() => _RepliesScreenState();
 }
 
-class _CommentsScreenState extends State<CommentsScreen> {
+class _RepliesScreenState extends State<RepliesScreen> {
   List<Map<String, dynamic>> userinfo = [];
   var isLoading = false;
 
@@ -55,7 +55,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
     getComments();
   }
 
-  final commentController = TextEditingController();
+  final replyController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +67,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
           children: [
             Expanded(
               child: TextField(
-                controller: commentController,
-                decoration: const InputDecoration(hintText: "Enter comment.."),
+                controller: replyController,
+                decoration: const InputDecoration(hintText: "Enter reply.."),
               ),
             ),
             const SizedBox(
@@ -76,42 +76,24 @@ class _CommentsScreenState extends State<CommentsScreen> {
             ),
             InkWell(
                 onTap: () async {
-
                   int time = DateTime.now().millisecondsSinceEpoch;
-                  await FirebaseTable().commentsTable.doc(time.toString()).set({
+                  await FirebaseTable().repliesTable.doc(time.toString()).set({
                     "id": time.toString(),
-                    "creator_id": FirebaseAuth.instance.currentUser!.uid,
+                    "creator_id":FirebaseAuth.instance.currentUser!.uid,
                     "postId": widget.postId,
+                    "commentId": widget.commentId,
                     "name": userinfo[0]["name"],
                     "username": userinfo[0]["username"],
                     "profile_picture": userinfo[0]["profile_picture"],
-                    "message": commentController.text,
+                    "message": replyController.text,
                     "likes": 0,
                     "likers": [],
-                    "replies": 0
                   });
-
-                  commentController.text = "";
+                  replyController.text = "";
                   FocusManager.instance.primaryFocus?.unfocus();
-                  await FirebaseTable()
-                      .postsTable
-                      .doc(widget.postId)
-                      .update({"comments": FieldValue.increment(1)});
-                  var isText = false;
+                  await FirebaseTable().commentsTable.doc(widget.commentId).update(
+                      {"replies":FieldValue.increment(1)});
 
-                  for (int i = 0; i < userController.textposts.length; i++) {
-                    if (userController.textposts[i].post_id == widget.postId) {
-                      userController.textposts[i].comments++;
-                      break;
-                    }
-                  }
-
-                  for (int i = 0; i < userController.imageposts.length; i++) {
-                    if (userController.imageposts[i].post_id == widget.postId) {
-                      userController.imageposts[i].comments++;
-                      break;
-                    }
-                  }
                 },
                 child: const Icon(Icons.send)),
           ],
@@ -129,8 +111,8 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     Container(
                       child: StreamBuilder<QuerySnapshot>(
                           stream: FirebaseTable()
-                              .commentsTable
-                              .where("postId", isEqualTo: widget.postId)
+                              .repliesTable
+                              .where("postId", isEqualTo: widget.postId).where("commentId",isEqualTo: widget.commentId)
                               .snapshots(),
                           builder: (context, snapshot) {
                             List<Column> clientWidgets = [];
@@ -177,7 +159,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                                     FirebaseAuth.instance
                                                         .currentUser!.uid)) {
                                                   await FirebaseTable()
-                                                      .commentsTable
+                                                      .repliesTable
                                                       .doc(client["id"])
                                                       .update({
                                                     "likes":
@@ -190,7 +172,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                                   });
                                                 } else {
                                                   await FirebaseTable()
-                                                      .commentsTable
+                                                      .repliesTable
                                                       .doc(client["id"])
                                                       .update({
                                                     "likes":
@@ -220,21 +202,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                     SizedBox(
                                       height: 5,
                                     ),
-                                    InkWell(
-                                      onTap: () async {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                                builder: (context) {
-                                          return RepliesScreen(
-                                            postId: widget.postId,
-                                            commentId: client["id"],
-                                            description: client["message"],
-                                          );
-                                        }));
-                                      },
-                                      child: Text(" View replies",
-                                          style: TextStyle(fontSize: 16)),
-                                    ),
+
                                     SizedBox(
                                       height: 8,
                                     )

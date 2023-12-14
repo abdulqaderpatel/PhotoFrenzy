@@ -143,9 +143,10 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                     });
                                     setState(() {
                                       widget.images[index].likes++;
-                                      widget.images[index].likers.add(FirebaseAuth.instance.currentUser!.uid);
+                                      widget.images[index].likers.add(
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid);
                                     });
-
                                   } else {
                                     await FirebaseTable()
                                         .postsTable
@@ -158,7 +159,9 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                     });
                                     setState(() {
                                       widget.images[index].likes--;
-                                      widget.images[index].likers.remove(FirebaseAuth.instance.currentUser!.uid);
+                                      widget.images[index].likers.remove(
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid);
                                     });
                                   }
                                 },
@@ -171,7 +174,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                               const SizedBox(
                                 width: 3,
                               ),
-                               Text(
+                              Text(
                                 widget.images[index].likes.toString(),
                               ),
                               SizedBox(
@@ -181,10 +184,11 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                   onTap: () {
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
-                                      return  CommentsScreen(
+                                      return CommentsScreen(
                                         postId: widget.images[index].post_id!,
-                                        description:widget.images[index].text!,
-                                        imageurl:widget.images[index].imageurl!,
+                                        description: widget.images[index].text!,
+                                        imageurl:
+                                            widget.images[index].imageurl!,
                                       );
                                     }));
                                   },
@@ -192,8 +196,9 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                               const SizedBox(
                                 width: 3,
                               ),
-                              const Text(
-                                "0",
+                              Text(
+                                userController.imageposts[index].comments
+                                    .toString(),
                               ),
                               SizedBox(
                                 width: Get.width * 0.1,
