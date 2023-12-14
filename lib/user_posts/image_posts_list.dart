@@ -181,7 +181,11 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                   onTap: () {
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
-                                      return const CommentsScreen();
+                                      return  CommentsScreen(
+                                        postId: widget.images[index].post_id!,
+                                        description:widget.images[index].text!,
+                                        imageurl:widget.images[index].imageurl!,
+                                      );
                                     }));
                                   },
                                   child: const Icon(Icons.chat_bubble_outline)),

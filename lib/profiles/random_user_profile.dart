@@ -626,12 +626,12 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                             ),
                                             InkWell(
                                                 onTap: () {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                    builder: (context) {
-                                                      return const CommentsScreen();
-                                                    },
-                                                  ));
+                                                  // Navigator.push(context,
+                                                  //     MaterialPageRoute(
+                                                  //   builder: (context) {
+                                                  //     return const CommentsScreen();
+                                                  //   },
+                                                  // ));
                                                 },
                                                 child: const Icon(
                                                     Icons.chat_bubble_outline)),

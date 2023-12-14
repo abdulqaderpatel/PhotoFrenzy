@@ -256,7 +256,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                       const Gap(45),
                                                       Column(
                                                         children: [
-                                                          Text("0",
+                                                          Text(client["followers"].length.toString(),
                                                               style: TextStyle(
                                                                   fontSize: 19,
                                                                   color: isDark(
@@ -277,7 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                       const Gap(45),
                                                       Column(
                                                         children: [
-                                                          Text("0",
+                                                          Text(client["following"].length.toString(),
                                                               style: TextStyle(
                                                                   fontSize: 19,
                                                                   color: isDark(
@@ -565,7 +565,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                   Navigator.push(context,
                                                       MaterialPageRoute(
                                                     builder: (context) {
-                                                      return const CommentsScreen();
+                                                      return CommentsScreen(
+                                                        postId: userController
+                                                            .textposts[index].post_id!,
+                                                        description: userController.textposts[index].text!,
+                                                      );
                                                     },
                                                   ));
                                                 },

@@ -89,8 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ? const Center(child: CircularProgressIndicator())
         : Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            appBar: AppBar(elevation: 0,
+              backgroundColor: Colors.transparent,
               automaticallyImplyLeading: false,
             ),
             endDrawer: Drawer(
