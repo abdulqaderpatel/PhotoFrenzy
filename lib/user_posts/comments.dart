@@ -138,7 +138,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                               final clientWidget = Column(
                                 children: [
                                   ListTile(
-                                    leading: client["profile_picture"] == null
+                                    leading: client["profile_picture"] == ""
                                         ? const CircleAvatar(
                                             backgroundImage: AssetImage(
                                                 "assets/images/profile_picture.png"))

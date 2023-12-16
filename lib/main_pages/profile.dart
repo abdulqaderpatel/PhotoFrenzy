@@ -3,9 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 
-
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import 'package:photofrenzy/models/text_post.dart';
 
@@ -393,229 +393,264 @@ class _ProfileScreenState extends State<ProfileScreen>
                         () => SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              // Build your text posts here
-                              // ...
-                              return Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.grey, width: 0.8),
-                                            borderRadius:
-                                                BorderRadius.circular(80)),
-                                        child: userController.textposts[index]
-                                                    .creator_profile_picture ==
-                                                ""
-                                            ? const CircleAvatar(
-                                                radius: 23,
-                                                backgroundColor: Colors.white,
-                                                backgroundImage: AssetImage(
-                                                  "assets/images/profile_picture.png",
+                              DateTime dateTime =
+                                  DateTime.fromMillisecondsSinceEpoch(int.parse(
+                                      userController
+                                          .textposts[index].post_id!));
+
+                              // Get current DateTime
+                              DateTime now = DateTime.now();
+
+                              String formattedTime = '';
+
+                              // Check if the date is today
+                              if (dateTime.year == now.year &&
+                                  dateTime.month == now.month &&
+                                  dateTime.day == now.day) {
+                                formattedTime = 'Today';
+                              } else {
+                                // Format the date
+                                formattedTime =
+                                    DateFormat('MMM d').format(dateTime);
+                              }
+
+                              // Format time (e.g., 3pm)
+                              formattedTime +=
+                                  ', ' + DateFormat.jm().format(dateTime);
+
+                              return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                child: Column(
+                                  children: [
+                                    Gap(10),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey,
+                                                  width: 0.8),
+                                              borderRadius:
+                                                  BorderRadius.circular(80)),
+                                          child: userController.textposts[index]
+                                                      .creator_profile_picture ==
+                                                  ""
+                                              ? const CircleAvatar(
+                                                  radius: 23,
+                                                  backgroundColor: Colors.white,
+                                                  backgroundImage: AssetImage(
+                                                    "assets/images/profile_picture.png",
+                                                  ),
+                                                )
+                                              : CircleAvatar(
+                                                  radius: 23,
+                                                  backgroundColor: Colors.white,
+                                                  backgroundImage: NetworkImage(
+                                                    userController
+                                                        .textposts[index]
+                                                        .creator_profile_picture!,
+                                                  ),
                                                 ),
-                                              )
-                                            : CircleAvatar(
-                                                radius: 23,
-                                                backgroundColor: Colors.white,
-                                                backgroundImage: NetworkImage(
-                                                  userController
-                                                      .textposts[index]
-                                                      .creator_profile_picture!,
-                                                ),
+                                        ),
+                                        SizedBox(
+                                          width: Get.width * 0.04,
+                                        ),
+                                        Flexible(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    userController
+                                                        .textposts[index]
+                                                        .creator_name!,
+                                                    style: TextStyle(
+                                                        fontSize: 19,fontWeight: FontWeight.w800,
+                                                        color: isDark(context)
+                                                            ? Colors.white
+                                                            : Colors.black),
+                                                  ),
+                                                  Text(
+                                                    "@${userController.textposts[index].creator_username}",
+                                                    style: TextStyle(
+                                                        fontSize: 17,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ],
                                               ),
-                                      ),
-                                      SizedBox(
-                                        width: Get.width * 0.04,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            userController
-                                                .textposts[index].creator_name!,
-                                            style: TextStyle(
-                                                fontSize: 19,
-                                                color: isDark(context)
-                                                    ? Colors.white
-                                                    : Colors.black),
+                                              Text(formattedTime)
+                                            ],
                                           ),
-                                          Text(
-                                            "@${userController.textposts[index].creator_username}",
-                                            style: TextStyle(
-                                                fontSize: 17,
-                                                color: isDark(context)
-                                                    ? Colors.white
-                                                    : Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: Get.width * 0.17),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                    userController
+                                                        .textposts[index].text!,
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: isDark(context)
+                                                            ? Colors.white
+                                                            : Colors.black,fontWeight: FontWeight.w500)),
+                                              ),
+                                            ],
                                           ),
                                           const SizedBox(
-                                            height: 15,
+                                            height: 10,
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: Get.height * 0.01,
-                                  ),
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(left: Get.width * 0.17),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                userController
-                                                    .textposts[index].text!,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          children: [
-                                            InkWell(
-                                                onTap: () async {
-                                                  if (!userController
-                                                      .textposts[index].likers
-                                                      .contains(FirebaseAuth
-                                                          .instance
-                                                          .currentUser!
-                                                          .uid)) {
-                                                    await FirebaseTable()
-                                                        .postsTable
-                                                        .doc(userController
-                                                            .textposts[index]
-                                                            .post_id)
-                                                        .update({
-                                                      "likes":
-                                                          FieldValue.increment(
-                                                              1),
-                                                      "likers": FieldValue
-                                                          .arrayUnion([
-                                                        FirebaseAuth.instance
-                                                            .currentUser!.uid
-                                                      ])
-                                                    });
-                                                    setState(() {
-                                                      userController
-                                                          .textposts[index]
-                                                          .likes++;
-                                                      userController
-                                                          .textposts[index]
-                                                          .likers
-                                                          .add(FirebaseAuth
-                                                              .instance
-                                                              .currentUser!
-                                                              .uid);
-                                                    });
-                                                  } else {
-                                                    await FirebaseTable()
-                                                        .postsTable
-                                                        .doc(userController
-                                                            .textposts[index]
-                                                            .post_id)
-                                                        .update({
-                                                      "likes":
-                                                          FieldValue.increment(
-                                                              -1),
-                                                      "likers": FieldValue
-                                                          .arrayRemove([
-                                                        FirebaseAuth.instance
-                                                            .currentUser!.uid
-                                                      ])
-                                                    });
-                                                    setState(() {
-                                                      userController
-                                                          .textposts[index]
-                                                          .likes--;
-                                                      userController
-                                                          .textposts[index]
-                                                          .likers
-                                                          .remove(FirebaseAuth
-                                                              .instance
-                                                              .currentUser!
-                                                              .uid);
-                                                    });
-                                                  }
-                                                },
-                                                child: Icon(userController
+                                          Row(
+                                            children: [
+                                              InkWell(
+                                                  onTap: () async {
+                                                    if (!userController
                                                         .textposts[index].likers
                                                         .contains(FirebaseAuth
                                                             .instance
                                                             .currentUser!
-                                                            .uid)
-                                                    ? Icons.favorite
-                                                    : Icons.favorite_outline)),
-                                            const SizedBox(
-                                              width: 3,
-                                            ),
-                                            Text(userController
-                                                .textposts[index].likes
-                                                .toString()),
-                                            SizedBox(
-                                              width: Get.width * 0.1,
-                                            ),
-                                            InkWell(
-                                                onTap: () {
-                                                  Navigator.push(context,
-                                                      MaterialPageRoute(
-                                                    builder: (context) {
-                                                      return CommentsScreen(
-                                                        postId: userController
+                                                            .uid)) {
+                                                      await FirebaseTable()
+                                                          .postsTable
+                                                          .doc(userController
+                                                              .textposts[index]
+                                                              .post_id)
+                                                          .update({
+                                                        "likes": FieldValue
+                                                            .increment(1),
+                                                        "likers": FieldValue
+                                                            .arrayUnion([
+                                                          FirebaseAuth.instance
+                                                              .currentUser!.uid
+                                                        ])
+                                                      });
+                                                      setState(() {
+                                                        userController
                                                             .textposts[index]
-                                                            .post_id!,
-                                                        description:
-                                                            userController
-                                                                .textposts[
-                                                                    index]
-                                                                .text!,
-                                                      );
-                                                    },
-                                                  ));
-                                                },
-                                                child: const Icon(
-                                                    Icons.chat_bubble_outline)),
-                                            const SizedBox(
-                                              width: 3,
-                                            ),
-                                            Text(
-                                              userController
-                                                  .textposts[index].comments
-                                                  .toString(),
-                                            ),
-                                            SizedBox(
-                                              width: Get.width * 0.1,
-                                            ),
-                                            const Icon(Icons.replay_outlined),
-                                            const SizedBox(
-                                              width: 3,
-                                            ),
-                                            const Text(
-                                              "0",
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                                            .likes++;
+                                                        userController
+                                                            .textposts[index]
+                                                            .likers
+                                                            .add(FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid);
+                                                      });
+                                                    } else {
+                                                      await FirebaseTable()
+                                                          .postsTable
+                                                          .doc(userController
+                                                              .textposts[index]
+                                                              .post_id)
+                                                          .update({
+                                                        "likes": FieldValue
+                                                            .increment(-1),
+                                                        "likers": FieldValue
+                                                            .arrayRemove([
+                                                          FirebaseAuth.instance
+                                                              .currentUser!.uid
+                                                        ])
+                                                      });
+                                                      setState(() {
+                                                        userController
+                                                            .textposts[index]
+                                                            .likes--;
+                                                        userController
+                                                            .textposts[index]
+                                                            .likers
+                                                            .remove(FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid);
+                                                      });
+                                                    }
+                                                  },
+                                                  child: Icon(userController
+                                                          .textposts[index]
+                                                          .likers
+                                                          .contains(FirebaseAuth
+                                                              .instance
+                                                              .currentUser!
+                                                              .uid)
+                                                      ? Icons.favorite
+                                                      : Icons
+                                                          .favorite_outline)),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              Text(userController
+                                                  .textposts[index].likes
+                                                  .toString()),
+                                              SizedBox(
+                                                width: Get.width * 0.1,
+                                              ),
+                                              InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                      builder: (context) {
+                                                        return CommentsScreen(
+                                                          postId: userController
+                                                              .textposts[index]
+                                                              .post_id!,
+                                                          description:
+                                                              userController
+                                                                  .textposts[
+                                                                      index]
+                                                                  .text!,
+                                                        );
+                                                      },
+                                                    ));
+                                                  },
+                                                  child: const Icon(Icons
+                                                      .chat_bubble_outline)),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              Text(
+                                                userController
+                                                    .textposts[index].comments
+                                                    .toString(),
+                                              ),
+                                              SizedBox(
+                                                width: Get.width * 0.1,
+                                              ),
+                                              const Icon(Icons.replay_outlined),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              const Text(
+                                                "0",
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Divider(
-                                    color: Colors.grey,
-                                  )
-                                ],
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+
+                                    const Divider(
+                                      color: Colors.grey,
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                             childCount: userController.textposts

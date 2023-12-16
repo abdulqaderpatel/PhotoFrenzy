@@ -4,11 +4,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/models/image_post.dart';
 import 'package:photofrenzy/user_posts/comments.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+
+import '../global/theme_mode.dart';
 
 class ImagePostsListScreen extends StatefulWidget {
   final List<ImagePost> images;
@@ -37,6 +40,30 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
             initialScrollIndex: widget.count,
             itemCount: widget.images.length,
             itemBuilder: (context, index) {
+
+              DateTime dateTime =
+              DateTime.fromMillisecondsSinceEpoch(int.parse(
+                  userController
+                      .imageposts[index].post_id!));
+              DateTime now = DateTime.now();
+
+              String formattedTime = '';
+
+              // Check if the date is today
+              if (dateTime.year == now.year &&
+                  dateTime.month == now.month &&
+                  dateTime.day == now.day) {
+                formattedTime = 'Today';
+              } else {
+                // Format the date
+                formattedTime =
+                    DateFormat('MMM d').format(dateTime);
+              }
+
+              // Format time (e.g., 3pm)
+              formattedTime +=
+                  ', ' + DateFormat.jm().format(dateTime);
+
               return Container(
                 margin: const EdgeInsets.only(bottom: 12),
                 child: Column(
@@ -69,27 +96,39 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                         SizedBox(
                           width: Get.width * 0.02,
                         ),
-                        Container(
-                            width: Get.width * 0.79,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.images[index].creator_name!,
-                                  style:
-                                      Theme.of(context).textTheme.displayMedium,
-                                ),
-                                Text(
-                                  "@${widget.images[index].creator_username}",
-                                  style:
-                                      Theme.of(context).textTheme.displaySmall,
-                                ),
-                                const SizedBox(
-                                  height: 15,
-                                ),
-                              ],
-                            )),
+                        Flexible(
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userController
+                                        .imageposts[index]
+                                        .creator_name!,
+                                    style: TextStyle(
+                                        fontSize: 19,fontWeight: FontWeight.w800,
+                                        color: isDark(context)
+                                            ? Colors.white
+                                            : Colors.black),
+                                  ),
+                                  Text(
+                                    "@${userController.imageposts[index].creator_username}",
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        color: Colors.grey),
+                                  ),
+                                ],
+                              ),
+                              Text(formattedTime)
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(
@@ -102,15 +141,19 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                           Row(
                             children: [
                               Text(
-                                widget.images[index].text!,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
+                                  userController
+                                      .imageposts[index].text!,
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      color: isDark(context)
+                                          ? Colors.white
+                                          : Colors.black,fontWeight: FontWeight.w500)),
                             ],
                           ),
                           const SizedBox(
                             height: 10,
                           ),
-                          Container(
+                          Container(width: Get.width,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10)),
                             child: ClipRRect(
