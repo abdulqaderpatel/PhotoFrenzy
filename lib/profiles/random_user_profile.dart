@@ -216,7 +216,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                           const Gap(40),
                                                           Column(
                                                             children: [
-                                                              Text("0",
+                                                              Text(client["followers"].length.toString(),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           19,
@@ -238,7 +238,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                           const Gap(40),
                                                           Column(
                                                             children: [
-                                                              Text("0",
+                                                              Text(client["following"].length.toString(),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           19,
@@ -303,7 +303,8 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                             .update({
                                                                           "following":
                                                                               FieldValue.arrayRemove([
-                                                                            client["id"]
+                                                                            client["id"],
+
                                                                           ])
                                                                         });
                                                                         FirebaseTable()

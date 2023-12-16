@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../global/firebase_tables.dart';
+import '../global/theme_mode.dart';
 import '../profiles/random_user_profile.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -39,14 +40,14 @@ class _SearchScreenState extends State<SearchScreen> {
                       title = value.toString();
                     });
                   },
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(color: Colors.black),
                   controller: searchController,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10)),
                     filled: true,
-                    fillColor: const Color(0xff352D3C),
+                    fillColor: Theme.of(context).cardColor,
                     enabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(
                         width: 1, //<-- SEE HERE
@@ -61,8 +62,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       left: 5,
                     ),
                     errorStyle: const TextStyle(fontSize: 0),
-                    hintStyle: const TextStyle(
-                        color: Colors.grey, fontWeight: FontWeight.w400),
+                    hintStyle:  TextStyle(
+                        color: isDark(context)?Colors.white:Colors.black, fontWeight: FontWeight.w400),
                     hintText: "Search",
                   ),
                 ),
@@ -122,7 +123,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   margin: const EdgeInsets.only(
                                                       bottom: 20),
                                                   color:
-                                                      const Color(0xff0A171F),
+                                                       isDark(context)?Color(0xff1B1212):Color(0xffEDEADE),
                                                   child: ListTile(
                                                     leading:
                                                         client["profile_picture"] ==
@@ -139,19 +140,19 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             "profile_picture"]),
                                                               ),
                                                     title: Text(
-                                                      client["username"],
-                                                      style: const TextStyle(
-                                                          color: Colors.white,
+                                                      client["name"],
+                                                      style: TextStyle(
+                                                          color: isDark(context)?Colors.white:Colors.black,
                                                           fontSize: 20,
                                                           fontWeight:
                                                               FontWeight.w600),
                                                     ),
                                                     subtitle: Text(
-                                                      client["name"],
+                                                      client["username"],
                                                       style: const TextStyle(
                                                           color: Colors.grey,
                                                           fontWeight:
-                                                              FontWeight.w500),
+                                                              FontWeight.w600),
                                                     ),
                                                   )),
                                             ),

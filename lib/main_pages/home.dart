@@ -89,8 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ? const Center(child: CircularProgressIndicator())
         : Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(
-              elevation: 0,
+            appBar: AppBar(elevation: 0,
               backgroundColor: Colors.transparent,
               automaticallyImplyLeading: false,
             ),
@@ -112,11 +111,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Expanded(
-                    child: Obx(
-                      () => ListView.builder(
-                          itemCount: userController.chattingUsers.length,
-                          itemBuilder: (context, index) {
-                            return InkWell(
+                    child:Obx(()=>ListView.builder(
+                        itemCount: userController.chattingUsers.length,
+                        itemBuilder: (context, index) {
+                          return InkWell(
                               onTap: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
@@ -149,7 +147,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             "assets/images/profile_picture.png"),
                                       ),
                                 title: Text(
-                                  "hello",
+                                  userController.chattingUsers[index].name,
                                   style: TextStyle(
                                       color: isDark(context)
                                           ? Colors.white
@@ -158,15 +156,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontWeight: FontWeight.w600),
                                 ),
                                 subtitle: Text(
-                                  userController.chattingUsers[index].name,
+                                  "@${userController.chattingUsers[index].username}",
                                   style: const TextStyle(
                                       color: Colors.grey,
                                       fontWeight: FontWeight.w500),
                                 ),
                               ),
-                            );
-                          }),
-                    ),
+
+                          );
+                        }),),
                   ),
                   // Add more ListTile widgets as needed
                 ],
@@ -178,7 +176,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: Get.height,
+                      height: Get.height*0.85,
                       child: PageView.builder(
                           itemCount: items.length,
                           itemBuilder: (context, index) {
@@ -360,7 +358,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           ],
                                                         ),
                                                         Text(
-                                                          "\$ ${items[index]["entry_fee"]}",
+                                                          "\$${items[index]["entry_fee"]}",
                                                           style: const TextStyle(
                                                               color:
                                                                   Colors.white,
@@ -460,9 +458,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     Container(
                                                       padding:
                                                           const EdgeInsets.all(
-                                                              10),
+                                                              5),
                                                       decoration: BoxDecoration(
-                                                          color: Colors.purple,
+                                                          color: Colors.white,
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(
@@ -470,12 +468,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       width: 200,
                                                       child: Center(
                                                         child: Text(
-                                                          "\$ ${items[index]["prize_money"]}"
+                                                          "\$${items[index]["prize_money"]}"
                                                               .toString(),
                                                           style: const TextStyle(
                                                               fontSize: 24,
                                                               color:
-                                                                  Colors.white,
+                                                                  Colors.black,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .w800),
