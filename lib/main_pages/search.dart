@@ -127,7 +127,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                     leading:
                                                         client["profile_picture"] ==
                                                                 ""
-                                                            ? CircleAvatar(
+                                                            ? const CircleAvatar(
                                                                 backgroundImage:
                                                                     AssetImage(
                                                                         "assets/images/profile_picture.png"),

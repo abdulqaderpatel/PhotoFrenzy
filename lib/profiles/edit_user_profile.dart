@@ -33,7 +33,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
 
   final phoneNumberController = TextEditingController();
 
-  UserController userController=Get.put(UserController());
+  UserController userController = Get.put(UserController());
 
   FirebaseStorage storage = FirebaseStorage.instance;
 
@@ -112,6 +112,9 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Edit Profile"),
+      ),
       bottomNavigationBar: Container(
           margin: const EdgeInsets.only(
             bottom: 15,
@@ -123,14 +126,18 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8))),
-            child:buttonLoader?const CircularProgressIndicator(color: Colors.grey,): Text(
-              "Edit Profile",
-              style: GoogleFonts.roboto(
-                  letterSpacing: 0,
-                  color:Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 20),
-            ),
+            child: buttonLoader
+                ? const CircularProgressIndicator(
+                    color: Colors.grey,
+                  )
+                : Text(
+                    "Edit Profile",
+                    style: GoogleFonts.roboto(
+                        letterSpacing: 0,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 20),
+                  ),
             onPressed: () async {
               setState(() {
                 buttonLoader = true;
@@ -150,14 +157,12 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                 setState(() {
                   buttonLoader = false;
                 });
-              }
-              else if (bioController.text.isEmpty) {
+              } else if (bioController.text.isEmpty) {
                 showToast(message: "Your info cannot be empty", error: true);
                 setState(() {
                   buttonLoader = false;
                 });
-              }
-              else if (!RegExp(r'^[a-zA-Z0-9]+$')
+              } else if (!RegExp(r'^[a-zA-Z0-9]+$')
                   .hasMatch(nameController.text)) {
                 showToast(message: "Please enter a valid name", error: true);
                 setState(() {
@@ -199,29 +204,46 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
 
                   WriteBatch batch = FirebaseFirestore.instance.batch();
 
-                  QuerySnapshot postsQuery = await FirebaseTable().postsTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                  QuerySnapshot postsQuery = await FirebaseTable()
+                      .postsTable
+                      .where('creator_id',
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .get();
                   for (QueryDocumentSnapshot postDoc in postsQuery.docs) {
-                    DocumentReference postDocRef = FirebaseTable().postsTable.doc(postDoc.id);
-                    batch.update(postDocRef, {'creator_username':usernameController.text,
-                      'creator_name':nameController.text});
+                    DocumentReference postDocRef =
+                        FirebaseTable().postsTable.doc(postDoc.id);
+                    batch.update(postDocRef, {
+                      'creator_username': usernameController.text,
+                      'creator_name': nameController.text
+                    });
                   }
 
-                  QuerySnapshot commentsQuery = await FirebaseTable().commentsTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                  QuerySnapshot commentsQuery = await FirebaseTable()
+                      .commentsTable
+                      .where('creator_id',
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .get();
                   for (QueryDocumentSnapshot postDoc in commentsQuery.docs) {
-                    DocumentReference postDocRef = FirebaseTable().commentsTable.doc(postDoc.id);
-                    batch.update(postDocRef, {'username':usernameController.text,
-                      'name':nameController.text,
-                     });
+                    DocumentReference postDocRef =
+                        FirebaseTable().commentsTable.doc(postDoc.id);
+                    batch.update(postDocRef, {
+                      'username': usernameController.text,
+                      'name': nameController.text,
+                    });
                   }
 
-
-                  QuerySnapshot repliesQuery = await FirebaseTable().repliesTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                  QuerySnapshot repliesQuery = await FirebaseTable()
+                      .repliesTable
+                      .where('creator_id',
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .get();
                   for (QueryDocumentSnapshot postDoc in repliesQuery.docs) {
-                    DocumentReference postDocRef = FirebaseTable().repliesTable.doc(postDoc.id);
-                    batch.update(postDocRef, {'username':usernameController.text,
-                      'name':nameController.text,
-                      });
-
+                    DocumentReference postDocRef =
+                        FirebaseTable().repliesTable.doc(postDoc.id);
+                    batch.update(postDocRef, {
+                      'username': usernameController.text,
+                      'name': nameController.text,
+                    });
                   }
 
                   await batch.commit();
@@ -229,11 +251,11 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                   userController.textposts.clear();
                   userController.imageposts.clear();
 
-
                   List<Map<String, dynamic>> temp = [];
                   var data = await FirebaseTable()
                       .postsTable
-                      .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .where("creator_id",
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                       .where("type", isEqualTo: "text")
                       .get();
 
@@ -258,7 +280,8 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
 
                   data = await FirebaseTable()
                       .postsTable
-                      .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                      .where("creator_id",
+                          isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                       .where("type", isEqualTo: "image")
                       .get();
 
@@ -278,9 +301,6 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                           element.data()["comments"]));
                     });
                   }
-
-
-
 
                   showToast(message: "Profile updated successfully");
                   setState(() {
@@ -308,40 +328,60 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
 
                     WriteBatch batch = FirebaseFirestore.instance.batch();
 
-                    QuerySnapshot postsQuery = await FirebaseTable().postsTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                    QuerySnapshot postsQuery = await FirebaseTable()
+                        .postsTable
+                        .where('creator_id',
+                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .get();
                     for (QueryDocumentSnapshot postDoc in postsQuery.docs) {
-                      DocumentReference postDocRef = FirebaseTable().postsTable.doc(postDoc.id);
-                      batch.update(postDocRef, {'creator_username':usernameController.text,
-                        'creator_name':nameController.text,
-                      'creator_profile_picture':newUrl.toString()});
+                      DocumentReference postDocRef =
+                          FirebaseTable().postsTable.doc(postDoc.id);
+                      batch.update(postDocRef, {
+                        'creator_username': usernameController.text,
+                        'creator_name': nameController.text,
+                        'creator_profile_picture': newUrl.toString()
+                      });
                     }
 
-                    QuerySnapshot commentsQuery = await FirebaseTable().commentsTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                    QuerySnapshot commentsQuery = await FirebaseTable()
+                        .commentsTable
+                        .where('creator_id',
+                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .get();
                     for (QueryDocumentSnapshot postDoc in commentsQuery.docs) {
-                      DocumentReference postDocRef = FirebaseTable().commentsTable.doc(postDoc.id);
-                      batch.update(postDocRef, {'username':usernameController.text,
-                        'name':nameController.text,
-                        'profile_picture':newUrl.toString()});
+                      DocumentReference postDocRef =
+                          FirebaseTable().commentsTable.doc(postDoc.id);
+                      batch.update(postDocRef, {
+                        'username': usernameController.text,
+                        'name': nameController.text,
+                        'profile_picture': newUrl.toString()
+                      });
                     }
 
-
-                    QuerySnapshot repliesQuery = await FirebaseTable().repliesTable.where('creator_id', isEqualTo:FirebaseAuth.instance.currentUser!.uid).get();
+                    QuerySnapshot repliesQuery = await FirebaseTable()
+                        .repliesTable
+                        .where('creator_id',
+                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .get();
                     for (QueryDocumentSnapshot postDoc in repliesQuery.docs) {
-                      DocumentReference postDocRef = FirebaseTable().repliesTable.doc(postDoc.id);
-                      batch.update(postDocRef, {'username':usernameController.text,
-                        'name':nameController.text,
-                        'profile_picture':newUrl.toString()});
+                      DocumentReference postDocRef =
+                          FirebaseTable().repliesTable.doc(postDoc.id);
+                      batch.update(postDocRef, {
+                        'username': usernameController.text,
+                        'name': nameController.text,
+                        'profile_picture': newUrl.toString()
+                      });
                     }
                     await batch.commit();
 
                     userController.textposts.clear();
                     userController.imageposts.clear();
 
-
                     List<Map<String, dynamic>> temp = [];
                     var data = await FirebaseTable()
                         .postsTable
-                        .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .where("creator_id",
+                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                         .where("type", isEqualTo: "text")
                         .get();
 
@@ -366,7 +406,8 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
 
                     data = await FirebaseTable()
                         .postsTable
-                        .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+                        .where("creator_id",
+                            isEqualTo: FirebaseAuth.instance.currentUser!.uid)
                         .where("type", isEqualTo: "image")
                         .get();
 
@@ -411,14 +452,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                       children: [
                         Column(
                           children: [
-                            Text(
-                              "Edit Profile",
-                              style: TextStyle(
-                                  color:isDark(context) ? Colors.white : Colors.black,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 25),
-                            ),
-                            Gap(Get.height * 0.015),
+
                             InkWell(
                               onTap: () {
                                 getImageGallery();

@@ -1,8 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:gap/gap.dart';
-import 'package:get/get.dart';
+
 import 'package:photofrenzy/global/firebase_tables.dart';
 
 class RepliesScreen extends StatefulWidget {
@@ -60,8 +59,11 @@ class _RepliesScreenState extends State<RepliesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("Replies"),
+      ),
       bottomNavigationBar: Container(
-        margin: EdgeInsets.only(left: 10, right: 10, bottom: 7),
+        margin: const EdgeInsets.only(left: 10, right: 10, bottom: 7),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -79,7 +81,7 @@ class _RepliesScreenState extends State<RepliesScreen> {
                   int time = DateTime.now().millisecondsSinceEpoch;
                   await FirebaseTable().repliesTable.doc(time.toString()).set({
                     "id": time.toString(),
-                    "creator_id":FirebaseAuth.instance.currentUser!.uid,
+                    "creator_id": FirebaseAuth.instance.currentUser!.uid,
                     "postId": widget.postId,
                     "commentId": widget.commentId,
                     "name": userinfo[0]["name"],
@@ -89,11 +91,13 @@ class _RepliesScreenState extends State<RepliesScreen> {
                     "likes": 0,
                     "likers": [],
                   });
+
                   replyController.text = "";
                   FocusManager.instance.primaryFocus?.unfocus();
-                  await FirebaseTable().commentsTable.doc(widget.commentId).update(
-                      {"replies":FieldValue.increment(1)});
-
+                  await FirebaseTable()
+                      .commentsTable
+                      .doc(widget.commentId)
+                      .update({"replies": FieldValue.increment(1)});
                 },
                 child: const Icon(Icons.send)),
           ],
@@ -101,121 +105,119 @@ class _RepliesScreenState extends State<RepliesScreen> {
       ),
       resizeToAvoidBottomInset: false,
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : SafeArea(
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    Container(
-                      child: StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseTable()
-                              .repliesTable
-                              .where("postId", isEqualTo: widget.postId).where("commentId",isEqualTo: widget.commentId)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            List<Column> clientWidgets = [];
-                            if (snapshot.hasData) {
-                              final clients = snapshot.data?.docs;
-                              for (var client in clients!) {
-                                final clientWidget = Column(
-                                  children: [
-                                    ListTile(
-                                      leading: client["profile_picture"] == null
-                                          ? const CircleAvatar(
-                                              backgroundImage: AssetImage(
-                                                  "assets/images/profile_picture.png"))
-                                          : CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  client["profile_picture"])),
-                                      title: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "${client["username"]}",
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .displayMedium,
-                                            ),
-                                            SizedBox(
-                                              height: 5,
-                                            ),
-                                            Text(
-                                              client["message"],
-                                              style: TextStyle(),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      trailing: Column(
+                    StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseTable()
+                            .repliesTable
+                            .where("postId", isEqualTo: widget.postId)
+                            .where("commentId", isEqualTo: widget.commentId)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          List<Column> clientWidgets = [];
+                          if (snapshot.hasData) {
+                            final clients = snapshot.data?.docs;
+                            for (var client in clients!) {
+                              final clientWidget = Column(
+                                children: [
+                                  ListTile(
+                                    leading: client["profile_picture"] == ""
+                                        ? const CircleAvatar(
+                                            backgroundImage: AssetImage(
+                                                "assets/images/profile_picture.png"))
+                                        : CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                client["profile_picture"])),
+                                    title: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          InkWell(
-                                              onTap: () async {
-                                                if (!client["likers"].contains(
-                                                    FirebaseAuth.instance
-                                                        .currentUser!.uid)) {
-                                                  await FirebaseTable()
-                                                      .repliesTable
-                                                      .doc(client["id"])
-                                                      .update({
-                                                    "likes":
-                                                        FieldValue.increment(1),
-                                                    "likers":
-                                                        FieldValue.arrayUnion([
-                                                      FirebaseAuth.instance
-                                                          .currentUser!.uid
-                                                    ])
-                                                  });
-                                                } else {
-                                                  await FirebaseTable()
-                                                      .repliesTable
-                                                      .doc(client["id"])
-                                                      .update({
-                                                    "likes":
-                                                        FieldValue.increment(
-                                                            -1),
-                                                    "likers":
-                                                        FieldValue.arrayRemove([
-                                                      FirebaseAuth.instance
-                                                          .currentUser!.uid
-                                                    ])
-                                                  });
-                                                }
-                                              },
-                                              child: Icon(client["likers"]
-                                                      .contains(FirebaseAuth
-                                                          .instance
-                                                          .currentUser!
-                                                          .uid)
-                                                  ? Icons.favorite
-                                                  : Icons.favorite_outline)),
-                                          Text(client["likers"]
-                                              .length
-                                              .toString()),
+                                          Text("${client["username"]}",
+                                              style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight:
+                                                      FontWeight.w800)),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            client["message"],
+                                            style:
+                                                const TextStyle(color: Colors.grey),
+                                          ),
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: 5,
+                                    trailing: Column(
+                                      children: [
+                                        InkWell(
+                                            onTap: () async {
+                                              if (!client["likers"].contains(
+                                                  FirebaseAuth.instance
+                                                      .currentUser!.uid)) {
+                                                await FirebaseTable()
+                                                    .repliesTable
+                                                    .doc(client["id"])
+                                                    .update({
+                                                  "likes":
+                                                      FieldValue.increment(1),
+                                                  "likers":
+                                                      FieldValue.arrayUnion([
+                                                    FirebaseAuth.instance
+                                                        .currentUser!.uid
+                                                  ])
+                                                });
+                                              } else {
+                                                await FirebaseTable()
+                                                    .repliesTable
+                                                    .doc(client["id"])
+                                                    .update({
+                                                  "likes":
+                                                      FieldValue.increment(
+                                                          -1),
+                                                  "likers":
+                                                      FieldValue.arrayRemove([
+                                                    FirebaseAuth.instance
+                                                        .currentUser!.uid
+                                                  ])
+                                                });
+                                              }
+                                            },
+                                            child: Icon(client["likers"]
+                                                    .contains(FirebaseAuth
+                                                        .instance
+                                                        .currentUser!
+                                                        .uid)
+                                                ? Icons.favorite
+                                                : Icons.favorite_outline)),
+                                        Text(client["likers"]
+                                            .length
+                                            .toString()),
+                                      ],
                                     ),
-
-                                    SizedBox(
-                                      height: 8,
-                                    )
-                                  ],
-                                );
-                                clientWidgets.add(clientWidget);
-                              }
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  )
+                                ],
+                              );
+                              clientWidgets.add(clientWidget);
                             }
-                            return Column(
-                              children: clientWidgets,
-                            );
-                          }),
-                    ),
+                          }
+                          return Column(
+                            children: clientWidgets,
+                          );
+                        }),
                   ],
                 ),
               ),

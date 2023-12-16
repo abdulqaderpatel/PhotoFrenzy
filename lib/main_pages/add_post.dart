@@ -1,18 +1,15 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
-
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/models/image_post.dart';
 import 'package:photofrenzy/models/text_post.dart';
-
 import '../global/firebase_tables.dart';
 
 class AddPostScreen extends StatefulWidget {
@@ -166,7 +163,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8))),
                 child: buttonLoading
-                    ? CircularProgressIndicator()
+                    ? const CircularProgressIndicator()
                     : Text(
                         "Create Post",
                         style: GoogleFonts.lato(

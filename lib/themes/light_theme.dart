@@ -13,7 +13,7 @@ ThemeData lightTheme = ThemeData(
   scaffoldBackgroundColor: Colors.white,
   cardColor: Color(0xffD7EAF1),
   dividerColor: Colors.grey[600],
-  appBarTheme: AppBarTheme(backgroundColor: Color(0xff15202B)),
+  appBarTheme: AppBarTheme(backgroundColor: Colors.white),
   iconTheme: const IconThemeData(color: Colors.black),
   textTheme: const TextTheme(
     displayLarge: TextStyle(

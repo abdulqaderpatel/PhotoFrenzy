@@ -89,7 +89,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ? const Center(child: CircularProgressIndicator())
         : Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(elevation: 0,
+            appBar: AppBar(
+              elevation: 0,
               backgroundColor: Colors.transparent,
               automaticallyImplyLeading: false,
             ),
@@ -111,10 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Expanded(
-                    child:Obx(()=>ListView.builder(
-                        itemCount: userController.chattingUsers.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
+                    child: Obx(
+                      () => ListView.builder(
+                          itemCount: userController.chattingUsers.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
                               onTap: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
@@ -162,9 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontWeight: FontWeight.w500),
                                 ),
                               ),
-
-                          );
-                        }),),
+                            );
+                          }),
+                    ),
                   ),
                   // Add more ListTile widgets as needed
                 ],

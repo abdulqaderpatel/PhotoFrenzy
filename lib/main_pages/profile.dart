@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 import 'package:flutter/material.dart';
+
+
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:photofrenzy/models/text_post.dart';
 
 import '../authentication/login.dart';
@@ -256,7 +256,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                       const Gap(45),
                                                       Column(
                                                         children: [
-                                                          Text(client["followers"].length.toString(),
+                                                          Text(
+                                                              client["followers"]
+                                                                  .length
+                                                                  .toString(),
                                                               style: TextStyle(
                                                                   fontSize: 19,
                                                                   color: isDark(
@@ -277,7 +280,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                       const Gap(45),
                                                       Column(
                                                         children: [
-                                                          Text(client["following"].length.toString(),
+                                                          Text(
+                                                              client["following"]
+                                                                  .length
+                                                                  .toString(),
                                                               style: TextStyle(
                                                                   fontSize: 19,
                                                                   color: isDark(
@@ -363,11 +369,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                     delegate: _SliverAppBarDelegate(
                       TabBar(
                         controller: _tabController,
-                        tabs: [
-                          const Tab(
+                        tabs: const [
+                          Tab(
                             icon: Icon(Icons.text_fields),
                           ),
-                          const Tab(
+                          Tab(
                             icon: Icon(Icons.image),
                           )
                         ],
@@ -567,8 +573,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                     builder: (context) {
                                                       return CommentsScreen(
                                                         postId: userController
-                                                            .textposts[index].post_id!,
-                                                        description: userController.textposts[index].text!,
+                                                            .textposts[index]
+                                                            .post_id!,
+                                                        description:
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .text!,
                                                       );
                                                     },
                                                   ));
@@ -578,8 +589,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             const SizedBox(
                                               width: 3,
                                             ),
-                                             Text(
-                                              userController.textposts[index].comments.toString(),
+                                            Text(
+                                              userController
+                                                  .textposts[index].comments
+                                                  .toString(),
                                             ),
                                             SizedBox(
                                               width: Get.width * 0.1,

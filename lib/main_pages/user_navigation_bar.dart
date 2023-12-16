@@ -1,22 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:photofrenzy/global/theme_mode.dart';
 import 'package:photofrenzy/main_pages/add_post.dart';
-import 'package:photofrenzy/main_pages/messages.dart';
+import 'package:photofrenzy/main_pages/marketplace.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/main_pages/search.dart';
 
 import 'home.dart';
 
 class UserNavigationBar extends StatefulWidget {
+  const UserNavigationBar({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<UserNavigationBar> {
-  int _currentIndex = 0;
+
 
   final controller = PersistentTabController(initialIndex: 0);
 
@@ -24,9 +25,9 @@ class _MyHomePageState extends State<UserNavigationBar> {
   List<Widget> _buildScreen() {
     return [
       const HomeScreen(),
-      SearchScreen(),
+      const SearchScreen(),
       const AddPostScreen(),
-      const MessagesScreen(),
+      const MarketPlaceScreen(),
       ProfileScreen(
         id: FirebaseAuth.instance.currentUser!.uid,
       ),
@@ -61,17 +62,17 @@ class _MyHomePageState extends State<UserNavigationBar> {
           color: isDark(context) == true ? Colors.white : Colors.black,
         ),
         inactiveIcon: const Icon(
-          Icons.add,
+          Icons.add_outlined,
           color: Colors.grey,
         ),
       ),
       PersistentBottomNavBarItem(
         icon: Icon(
-          Icons.chat,
+          Icons.shop,
           color: isDark(context) == true ? Colors.white : Colors.black,
         ),
         inactiveIcon: const Icon(
-          Icons.chat,
+          Icons.shop_outlined,
           color: Colors.grey,
         ),
       ),

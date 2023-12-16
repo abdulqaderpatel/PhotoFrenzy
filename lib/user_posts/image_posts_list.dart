@@ -26,7 +26,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar: AppBar(title: const Text("Your Posts"),),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
           child: Container(
