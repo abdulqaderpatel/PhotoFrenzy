@@ -525,6 +525,18 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                             .instance
                                                             .currentUser!
                                                             .uid)) {
+                                                      setState(() {
+                                                        userController
+                                                            .textposts[index]
+                                                            .likes++;
+                                                        userController
+                                                            .textposts[index]
+                                                            .likers
+                                                            .add(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid);
+                                                      });
                                                       await FirebaseTable()
                                                           .postsTable
                                                           .doc(userController
@@ -539,19 +551,20 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                               .currentUser!.uid
                                                         ])
                                                       });
+
+                                                    } else {
                                                       setState(() {
                                                         userController
                                                             .textposts[index]
-                                                            .likes++;
+                                                            .likes--;
                                                         userController
                                                             .textposts[index]
                                                             .likers
-                                                            .add(FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid);
+                                                            .remove(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid);
                                                       });
-                                                    } else {
                                                       await FirebaseTable()
                                                           .postsTable
                                                           .doc(userController
@@ -566,18 +579,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                               .currentUser!.uid
                                                         ])
                                                       });
-                                                      setState(() {
-                                                        userController
-                                                            .textposts[index]
-                                                            .likes--;
-                                                        userController
-                                                            .textposts[index]
-                                                            .likers
-                                                            .remove(FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid);
-                                                      });
+
                                                     }
                                                   },
                                                   child: Icon(userController
@@ -622,10 +624,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               const SizedBox(
                                                 width: 3,
                                               ),
-                                              Text(
+                                              Obx(()=>Text(
                                                 userController
                                                     .textposts[index].comments
-                                                    .toString(),
+                                                    .toString(),),
                                               ),
                                               SizedBox(
                                                 width: Get.width * 0.1,

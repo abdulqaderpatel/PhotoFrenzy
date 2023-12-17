@@ -458,8 +458,8 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                                 getImageGallery();
                               },
                               child: Container(
-                                width: 80,
-                                height: 80,
+                                width: 100,
+                                height: 100,
                                 padding: const EdgeInsets.all(2),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(70),
@@ -491,7 +491,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                           ],
                         ),
                         const SizedBox(
-                          height: 40,
+                          height: 20,
                         ),
                         TextField(
                           controller: nameController,

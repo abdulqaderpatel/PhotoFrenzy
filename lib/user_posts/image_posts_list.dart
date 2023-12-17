@@ -175,6 +175,12 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                 onTap: () async {
                                   if (!widget.images[index].likers.contains(
                                       FirebaseAuth.instance.currentUser!.uid)) {
+                                    setState(() {
+                                      widget.images[index].likes++;
+                                      widget.images[index].likers.add(
+                                          FirebaseAuth
+                                              .instance.currentUser!.uid);
+                                    });
                                     await FirebaseTable()
                                         .postsTable
                                         .doc(widget.images[index].post_id)
@@ -184,13 +190,14 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                         FirebaseAuth.instance.currentUser!.uid
                                       ])
                                     });
+
+                                  } else {
                                     setState(() {
-                                      widget.images[index].likes++;
-                                      widget.images[index].likers.add(
+                                      widget.images[index].likes--;
+                                      widget.images[index].likers.remove(
                                           FirebaseAuth
                                               .instance.currentUser!.uid);
                                     });
-                                  } else {
                                     await FirebaseTable()
                                         .postsTable
                                         .doc(widget.images[index].post_id)
@@ -200,12 +207,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                         FirebaseAuth.instance.currentUser!.uid
                                       ])
                                     });
-                                    setState(() {
-                                      widget.images[index].likes--;
-                                      widget.images[index].likers.remove(
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid);
-                                    });
+
                                   }
                                 },
                                 child: Icon(widget.images[index].likers

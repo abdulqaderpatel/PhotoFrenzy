@@ -48,6 +48,7 @@ dependencies:
   matrix2d:
   intl:
   dotted_border:
+  camera:
 
 
   cupertino_icons: ^1.0.2

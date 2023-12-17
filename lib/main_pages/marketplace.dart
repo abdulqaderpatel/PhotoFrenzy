@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:gap/gap.dart';
 
 import '../Market/details.dart';
 import '../models/shirt_data.dart';
 import '../utilities/show_up_animation.dart';
 
 List<String> optionList = ["ALL", "T-Shirt", "Jacket", "Shoes", "Pants"];
+var current = 0;
 
-class MarketPlaceScreen extends StatelessWidget {
+class MarketPlaceScreen extends StatefulWidget {
   const MarketPlaceScreen({super.key});
+
+  @override
+  State<MarketPlaceScreen> createState() => _MarketPlaceScreenState();
+}
+
+class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
+  var isGrid = false;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +31,7 @@ class MarketPlaceScreen extends StatelessWidget {
                 children: [
                   Expanded(
                       child: Text(
-                    "Order From The Best Of Fashion",
+                    "Get the best photographs",
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold, color: Colors.black),
                   )),
@@ -36,47 +45,26 @@ class MarketPlaceScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(35),
                       border: Border.all(),
                     ),
-                    child: const Icon(Icons.filter_list),
+                    child: isGrid
+                        ? InkWell(
+                            onTap: () {
+                              setState(() {
+                                isGrid = false;
+                              });
+                            },
+                            child: const Icon(Icons.grid_view))
+                        : InkWell(
+                            onTap: () {
+                              setState(() {
+                                isGrid = true;
+                              });
+                            },
+                            child: const Icon(Icons.list)),
                   ),
                 ],
               ),
               const SizedBox(
                 height: 20,
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: SizedBox(
-                    height: 50,
-                    child: Row(
-                      children: [
-                        for (int i = 0; i < optionList.length; i++) ...[
-                          GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              height: 40,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 15),
-                              margin:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              decoration: BoxDecoration(
-                                color: Colors.black, //Colors.transparent,
-                                borderRadius: BorderRadius.circular(35),
-                                border: Border.all(),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(optionList[i],
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyLarge
-                                      ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color:Colors.white
-                                              )),
-                            ),
-                          )
-                        ]
-                      ],
-                    )),
               ),
               const SizedBox(
                 height: 20,
@@ -91,126 +79,190 @@ class MarketPlaceScreen extends StatelessWidget {
                         .titleLarge
                         ?.copyWith(fontWeight: FontWeight.bold),
                   )),
-                  const Icon(Icons.arrow_forward)
+                  InkWell(
+                      onTap: () {
+                        setState(() {
+                          current++;
+                        });
+                      },
+                      child: const Icon(Icons.arrow_forward))
                 ],
               ),
               const SizedBox(
                 height: 20,
               ),
-              Stack(
-                children: [
-                  Transform.rotate(
-                    angle: -0.15,
-                    child: Container(
-                      height: 280,
-                      width: double.infinity,
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: const Color(0xffb7d02a)),
-                    ),
-                  ),
-                  Transform.rotate(
-                    angle: 0.15,
-                    child: Container(
-                      height: 280,
-                      width: double.infinity,
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: const Color(0xffb7d02a)),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => DetailScreen(
-                                data: shirtList[0],
-                              )));
-                    },
-                    child: Container(
-                      height: 280,
-                      padding: const EdgeInsets.all(15),
-                      width: double.infinity,
-                      margin: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.white),
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ShowUpAnimation(
-                                  child: Text(
-                                shirtList[0].title,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                              )),
-                              ShowUpAnimation(
-                                  delay: 200,
-                                  child: SizedBox(
-                                    height: 200,
-                                    width: double.infinity,
-                                    child: Hero(
-                                        tag: "${shirtList[0].id}",
-                                        child:
-                                            Image.asset(shirtList[0].imageUrl)),
-                                  ))
-                            ],
-                          ),
-                          ShowUpAnimation(
-                            delay: 400,
-                            child: Container(
-                              height: 50,
-                              padding:
-                                  const EdgeInsets.only(left: 20, right: 5),
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.black87,
-                                borderRadius: BorderRadius.circular(30),
+              AnimatedSwitcher(duration: Duration(milliseconds: 500),child:
+              isGrid == false
+                  ? Container(
+                      height: 370,
+                      child: PageView.builder(
+                          itemCount: shirtList.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => DetailScreen(
+                                          data: shirtList[current],
+                                        )));
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(15),
+                                margin: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: Colors.white),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(
+                                          shirtList[index].title,
+                                          style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w600),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 200,
+                                      width: double.infinity,
+                                      child: Image.asset(shirtList[0].imageUrl),
+                                    ),
+                                    const Gap(10),
+                                    Container(
+                                      height: 50,
+                                      padding: const EdgeInsets.only(
+                                          left: 20, right: 5),
+                                      width: double.infinity,
+                                      decoration: BoxDecoration(
+                                        color: Colors.black87,
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "\$ 150",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge
+                                                ?.copyWith(
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                          ),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 15, vertical: 10),
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                                color: Colors.white),
+                                            child: Icon(Icons.shopping_cart,color: Colors.black,)
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                            );
+                          }),
+                    )
+                  : Container(
+                    height: 400,
+                    child: GridView.builder(
+                        itemCount: shirtList.length,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                mainAxisSpacing: 20,
+                                mainAxisExtent: 250),
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context)
+                                  .push(MaterialPageRoute(
+                                      builder: (context) => DetailScreen(
+                                            data: shirtList[current],
+                                          )));
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15),
+                              margin: EdgeInsets.all(isGrid ? 10 : 20),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.white,
+                              ),
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "\$ 150",
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                    shirtList[index].title,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                   ),
+                                  SizedBox(
+                                    height: 100,
+                                    width: double.infinity,
+                                    child: Image.asset(
+                                      shirtList[index].imageUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
                                   Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15, vertical: 10),
+                                    height: 50,
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 5),
+                                    width: double.infinity,
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(25),
-                                        color: Colors.white),
-                                    child: Text(
-                                      "View",
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .titleSmall
-                                          ?.copyWith(
-                                              fontWeight: FontWeight.bold),
+                                      color: Colors.black87,
+                                      borderRadius:
+                                          BorderRadius.circular(30),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "\$ 150",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight:
+                                                      FontWeight.bold),
+                                        ),
+                                        Container(
+                                          padding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 15,
+                                                  vertical: 10),
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                      25),
+                                              color: Colors.white),
+                                          child:  Icon(Icons.shopping_cart,color: Colors.black,)
+                                        )
+                                      ],
                                     ),
                                   )
+                                  // Rest of your content
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                          );
+                        }),
+                  ),),
               const SizedBox(
                 height: 20,
               ),
@@ -228,7 +280,6 @@ class MarketPlaceScreen extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
                   ),
-
                 ),
               )
             ],
