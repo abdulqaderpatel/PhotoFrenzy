@@ -7,13 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:intl/intl.dart';
 import 'package:photofrenzy/individual_chat.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
+import 'package:photofrenzy/user_posts/random_image_posts_list.dart';
 
 import '../authentication/login.dart';
 import '../global/firebase_tables.dart';
 import '../global/show_message.dart';
 import '../global/theme_mode.dart';
+import '../models/image_post.dart';
 import '../profiles/edit_user_profile.dart';
 import '../user_posts/comments.dart';
 import '../user_posts/image_posts_list.dart';
@@ -35,13 +38,19 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
   var isLoading = false;
 
   List<Map<String, dynamic>> textPosts = [];
-  List<Map<String, dynamic>> imagePosts = [];
+  List<ImagePost> imagePosts = [];
+  
+  var postsCount=0;
 
   void getPosts() async {
     setState(() {
       isLoading = true;
     });
 
+    await FirebaseTable().postsTable.where("creator_id",isEqualTo: widget.data["id"]).count().get().then(
+          (res) => postsCount=res.count,
+      onError: (e) => print("Error completing: $e"),
+    );
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
         .postsTable
@@ -65,13 +74,23 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
 
     for (var element in data.docs) {
       setState(() {
-        temp.add(element.data());
+        imagePosts.add(ImagePost(
+            element.data()["creator_id"],
+            element.data()["creator_name"],
+            element.data()["creator_profile_picture"],
+            element.data()["creator_username"],
+            element.data()["imageurl"],
+            element.data()["post_id"],
+            element.data()["text"],
+            element.data()["type"],
+            element.data()["likes"],
+            element.data()["likers"],
+            element.data()["comments"]));
       });
     }
-    imagePosts = temp;
 
-    print(textPosts);
-    print(imagePosts);
+
+
 
     setState(() {
       isLoading = false;
@@ -171,19 +190,21 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                   ),
                                                           ),
                                                           const Gap(5),
-                                                          Text(
-                                                            client["name"],
-                                                            style: TextStyle(
-                                                                fontSize: 28,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: isDark(
-                                                                        context)
-                                                                    ? Colors
-                                                                        .white
-                                                                    : Colors
-                                                                        .black),
+                                                          FittedBox(
+                                                            child: Text(
+                                                              client["name"],
+                                                              style: TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: isDark(
+                                                                          context)
+                                                                      ? Colors
+                                                                          .white
+                                                                      : Colors
+                                                                          .black),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -194,7 +215,7 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                         children: [
                                                           Column(
                                                             children: [
-                                                              Text("0",
+                                                              Text(postsCount.toString(),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           19,
@@ -523,147 +544,254 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-                              // Build your text posts here
-                              // ...
-                              return Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: Colors.grey, width: 0.8),
-                                            borderRadius:
-                                                BorderRadius.circular(80)),
-                                        child: textPosts[index][
-                                                    "creator_profile_picture"] ==
-                                                ""
-                                            ? const CircleAvatar(
-                                                radius: 23,
-                                                backgroundColor: Colors.white,
-                                                backgroundImage: AssetImage(
-                                                  "assets/images/profile_picture.png",
-                                                ),
-                                              )
-                                            : CircleAvatar(
-                                                radius: 23,
-                                                backgroundColor: Colors.white,
-                                                backgroundImage: NetworkImage(
-                                                  textPosts[index][
-                                                      "creator_profile_picture"],
-                                                ),
-                                              ),
-                                      ),
-                                      SizedBox(
-                                        width: Get.width * 0.04,
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            textPosts[index]["creator_name"],
-                                            style: TextStyle(
-                                                fontSize: 19,
-                                                color: isDark(context)
-                                                    ? Colors.white
-                                                    : Colors.black),
-                                          ),
-                                          Text(
-                                            "@${textPosts[index]["creator_username"]}",
-                                            style: TextStyle(
-                                                fontSize: 17,
-                                                color: isDark(context)
-                                                    ? Colors.white
-                                                    : Colors.grey),
-                                          ),
-                                          const SizedBox(
-                                            height: 15,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: Get.height * 0.01,
-                                  ),
-                                  Container(
-                                    margin:
-                                        EdgeInsets.only(left: Get.width * 0.17),
-                                    child: Column(
+
+                              DateTime dateTime =
+                              DateTime.fromMillisecondsSinceEpoch(int.parse(
+                                 textPosts[index]["post_id"]));
+
+                              // Get current DateTime
+                              DateTime now = DateTime.now();
+
+                              String formattedTime = '';
+
+                              // Check if the date is today
+                              if (dateTime.year == now.year &&
+                                  dateTime.month == now.month &&
+                                  dateTime.day == now.day) {
+                                formattedTime = 'Today';
+                              } else {
+                                // Format the date
+                                formattedTime =
+                                    DateFormat('MMM d').format(dateTime);
+                              }
+
+                              // Format time (e.g., 3pm)
+                              formattedTime +=
+                                  ', ' + DateFormat.jm().format(dateTime);
+
+                              return Container(
+                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                child: Column(
+                                  children: [
+                                    Gap(10),
+                                    Row(
                                       children: [
-                                        Row(
-                                          children: [
-                                            Flexible(
-                                              child: Text(
-                                                textPosts[index]["text"],
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
+                                        Container(
+                                          decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: Colors.grey,
+                                                  width: 0.8),
+                                              borderRadius:
+                                              BorderRadius.circular(80)),
+                                          child: textPosts[index]
+                                              ["creator_profile_picture"] ==
+                                              ""
+                                              ? const CircleAvatar(
+                                            radius: 23,
+                                            backgroundColor: Colors.white,
+                                            backgroundImage: AssetImage(
+                                              "assets/images/profile_picture.png",
+                                            ),
+                                          )
+                                              : CircleAvatar(
+                                            radius: 23,
+                                            backgroundColor: Colors.white,
+                                            backgroundImage: NetworkImage(
+                                             textPosts[index]
+                                                  ["creator_profile_picture"],
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: Get.width * 0.04,
+                                        ),
+                                        Flexible(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    textPosts[index]
+                                                        ["creator_name"],
+                                                    style: TextStyle(
+                                                        fontSize: 19,fontWeight: FontWeight.w800,
+                                                        color: isDark(context)
+                                                            ? Colors.white
+                                                            : Colors.black),
+                                                  ),
+                                                  Text(
+                                                    "@${textPosts[index]["creator_username"]}",
+                                                    style: TextStyle(
+                                                        fontSize: 17,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ],
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Row(
-                                          children: [
-                                            InkWell(
-                                                onTap: () async {},
-                                                child: Icon(textPosts[index]
-                                                            ["creator_name"] ==
-                                                        "fdsfds"
-                                                    ? Icons.favorite_outline
-                                                    : Icons.favorite)),
-                                            const SizedBox(
-                                              width: 3,
-                                            ),
-                                            const Text("0"),
-                                            SizedBox(
-                                              width: Get.width * 0.1,
-                                            ),
-                                            InkWell(
-                                                onTap: () {
-                                                  // Navigator.push(context,
-                                                  //     MaterialPageRoute(
-                                                  //   builder: (context) {
-                                                  //     return const CommentsScreen();
-                                                  //   },
-                                                  // ));
-                                                },
-                                                child: const Icon(
-                                                    Icons.chat_bubble_outline)),
-                                            const SizedBox(
-                                              width: 3,
-                                            ),
-                                            const Text(
-                                              "0",
-                                            ),
-                                            SizedBox(
-                                              width: Get.width * 0.1,
-                                            ),
-                                            const Icon(Icons.replay_outlined),
-                                            const SizedBox(
-                                              width: 3,
-                                            ),
-                                            const Text(
-                                              "0",
-                                            ),
-                                          ],
+                                              Text(formattedTime)
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
-                                  const Divider(
-                                    color: Colors.grey,
-                                  )
-                                ],
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: Get.width * 0.17),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Flexible(
+                                                child: Text(
+                                                  textPosts[index]["text"],
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        color: isDark(context)
+                                                            ? Colors.white
+                                                            : Colors.black,fontWeight: FontWeight.w500)),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            children: [
+                                              InkWell(
+                                                  onTap: () async {
+                                                    if (!textPosts[index]["likers"]
+                                                        .contains(FirebaseAuth
+                                                        .instance
+                                                        .currentUser!
+                                                        .uid)) {
+                                                      setState(() {
+                                                      textPosts[index]
+                                                            ["likes"]++;
+                                                      textPosts[index]
+                                                            ["likers"]
+                                                            .add(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid);
+                                                      });
+                                                      await FirebaseTable()
+                                                          .postsTable
+                                                          .doc(textPosts[index]
+                                                      ["post_id"])
+                                                          .update({
+                                                        "likes": FieldValue
+                                                            .increment(1),
+                                                        "likers": FieldValue
+                                                            .arrayUnion([
+                                                          FirebaseAuth.instance
+                                                              .currentUser!.uid
+                                                        ])
+                                                      });
+
+                                                    } else {
+                                                      setState(() {
+                                                       textPosts[index]
+                                                            ["likes"]--;
+                                                      textPosts[index]
+                                                            ["likers"]
+                                                            .remove(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid);
+                                                      });
+                                                      await FirebaseTable()
+                                                          .postsTable
+                                                          .doc(textPosts[index]
+                                                          ["post_id"])
+                                                          .update({
+                                                        "likes": FieldValue
+                                                            .increment(-1),
+                                                        "likers": FieldValue
+                                                            .arrayRemove([
+                                                          FirebaseAuth.instance
+                                                              .currentUser!.uid
+                                                        ])
+                                                      });
+
+                                                    }
+                                                  },
+                                                  child: Icon(
+                                                      textPosts[index]
+                                                      ["likers"]
+                                                      .contains(FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid)
+                                                      ? Icons.favorite
+                                                      : Icons
+                                                      .favorite_outline)),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              Text(
+                                                  textPosts[index]["likes"]
+                                                  .toString()),
+                                              SizedBox(
+                                                width: Get.width * 0.1,
+                                              ),
+                                              InkWell(
+                                                  onTap: () {
+                                                    Navigator.push(context,
+                                                        MaterialPageRoute(
+                                                          builder: (context) {
+                                                            return CommentsScreen(
+                                                              postId:
+                                                                  textPosts[index]
+                                                                  ["post_id"],
+                                                              description:
+                                                             textPosts[
+                                                              index]
+                                                                  ["text"],
+                                                            );
+                                                          },
+                                                        ));
+                                                  },
+                                                  child: const Icon(Icons
+                                                      .chat_bubble_outline)),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                             Text(
+                                              textPosts[index]["comments"]
+                                                    .toString(),),
+
+                                              SizedBox(
+                                                width: Get.width * 0.1,
+                                              ),
+                                              const Icon(Icons.replay_outlined),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              const Text(
+                                                "0",
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+
+                                    const Divider(
+                                      color: Colors.grey,
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                             childCount: textPosts
@@ -689,15 +817,16 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                 onTap: () {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                    return ImagePostsListScreen(
-                                        userController.imageposts, index);
+                                        //TODO
+                                    return RandomImagePostsListScreen(
+                                      imagePosts, index);
                                   }));
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.only(
                                       top: 3, bottom: 3, left: 1.5, right: 1.5),
                                   child: Image.network(
-                                    imagePosts[index]["imageurl"],
+                                    imagePosts[index].imageurl!,
                                     // Replace with the path to your image
                                     fit: BoxFit
                                         .fill, // Use BoxFit.fill to force the image to fill the container

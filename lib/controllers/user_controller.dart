@@ -14,6 +14,8 @@ class UserController extends GetxController {
   //for likes,comments,replies
   RxList<int> userLikes = <int>[].obs;
 
+  RxInt userPostCount=0.obs;
+
   void addTextPost(TextPost textPost) {
     textposts.add(textPost);
   }

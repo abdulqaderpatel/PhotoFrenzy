@@ -43,6 +43,11 @@ class _ProfileScreenState extends State<ProfileScreen>
       isLoading = true;
     });
 
+    await FirebaseTable().postsTable.where("creator_id",isEqualTo: FirebaseAuth.instance.currentUser!.uid).count().get().then(
+          (res) => userController.userPostCount.value=res.count,
+      onError: (e) => print("Error completing: $e"),
+    );
+
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
         .postsTable
@@ -235,7 +240,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                     children: [
                                                       Column(
                                                         children: [
-                                                          Text("0",
+                                                          Obx(()=>Text(userController.userPostCount.value.toString(),
                                                               style: TextStyle(
                                                                   fontSize: 19,
                                                                   color: isDark(
@@ -243,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                                       ? Colors
                                                                           .white
                                                                       : Colors
-                                                                          .black)),
+                                                                          .black)),),
                                                           Text(
                                                             "Posts",
                                                             style: Theme.of(

@@ -101,6 +101,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             "likers": [],
                             "comments": 0
                           });
+                          userController.userPostCount.value++;
                           showToast(message: "Post created successfully");
                           userController.textposts.add(TextPost(
                               FirebaseAuth.instance.currentUser!.uid,
@@ -138,7 +139,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               "likers": [],
                               "comments": 0
                             });
-
+                            userController.userPostCount.value++;
                             showToast(message: "Post created successfully");
                             userController.imageposts.add(ImagePost(
                                 FirebaseAuth.instance.currentUser!.uid,

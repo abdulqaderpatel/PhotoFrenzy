@@ -393,9 +393,13 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                     InkWell(
                                       onTap: () async {
                                         if (messageController.text.isNotEmpty) {
+
+                                          var messageText=messageController.text;
+                                          messageController.clear();
                                           var time = DateTime.now()
                                               .millisecondsSinceEpoch
                                               .toString();
+
                                           await chatTable
                                               .doc(widget.combinedId)
                                               .collection("messages")
@@ -407,7 +411,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                             "receiver":
                                                 widget.receiverInfo["id"],
                                             "time": time,
-                                            "message": messageController.text
+                                            "message": messageText
                                           });
 
                                           await FirebaseFirestore.instance
