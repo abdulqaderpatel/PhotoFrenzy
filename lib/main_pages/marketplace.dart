@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:photofrenzy/Market/add_item.dart';
 
 import '../Market/details.dart';
 import '../models/shirt_data.dart';
@@ -21,6 +22,18 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Marketplace"),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return AddItemScreen();
+                }));
+              },
+              icon: Icon(Icons.add))
+        ],
+      ),
       backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
         child: Padding(
@@ -91,197 +104,191 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
               const SizedBox(
                 height: 20,
               ),
-              AnimatedSwitcher(duration: Duration(milliseconds: 500),child:
-              isGrid == false
-                  ? Container(
-                      height: 370,
-                      child: PageView.builder(
-                          itemCount: shirtList.length,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => DetailScreen(
-                                          data: shirtList[current],
-                                        )));
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(15),
-                                margin: const EdgeInsets.all(20),
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: Colors.white),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          shirtList[index].title,
-                                          style: const TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w600),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 200,
-                                      width: double.infinity,
-                                      child: Image.asset(shirtList[0].imageUrl),
-                                    ),
-                                    const Gap(10),
-                                    Container(
-                                      height: 50,
-                                      padding: const EdgeInsets.only(
-                                          left: 20, right: 5),
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        color: Colors.black87,
-                                        borderRadius: BorderRadius.circular(30),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "\$ 150",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge
-                                                ?.copyWith(
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 15, vertical: 10),
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(25),
-                                                color: Colors.white),
-                                            child: Icon(Icons.shopping_cart,color: Colors.black,)
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
-                    )
-                  : Container(
-                    height: 400,
-                    child: GridView.builder(
-                        itemCount: shirtList.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                mainAxisSpacing: 20,
-                                mainAxisExtent: 250),
-                        itemBuilder: (context, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.of(context)
-                                  .push(MaterialPageRoute(
+              AnimatedSwitcher(
+                duration: Duration(milliseconds: 1000),
+                child: isGrid == false
+                    ? Container(
+                        height: 370,
+                        child: PageView.builder(
+                            itemCount: shirtList.length,
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => DetailScreen(
                                             data: shirtList[current],
                                           )));
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.all(15),
-                              margin: EdgeInsets.all(isGrid ? 10 : 20),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: Colors.white,
-                              ),
-                              child: Column(
-                                crossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    shirtList[index].title,
-                                    style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                  ),
-                                  SizedBox(
-                                    height: 100,
-                                    width: double.infinity,
-                                    child: Image.asset(
-                                      shirtList[index].imageUrl,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    height: 50,
-                                    padding: const EdgeInsets.only(
-                                        left: 20, right: 5),
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      color: Colors.black87,
-                                      borderRadius:
-                                          BorderRadius.circular(30),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "\$ 150",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                  color: Colors.white,
-                                                  fontWeight:
-                                                      FontWeight.bold),
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(15),
+                                  margin: const EdgeInsets.all(20),
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(30),
+                                      color: Colors.white),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            shirtList[index].title,
+                                            style: const TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 200,
+                                        width: double.infinity,
+                                        child:
+                                            Image.asset(shirtList[0].imageUrl),
+                                      ),
+                                      const Gap(10),
+                                      Container(
+                                        height: 50,
+                                        padding: const EdgeInsets.only(
+                                            left: 20, right: 5),
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black87,
+                                          borderRadius:
+                                              BorderRadius.circular(30),
                                         ),
-                                        Container(
-                                          padding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 15,
-                                                  vertical: 10),
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      25),
-                                              color: Colors.white),
-                                          child:  Icon(Icons.shopping_cart,color: Colors.black,)
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                  // Rest of your content
-                                ],
-                              ),
-                            ),
-                          );
-                        }),
-                  ),),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "\$ 150",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25),
+                                                    color: Colors.white),
+                                                child: Icon(
+                                                  Icons.shopping_cart,
+                                                  color: Colors.black,
+                                                ))
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                      )
+                    : Container(
+                        height: 450,
+                        child: GridView.builder(
+                            itemCount: shirtList.length,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 2,
+                                    mainAxisSpacing: 20,
+                                    mainAxisExtent: 250),
+                            itemBuilder: (context, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => DetailScreen(
+                                            data: shirtList[current],
+                                          )));
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.all(15),
+                                  margin: EdgeInsets.all(isGrid ? 10 : 20),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: Colors.white,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        shirtList[index].title,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                      SizedBox(
+                                        height: 100,
+                                        width: double.infinity,
+                                        child: Image.asset(
+                                          shirtList[index].imageUrl,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Container(
+                                        height: 50,
+                                        padding: const EdgeInsets.only(
+                                            left: 20, right: 5),
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          color: Colors.black87,
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "\$ 150",
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyLarge
+                                                  ?.copyWith(
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                            ),
+                                            Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 15,
+                                                        vertical: 10),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25),
+                                                    color: Colors.white),
+                                                child: Icon(
+                                                  Icons.shopping_cart,
+                                                  color: Colors.black,
+                                                ))
+                                          ],
+                                        ),
+                                      )
+                                      // Rest of your content
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }),
+                      ),
+              ),
               const SizedBox(
                 height: 20,
               ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {
-                  // Navigator.of(context).push(MaterialPageRoute(
-                  //     builder: (context) => const MyCartScreen()));
-                },
-                child: Container(
-                  height: 60,
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-              )
             ],
           ),
         ),

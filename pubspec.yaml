@@ -49,6 +49,7 @@ dependencies:
   intl:
   dotted_border:
   camera:
+  ar_flutter_plugin:
 
 
   cupertino_icons: ^1.0.2
