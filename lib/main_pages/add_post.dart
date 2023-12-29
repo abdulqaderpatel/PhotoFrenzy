@@ -103,7 +103,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
                           });
                           userController.userPostCount.value++;
                           showToast(message: "Post created successfully");
-                          userController.textposts.add(TextPost(
+                          userController.textposts.add(
+                            TextPost(
                               FirebaseAuth.instance.currentUser!.uid,
                               FirebaseAuth.instance.currentUser!.displayName,
                               temp[0]["profile_picture"],
@@ -113,7 +114,9 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               "text",
                               0,
                               [],
-                              0));
+                              0,
+                            ),
+                          );
                           setState(() {
                             buttonLoading = false;
                           });
@@ -122,41 +125,46 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               "/${FirebaseAuth.instance.currentUser!.uid}/$id");
                           UploadTask uploadTask =
                               ref.putFile(postImage!.absolute);
-                          Future.value(uploadTask).then((value) async {
-                            var newUrl = await ref.getDownloadURL();
-                            await FirebaseTable().postsTable.doc(id).set({
-                              "creator_name": temp[0]["name"],
-                              "creator_username": temp[0]["username"],
-                              "creator_profile_picture": temp[0]
-                                  ["profile_picture"],
-                              "post_id": id,
-                              "creator_id":
+                          Future.value(uploadTask).then(
+                            (value) async {
+                              var newUrl = await ref.getDownloadURL();
+                              await FirebaseTable().postsTable.doc(id).set({
+                                "creator_name": temp[0]["name"],
+                                "creator_username": temp[0]["username"],
+                                "creator_profile_picture": temp[0]
+                                    ["profile_picture"],
+                                "post_id": id,
+                                "creator_id":
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                "type": "image",
+                                "text": textController.text,
+                                "imageurl": newUrl.toString(),
+                                "likes": 0,
+                                "likers": [],
+                                "comments": 0
+                              });
+                              userController.userPostCount.value++;
+                              showToast(message: "Post created successfully");
+                              userController.imageposts.add(ImagePost(
                                   FirebaseAuth.instance.currentUser!.uid,
-                              "type": "image",
-                              "text": textController.text,
-                              "imageurl": newUrl.toString(),
-                              "likes": 0,
-                              "likers": [],
-                              "comments": 0
-                            });
-                            userController.userPostCount.value++;
-                            showToast(message: "Post created successfully");
-                            userController.imageposts.add(ImagePost(
-                                FirebaseAuth.instance.currentUser!.uid,
-                                FirebaseAuth.instance.currentUser!.displayName,
-                                temp[0]["profile_picture"],
-                                temp[0]["username"],
-                                newUrl.toString(),
-                                id,
-                                "image",
-                                "text",
-                                0,
-                                [],
-                                0));
-                            setState(() {
-                              buttonLoading = false;
-                            });
-                          });
+                                  FirebaseAuth
+                                      .instance.currentUser!.displayName,
+                                  temp[0]["profile_picture"],
+                                  temp[0]["username"],
+                                  newUrl.toString(),
+                                  id,
+                                  "image",
+                                  "text",
+                                  0,
+                                  [],
+                                  0));
+                              setState(
+                                () {
+                                  buttonLoading = false;
+                                },
+                              );
+                            },
+                          );
                         }
                       },
                 style: ElevatedButton.styleFrom(
@@ -180,69 +188,71 @@ class _AddPostScreenState extends State<AddPostScreen> {
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
-          child: Container(
-              margin: EdgeInsets.only(
-                  top: 10,
-                  left: Get.width * 0.025,
-                  right: Get.width * 0.025,
-                  bottom: 15),
-              child: postImage!.path.isEmpty
-                  ? Column(
-                      children: [
-                        TextField(
-                            maxLines: 5,
-                            controller: textController,
-                            decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: "Write something here..",
-                            )),
-                      ],
-                    )
-                  : SingleChildScrollView(
-                      child: Column(
+        child: Container(
+          margin: EdgeInsets.only(
+              top: 10,
+              left: Get.width * 0.025,
+              right: Get.width * 0.025,
+              bottom: 15),
+          child: postImage!.path.isEmpty
+              ? Column(
+                  children: [
+                    TextField(
+                        maxLines: 5,
+                        controller: textController,
+                        decoration: const InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Write something here..",
+                        )),
+                  ],
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      TextField(
+                          maxLines: 6,
+                          controller: textController,
+                          decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            hintText: "Write something here..",
+                          )),
+                      Stack(
                         children: [
-                          TextField(
-                              maxLines: 6,
-                              controller: textController,
-                              decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                hintText: "Write something here..",
-                              )),
-                          Stack(
-                            children: [
-                              Positioned(
-                                child: Container(
-                                  constraints: BoxConstraints(
-                                      minWidth: Get.width,
-                                      minHeight: Get.height * 0.4,
-                                      maxHeight: Get.height * 0.5),
-                                  margin: const EdgeInsets.only(top: 10),
-                                  child: Image.file(
-                                    postImage!, // Replace with the path to your image
-                                    fit: BoxFit
-                                        .fill, // Use BoxFit.fill to force the image to fill the container
-                                  ),
-                                ),
+                          Positioned(
+                            child: Container(
+                              constraints: BoxConstraints(
+                                  minWidth: Get.width,
+                                  minHeight: Get.height * 0.4,
+                                  maxHeight: Get.height * 0.5),
+                              margin: const EdgeInsets.only(top: 10),
+                              child: Image.file(
+                                postImage!, // Replace with the path to your image
+                                fit: BoxFit
+                                    .fill, // Use BoxFit.fill to force the image to fill the container
                               ),
-                              Positioned(
-                                  top: 15,
-                                  right: 10,
-                                  child: InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                        postImage = File("");
-                                      });
-                                    },
-                                    child: const Icon(
-                                      Icons.highlight_remove,
-                                      color: Colors.white,
-                                    ),
-                                  )),
-                            ],
+                            ),
                           ),
+                          Positioned(
+                              top: 15,
+                              right: 10,
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    postImage = File("");
+                                  });
+                                },
+                                child: const Icon(
+                                  Icons.highlight_remove,
+                                  color: Colors.white,
+                                ),
+                              )),
                         ],
                       ),
-                    ))),
+                    ],
+                  ),
+                ),
+        ),
+      ),
     );
   }
 }

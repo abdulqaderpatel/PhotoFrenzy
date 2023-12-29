@@ -11,7 +11,6 @@ import 'package:intl/intl.dart';
 import 'package:photofrenzy/individual_chat.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/user_posts/random_image_posts_list.dart';
-
 import '../authentication/login.dart';
 import '../global/firebase_tables.dart';
 import '../global/show_message.dart';

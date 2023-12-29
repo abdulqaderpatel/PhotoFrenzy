@@ -393,8 +393,8 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                     InkWell(
                                       onTap: () async {
                                         if (messageController.text.isNotEmpty) {
-
-                                          var messageText=messageController.text;
+                                          var messageText =
+                                              messageController.text;
                                           messageController.clear();
                                           var time = DateTime.now()
                                               .millisecondsSinceEpoch
@@ -437,30 +437,29 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                                   userController
                                                       .chattingUsers.length;
                                               i++) {
-
                                             if (!(userController
                                                     .chattingUsers[i].id ==
                                                 widget.combinedId)) {
-                                             isAlreadyChat=true;
+                                              isAlreadyChat = true;
                                             }
                                           }
 
-                                          if(!isAlreadyChat)
-                                            {
-                                              userController.chattingUsers.add(
-                                                  user.User(
-                                                      id: widget.combinedId,
-                                                      name: widget
-                                                          .receiverInfo["name"],
-                                                      username:
-                                                      widget.receiverInfo[
-                                                      "username"],
-                                                      imageurl:
-                                                      widget.receiverInfo[
-                                                      "imageurl"]));
-                                            }
+                                          if (!isAlreadyChat) {
+                                            userController.chattingUsers.add(
+                                                user.User(
+                                                    id: widget.combinedId,
+                                                    name: widget
+                                                        .receiverInfo["name"],
+                                                    username:
+                                                        widget.receiverInfo[
+                                                            "username"],
+                                                    imageurl:
+                                                        widget.receiverInfo[
+                                                            "imageurl"]));
+                                          }
 
-                                          print(userController.chattingUsers[1].id);
+                                          print(userController
+                                              .chattingUsers[1].id);
 
                                           messageController.text = "";
                                           FocusManager.instance.primaryFocus

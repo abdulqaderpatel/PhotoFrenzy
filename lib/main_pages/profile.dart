@@ -1,14 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-
 import 'package:photofrenzy/models/text_post.dart';
-
 import '../authentication/login.dart';
 import '../controllers/user_controller.dart';
 import '../global/firebase_tables.dart';
@@ -43,10 +39,15 @@ class _ProfileScreenState extends State<ProfileScreen>
       isLoading = true;
     });
 
-    await FirebaseTable().postsTable.where("creator_id",isEqualTo: FirebaseAuth.instance.currentUser!.uid).count().get().then(
-          (res) => userController.userPostCount.value=res.count,
-      onError: (e) => print("Error completing: $e"),
-    );
+    await FirebaseTable()
+        .postsTable
+        .where("creator_id", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .count()
+        .get()
+        .then(
+          (res) => userController.userPostCount.value = res.count,
+          onError: (e) => print("Error completing: $e"),
+        );
 
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
@@ -240,15 +241,22 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                     children: [
                                                       Column(
                                                         children: [
-                                                          Obx(()=>Text(userController.userPostCount.value.toString(),
-                                                              style: TextStyle(
-                                                                  fontSize: 19,
-                                                                  color: isDark(
-                                                                          context)
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black)),),
+                                                          Obx(
+                                                            () => Text(
+                                                                userController
+                                                                    .userPostCount
+                                                                    .value
+                                                                    .toString(),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        19,
+                                                                    color: isDark(
+                                                                            context)
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Colors
+                                                                            .black)),
+                                                          ),
                                                           Text(
                                                             "Posts",
                                                             style: Theme.of(
@@ -476,7 +484,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                         .textposts[index]
                                                         .creator_name!,
                                                     style: TextStyle(
-                                                        fontSize: 19,fontWeight: FontWeight.w800,
+                                                        fontSize: 19,
+                                                        fontWeight:
+                                                            FontWeight.w800,
                                                         color: isDark(context)
                                                             ? Colors.white
                                                             : Colors.black),
@@ -513,7 +523,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                         fontSize: 15,
                                                         color: isDark(context)
                                                             ? Colors.white
-                                                            : Colors.black,fontWeight: FontWeight.w500)),
+                                                            : Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
                                               ),
                                             ],
                                           ),
@@ -538,9 +550,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                             .textposts[index]
                                                             .likers
                                                             .add(FirebaseAuth
-                                                            .instance
-                                                            .currentUser!
-                                                            .uid);
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid);
                                                       });
                                                       await FirebaseTable()
                                                           .postsTable
@@ -556,7 +568,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                               .currentUser!.uid
                                                         ])
                                                       });
-
                                                     } else {
                                                       setState(() {
                                                         userController
@@ -566,9 +577,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                             .textposts[index]
                                                             .likers
                                                             .remove(FirebaseAuth
-                                                            .instance
-                                                            .currentUser!
-                                                            .uid);
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid);
                                                       });
                                                       await FirebaseTable()
                                                           .postsTable
@@ -584,7 +595,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                               .currentUser!.uid
                                                         ])
                                                       });
-
                                                     }
                                                   },
                                                   child: Icon(userController
@@ -629,10 +639,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               const SizedBox(
                                                 width: 3,
                                               ),
-                                              Obx(()=>Text(
-                                                userController
-                                                    .textposts[index].comments
-                                                    .toString(),),
+                                              Obx(
+                                                () => Text(
+                                                  userController
+                                                      .textposts[index].comments
+                                                      .toString(),
+                                                ),
                                               ),
                                               SizedBox(
                                                 width: Get.width * 0.1,
@@ -652,7 +664,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                     const SizedBox(
                                       height: 5,
                                     ),
-
                                     const Divider(
                                       color: Colors.grey,
                                     ),
