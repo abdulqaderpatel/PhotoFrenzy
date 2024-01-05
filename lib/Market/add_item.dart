@@ -31,19 +31,12 @@ class _AddItemScreenState extends State<AddItemScreen> {
   final nameController = TextEditingController();
   final priceController = TextEditingController();
   final descriptionController = TextEditingController();
-  File? postImage = File("");
+  XFile? postImage = XFile("");
   var buttonLoading = false;
 
-  FirebaseStorage storage = FirebaseStorage.instance;
+  File? imagePath;
 
-  Future getImageGallery() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        postImage = File(pickedFile.path);
-      });
-    }
-  }
+  FirebaseStorage storage = FirebaseStorage.instance;
 
   final picker = ImagePicker();
 
@@ -83,72 +76,32 @@ class _AddItemScreenState extends State<AddItemScreen> {
                     });
 
                     UserController userController = Get.put(UserController());
-                    if (postImage!.path.isEmpty) {
-                      await FirebaseTable().postsTable.doc(id).set({
+
+                    Reference ref = FirebaseStorage.instance.ref(
+                        "/${FirebaseAuth.instance.currentUser!.uid}/marketplace/$id");
+                    var file = File(postImage!.path);
+                    print(file);
+                    UploadTask uploadTask = ref.putFile(imagePath!);
+                    Future.value(uploadTask).then((value) async {
+                      var newUrl = await ref.getDownloadURL();
+                      await FirebaseTable().productsTable.doc(id).set({
                         "creator_name": temp[0]["name"],
                         "creator_username": temp[0]["username"],
                         "creator_profile_picture": temp[0]["profile_picture"],
-                        "post_id": id,
+                        "image_id": id,
                         "creator_id": FirebaseAuth.instance.currentUser!.uid,
-                        "type": "text",
-                        "text": textController.text,
-                        "likes": 0,
-                        "likers": [],
-                        "comments": 0
+                        "title": nameController.text,
+                        "description": descriptionController.text,
+                        "price": priceController.text,
+                        "imageurl": newUrl.toString(),
                       });
-                      showToast(message: "Post created successfully");
-                      userController.textposts.add(TextPost(
-                          FirebaseAuth.instance.currentUser!.uid,
-                          FirebaseAuth.instance.currentUser!.displayName,
-                          temp[0]["profile_picture"],
-                          temp[0]["username"],
-                          id,
-                          textController.text,
-                          "text",
-                          0,
-                          [],
-                          0));
+
+                      showToast(message: "Photograph uploaded to marketplace");
+
                       setState(() {
                         buttonLoading = false;
                       });
-                    } else {
-                      Reference ref = FirebaseStorage.instance.ref(
-                          "/${FirebaseAuth.instance.currentUser!.uid}/$id");
-                      UploadTask uploadTask = ref.putFile(postImage!.absolute);
-                      Future.value(uploadTask).then((value) async {
-                        var newUrl = await ref.getDownloadURL();
-                        await FirebaseTable().postsTable.doc(id).set({
-                          "creator_name": temp[0]["name"],
-                          "creator_username": temp[0]["username"],
-                          "creator_profile_picture": temp[0]["profile_picture"],
-                          "post_id": id,
-                          "creator_id": FirebaseAuth.instance.currentUser!.uid,
-                          "type": "image",
-                          "text": textController.text,
-                          "imageurl": newUrl.toString(),
-                          "likes": 0,
-                          "likers": [],
-                          "comments": 0
-                        });
-
-                        showToast(message: "Post created successfully");
-                        userController.imageposts.add(ImagePost(
-                            FirebaseAuth.instance.currentUser!.uid,
-                            FirebaseAuth.instance.currentUser!.displayName,
-                            temp[0]["profile_picture"],
-                            temp[0]["username"],
-                            newUrl.toString(),
-                            id,
-                            "image",
-                            "text",
-                            0,
-                            [],
-                            0));
-                        setState(() {
-                          buttonLoading = false;
-                        });
-                      });
-                    }
+                    });
                   },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.primary,
@@ -204,16 +157,16 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                         children: [
                                           SimpleDialogOption(
                                             onPressed: () async {
-                                              final pickedImage =
-                                                  await ImagePicker().pickImage(
-                                                      source:
-                                                          ImageSource.camera);
-                                              if (pickedImage != null) {
+                                              if (postImage != null) {
                                                 String imagepath =
-                                                    pickedImage.path;
+                                                    postImage!.path;
+
                                                 imageFileUint8List =
-                                                    await pickedImage
+                                                    await postImage!
                                                         .readAsBytes();
+
+                                                imagePath =
+                                                    File(postImage!.path);
 
                                                 if (context.mounted) {
                                                   Navigator.pop(context);
@@ -234,15 +187,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                           ),
                                           SimpleDialogOption(
                                             onPressed: () async {
-                                              final pickedImage =
+                                              final postImage =
                                                   await ImagePicker().pickImage(
                                                       source:
                                                           ImageSource.gallery);
-                                              if (pickedImage != null) {
+                                              if (postImage != null) {
                                                 String imagepath =
-                                                    pickedImage.path;
+                                                    postImage.path;
                                                 imageFileUint8List =
-                                                    await pickedImage
+                                                    await postImage
                                                         .readAsBytes();
 
                                                 if (context.mounted) {
@@ -252,6 +205,9 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                                 setState(() {
                                                   imageFileUint8List;
                                                 });
+
+                                                imagePath =
+                                                    File(postImage!.path);
                                               }
                                             },
                                             child: Text(
@@ -298,15 +254,11 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                         children: [
                                           SimpleDialogOption(
                                             onPressed: () async {
-                                              final pickedImage =
-                                                  await ImagePicker().pickImage(
-                                                      source:
-                                                          ImageSource.camera);
-                                              if (pickedImage != null) {
+                                              if (postImage != null) {
                                                 String imagepath =
-                                                    pickedImage.path;
+                                                    postImage!.path;
                                                 imageFileUint8List =
-                                                    await pickedImage
+                                                    await postImage!
                                                         .readAsBytes();
 
                                                 if (context.mounted) {
@@ -328,15 +280,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
                                           ),
                                           SimpleDialogOption(
                                             onPressed: () async {
-                                              final pickedImage =
+                                              final postImage =
                                                   await ImagePicker().pickImage(
                                                       source:
                                                           ImageSource.gallery);
-                                              if (pickedImage != null) {
+                                              if (postImage != null) {
                                                 String imagepath =
-                                                    pickedImage.path;
+                                                    postImage.path;
                                                 imageFileUint8List =
-                                                    await pickedImage
+                                                    await postImage
                                                         .readAsBytes();
 
                                                 if (context.mounted) {
@@ -429,7 +381,8 @@ class _AddItemScreenState extends State<AddItemScreen> {
                           contentPadding:
                               const EdgeInsets.only(top: 20, bottom: 20),
                           prefixIcon: const Icon(Icons.info),
-                          hintText: "Write something cool about your photograph..",
+                          hintText:
+                              "Write something cool about your photograph..",
                           filled: true,
                           fillColor: Theme.of(context).cardColor,
                           border: InputBorder.none),
