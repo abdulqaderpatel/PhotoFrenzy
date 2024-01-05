@@ -8,8 +8,10 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/competition/individual_competition.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
+import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/individual_chat.dart';
 import 'package:photofrenzy/models/user.dart' as user;
+import 'package:photofrenzy/user_posts/comments.dart';
 import '../global/theme_mode.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,9 +26,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   var isLoading = false;
   var items = [];
+
+  List<Map<String, dynamic>> posts = [];
   UserController userController = Get.put(UserController());
 
+  List<String> list = <String>["Competitions", "Your Feed"];
+  String dropdownValue = "Competitions";
+
   void getData() async {
+    //for the competitions
     userController.chattingUsers.clear();
     setState(() {
       isLoading = true;
@@ -56,6 +64,26 @@ class _HomeScreenState extends State<HomeScreen> {
           username: data["username"],
           imageurl: data["imageurl"]));
     }
+
+    //for the user post feed
+    var data = await FirebaseTable()
+        .postsTable
+        .where("creator_id",
+            isNotEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .get();
+
+    List<Map<String, dynamic>> temp = [];
+    for (var element in data.docs) {
+      setState(() {
+        temp.add(element.data());
+      });
+    }
+
+    setState(() {
+      posts = temp;
+    });
+
+    print(posts);
 
     setState(() {
       isLoading = false;
@@ -89,9 +117,48 @@ class _HomeScreenState extends State<HomeScreen> {
         ? const Center(child: CircularProgressIndicator())
         : Scaffold(
             key: _scaffoldKey,
-            appBar: AppBar(elevation: 0,
+            appBar: AppBar(
+              elevation: 0,
               backgroundColor: Colors.transparent,
               automaticallyImplyLeading: false,
+              title: Center(
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                    canvasColor: Theme.of(context).backgroundColor,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    width: Get.width * 0.4,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).backgroundColor,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: dropdownValue,
+                        icon: const Icon(
+                          Icons.arrow_downward,
+                          color: Colors.white,
+                        ),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.white),
+                        onChanged: (String? value) {
+                          // This is called when the user selects an item.
+                          setState(() {
+                            dropdownValue = value!;
+                          });
+                        },
+                        items:
+                            list.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
             endDrawer: Drawer(
               // Use endDrawer for right-side drawer
@@ -111,10 +178,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   Expanded(
-                    child:Obx(()=>ListView.builder(
-                        itemCount: userController.chattingUsers.length,
-                        itemBuilder: (context, index) {
-                          return InkWell(
+                    child: Obx(
+                      () => ListView.builder(
+                          itemCount: userController.chattingUsers.length,
+                          itemBuilder: (context, index) {
+                            return InkWell(
                               onTap: () {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
@@ -162,466 +230,748 @@ class _HomeScreenState extends State<HomeScreen> {
                                       fontWeight: FontWeight.w500),
                                 ),
                               ),
-
-                          );
-                        }),),
-                  ),
-                  // Add more ListTile widgets as needed
-                ],
-              ),
-            ),
-            body: SafeArea(
-              child: SingleChildScrollView(
-                physics: const NeverScrollableScrollPhysics(),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: Get.height*0.85,
-                      child: PageView.builder(
-                          itemCount: items.length,
-                          itemBuilder: (context, index) {
-                            return Stack(
-                              children: [
-                                Container(
-                                  height: Get.height * 0.9,
-                                  decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                    colors: [
-                                      Color(0xfffc466b),
-                                      Color(0xff3f5efb)
-                                    ],
-                                    stops: [0.25, 0.75],
-                                    begin: Alignment.topLeft,
-                                    end: Alignment.bottomRight,
-                                  )),
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Container(
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red,
-                                            // gradient: const LinearGradient(
-                                            //     colors: [
-                                            //       Color(0xff09203F),
-                                            //       Color(0xff537895)
-                                            //     ]),
-                                            borderRadius: BorderRadius.circular(
-                                              20,
-                                            ),
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Stack(
-                                                children: [
-                                                  Container(
-                                                    height: Get.height * 0.275,
-                                                    width: Get.width,
-                                                    decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20)),
-                                                    child: ClipRRect(
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .only(
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        20),
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        20)),
-                                                        child: Image.network(
-                                                          items[index]["image"],
-                                                          fit: BoxFit.cover,
-                                                        )),
-                                                  ),
-                                                  Positioned(
-                                                    top: Get.height * 0.025,
-                                                    right: Get.width * 0.076,
-                                                    child: Container(
-                                                      height: 60,
-                                                      width: 60,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: const Color(
-                                                                0xff65696E)
-                                                            .withOpacity(0.4),
-                                                      ),
-                                                      child: Center(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            Text(
-                                                              DateFormat("d")
-                                                                  .format(
-                                                                DateTime.parse(
-                                                                  items[index][
-                                                                      "start_time"],
-                                                                ),
-                                                              ),
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
-                                                            ),
-                                                            Text(
-                                                              DateFormat("MMMM")
-                                                                  .format(
-                                                                DateTime.parse(
-                                                                  items[index][
-                                                                      "start_time"],
-                                                                ),
-                                                              ),
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              style: const TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                  fontSize: 10),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 20,
-                                                        horizontal: 10),
-                                                child: Column(
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Text(
-                                                            items[index]
-                                                                ["name"],
-                                                            style: TextStyle(
-                                                                fontSize: 23,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: isDark(
-                                                                        context)
-                                                                    ? Colors
-                                                                        .white
-                                                                    : Colors
-                                                                        .black)),
-                                                      ],
-                                                    ),
-                                                    Text(
-                                                      "Theme: ${items[index]["type"]}",
-                                                      style: const TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: Colors.grey),
-                                                    ),
-                                                    const Gap(10),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        const Row(
-                                                          children: [
-                                                            Icon(Icons
-                                                                .monetization_on_sharp),
-                                                            Gap(3),
-                                                            Text("Entry Fee",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600)),
-                                                          ],
-                                                        ),
-                                                        Text(
-                                                          "\$${items[index]["entry_fee"]}",
-                                                          style: const TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const Gap(10),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        const Row(
-                                                          children: [
-                                                            Icon(Icons.timer),
-                                                            Gap(3),
-                                                            Text(
-                                                                "Starting Time",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600)),
-                                                          ],
-                                                        ),
-                                                        Text(
-                                                          DateFormat("hh:mm a")
-                                                              .format(
-                                                            DateTime.parse(
-                                                              items[index][
-                                                                  "start_time"],
-                                                            ),
-                                                          ),
-                                                          style: const TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const Gap(10),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        const Row(
-                                                          children: [
-                                                            Icon(Icons
-                                                                .timer_outlined),
-                                                            Gap(3),
-                                                            Text("Ending Time",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600)),
-                                                          ],
-                                                        ),
-                                                        Text(
-                                                          DateFormat("hh:mm a")
-                                                              .format(
-                                                            DateTime.parse(
-                                                              items[index]
-                                                                  ["end_time"],
-                                                            ),
-                                                          ),
-                                                          style: const TextStyle(
-                                                              color:
-                                                                  Colors.white,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const Gap(10),
-                                                    const Center(
-                                                      child: Text(
-                                                        "Prize Money",
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 18,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .w600),
-                                                      ),
-                                                    ),
-                                                    const Gap(3),
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5),
-                                                      decoration: BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      15)),
-                                                      width: 200,
-                                                      child: Center(
-                                                        child: Text(
-                                                          "\$${items[index]["prize_money"]}"
-                                                              .toString(),
-                                                          style: const TextStyle(
-                                                              fontSize: 24,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const Gap(10),
-                                                    items[index]["participants"]
-                                                            .contains(
-                                                                FirebaseAuth
-                                                                    .instance
-                                                                    .currentUser!
-                                                                    .uid)
-                                                        ? ElevatedButton(
-                                                            style:
-                                                                ElevatedButton
-                                                                    .styleFrom(
-                                                              foregroundColor:
-                                                                  Colors.white,
-                                                              minimumSize: Size(
-                                                                  Get.width,
-                                                                  40),
-                                                              backgroundColor:
-                                                                  const Color(
-                                                                      0xffff9248),
-                                                              textStyle: const TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
-                                                              primary:
-                                                                  Colors.blue,
-                                                              // Background color
-                                                            ),
-                                                            onPressed: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) {
-                                                                  return IndividualCompetitionsScreen(
-                                                                    competitionDetails: {
-                                                                      "id": items[
-                                                                              index]
-                                                                          [
-                                                                          "id"],
-                                                                      "name": items[
-                                                                              index]
-                                                                          [
-                                                                          "name"],
-                                                                      "image": items[
-                                                                              index]
-                                                                          [
-                                                                          "image"],
-                                                                      "entry_price":
-                                                                          items[index]
-                                                                              [
-                                                                              "entry_price"],
-                                                                      "prize_money":
-                                                                          items[index]
-                                                                              [
-                                                                              "prize_money"],
-                                                                      "start_time":
-                                                                          items[index]
-                                                                              [
-                                                                              "start_time"],
-                                                                      "end_time":
-                                                                          items[index]
-                                                                              [
-                                                                              "end_time"],
-                                                                      "type": items[
-                                                                              index]
-                                                                          [
-                                                                          "type"],
-                                                                      "description":
-                                                                          items[index]
-                                                                              [
-                                                                              "description"]
-                                                                    },
-                                                                  );
-                                                                }),
-                                                              );
-                                                            },
-                                                            child: const Text(
-                                                                "View Details"))
-                                                        : ElevatedButton(
-                                                            style:
-                                                                ElevatedButton
-                                                                    .styleFrom(
-                                                              minimumSize: Size(
-                                                                  Get.width,
-                                                                  40),
-                                                              backgroundColor:
-                                                                  Colors.orange,
-                                                              textStyle: const TextStyle(
-                                                                  fontSize: 15,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600),
-                                                              primary:
-                                                                  Colors.blue,
-                                                              onPrimary:
-                                                                  Colors.white,
-                                                              // Background color
-                                                            ),
-                                                            onPressed:
-                                                                () async {
-                                                              await FirebaseFirestore
-                                                                  .instance
-                                                                  .collection(
-                                                                      "Competitions")
-                                                                  .doc(items[
-                                                                          index]
-                                                                      ["id"])
-                                                                  .update({
-                                                                "participants":
-                                                                    FieldValue
-                                                                        .arrayUnion([
-                                                                  FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid
-                                                                ])
-                                                              });
-                                                              loadData();
-                                                            },
-                                                            child: const Text(
-                                                                "Compete")),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: Get.height * 0.03,
-                                        )
-                                      ],
-                                    )
-                                  ],
-                                )
-                              ],
                             );
                           }),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ));
+            ),
+            body: dropdownValue == "Competitions"
+                ? SafeArea(
+                    child: SingleChildScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: Get.height * 0.85,
+                            child: PageView.builder(
+                                itemCount: items.length,
+                                itemBuilder: (context, index) {
+                                  return Stack(
+                                    children: [
+                                      Container(
+                                        height: Get.height * 0.9,
+                                        decoration: const BoxDecoration(
+                                            gradient: LinearGradient(
+                                          colors: [
+                                            Color(0xfffc466b),
+                                            Color(0xff3f5efb)
+                                          ],
+                                          stops: [0.25, 0.75],
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                        )),
+                                      ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Column(
+                                            children: [
+                                              Container(
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.red,
+                                                  // gradient: const LinearGradient(
+                                                  //     colors: [
+                                                  //       Color(0xff09203F),
+                                                  //       Color(0xff537895)
+                                                  //     ]),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                    20,
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Stack(
+                                                      children: [
+                                                        Container(
+                                                          height: Get.height *
+                                                              0.275,
+                                                          width: Get.width,
+                                                          decoration: BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                          child: ClipRRect(
+                                                              borderRadius: const BorderRadius
+                                                                  .only(
+                                                                  topRight: Radius
+                                                                      .circular(
+                                                                          20),
+                                                                  topLeft: Radius
+                                                                      .circular(
+                                                                          20)),
+                                                              child:
+                                                                  Image.network(
+                                                                items[index]
+                                                                    ["image"],
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              )),
+                                                        ),
+                                                        Positioned(
+                                                          top: Get.height *
+                                                              0.025,
+                                                          right:
+                                                              Get.width * 0.076,
+                                                          child: Container(
+                                                            height: 60,
+                                                            width: 60,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              color: const Color(
+                                                                      0xff65696E)
+                                                                  .withOpacity(
+                                                                      0.4),
+                                                            ),
+                                                            child: Center(
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Text(
+                                                                    DateFormat(
+                                                                            "d")
+                                                                        .format(
+                                                                      DateTime
+                                                                          .parse(
+                                                                        items[index]
+                                                                            [
+                                                                            "start_time"],
+                                                                      ),
+                                                                    ),
+                                                                    style: const TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                  ),
+                                                                  Text(
+                                                                    DateFormat(
+                                                                            "MMMM")
+                                                                        .format(
+                                                                      DateTime
+                                                                          .parse(
+                                                                        items[index]
+                                                                            [
+                                                                            "start_time"],
+                                                                      ),
+                                                                    ),
+                                                                    maxLines: 1,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    style: const TextStyle(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w600,
+                                                                        fontSize:
+                                                                            10),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 20,
+                                                          horizontal: 10),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Text(
+                                                                  items[index]
+                                                                      ["name"],
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          23,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      color: isDark(
+                                                                              context)
+                                                                          ? Colors
+                                                                              .white
+                                                                          : Colors
+                                                                              .black)),
+                                                            ],
+                                                          ),
+                                                          Text(
+                                                            "Theme: ${items[index]["type"]}",
+                                                            style: const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: Colors
+                                                                    .grey),
+                                                          ),
+                                                          const Gap(10),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              const Row(
+                                                                children: [
+                                                                  Icon(Icons
+                                                                      .monetization_on_sharp),
+                                                                  Gap(3),
+                                                                  Text(
+                                                                      "Entry Fee",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontWeight:
+                                                                              FontWeight.w600)),
+                                                                ],
+                                                              ),
+                                                              Text(
+                                                                "\$${items[index]["entry_fee"]}",
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Gap(10),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              const Row(
+                                                                children: [
+                                                                  Icon(Icons
+                                                                      .timer),
+                                                                  Gap(3),
+                                                                  Text(
+                                                                      "Starting Time",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontWeight:
+                                                                              FontWeight.w600)),
+                                                                ],
+                                                              ),
+                                                              Text(
+                                                                DateFormat(
+                                                                        "hh:mm a")
+                                                                    .format(
+                                                                  DateTime
+                                                                      .parse(
+                                                                    items[index]
+                                                                        [
+                                                                        "start_time"],
+                                                                  ),
+                                                                ),
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Gap(10),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              const Row(
+                                                                children: [
+                                                                  Icon(Icons
+                                                                      .timer_outlined),
+                                                                  Gap(3),
+                                                                  Text(
+                                                                      "Ending Time",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontWeight:
+                                                                              FontWeight.w600)),
+                                                                ],
+                                                              ),
+                                                              Text(
+                                                                DateFormat(
+                                                                        "hh:mm a")
+                                                                    .format(
+                                                                  DateTime
+                                                                      .parse(
+                                                                    items[index]
+                                                                        [
+                                                                        "end_time"],
+                                                                  ),
+                                                                ),
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const Gap(10),
+                                                          const Center(
+                                                            child: Text(
+                                                              "Prize Money",
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize: 18,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600),
+                                                            ),
+                                                          ),
+                                                          const Gap(3),
+                                                          Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(5),
+                                                            decoration: BoxDecoration(
+                                                                color: Colors
+                                                                    .white,
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            15)),
+                                                            width: 200,
+                                                            child: Center(
+                                                              child: Text(
+                                                                "\$${items[index]["prize_money"]}"
+                                                                    .toString(),
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                        24,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w800),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          const Gap(10),
+                                                          items[index][
+                                                                      "participants"]
+                                                                  .contains(FirebaseAuth
+                                                                      .instance
+                                                                      .currentUser!
+                                                                      .uid)
+                                                              ? ElevatedButton(
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    foregroundColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    minimumSize:
+                                                                        Size(
+                                                                            Get.width,
+                                                                            40),
+                                                                    backgroundColor:
+                                                                        const Color(
+                                                                            0xffff9248),
+                                                                    textStyle: const TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                    primary:
+                                                                        Colors
+                                                                            .blue,
+                                                                    // Background color
+                                                                  ),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator
+                                                                        .push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                          builder:
+                                                                              (context) {
+                                                                        return IndividualCompetitionsScreen(
+                                                                          competitionDetails: {
+                                                                            "id":
+                                                                                items[index]["id"],
+                                                                            "name":
+                                                                                items[index]["name"],
+                                                                            "image":
+                                                                                items[index]["image"],
+                                                                            "entry_price":
+                                                                                items[index]["entry_price"],
+                                                                            "prize_money":
+                                                                                items[index]["prize_money"],
+                                                                            "start_time":
+                                                                                items[index]["start_time"],
+                                                                            "end_time":
+                                                                                items[index]["end_time"],
+                                                                            "type":
+                                                                                items[index]["type"],
+                                                                            "description":
+                                                                                items[index]["description"]
+                                                                          },
+                                                                        );
+                                                                      }),
+                                                                    );
+                                                                  },
+                                                                  child: const Text(
+                                                                      "View Details"))
+                                                              : ElevatedButton(
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    minimumSize:
+                                                                        Size(
+                                                                            Get.width,
+                                                                            40),
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .orange,
+                                                                    textStyle: const TextStyle(
+                                                                        fontSize:
+                                                                            15,
+                                                                        fontWeight:
+                                                                            FontWeight.w600),
+                                                                    primary:
+                                                                        Colors
+                                                                            .blue,
+                                                                    onPrimary:
+                                                                        Colors
+                                                                            .white,
+                                                                    // Background color
+                                                                  ),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await FirebaseFirestore
+                                                                        .instance
+                                                                        .collection(
+                                                                            "Competitions")
+                                                                        .doc(items[index]
+                                                                            [
+                                                                            "id"])
+                                                                        .update({
+                                                                      "participants":
+                                                                          FieldValue
+                                                                              .arrayUnion([
+                                                                        FirebaseAuth
+                                                                            .instance
+                                                                            .currentUser!
+                                                                            .uid
+                                                                      ])
+                                                                    });
+                                                                    loadData();
+                                                                  },
+                                                                  child: const Text(
+                                                                      "Compete")),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: Get.height * 0.03,
+                                              )
+                                            ],
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  );
+                                }),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                : SafeArea(
+                    child: Container(
+                    margin: EdgeInsets.all(10),
+                    child: ListView.builder(
+                        itemCount: posts.length,
+                        itemBuilder: (context, index) {
+                          DateTime dateTime =
+                              DateTime.fromMillisecondsSinceEpoch(
+                                  int.parse(posts[index]["post_id"]));
+
+                          // Get current DateTime
+                          DateTime now = DateTime.now();
+
+                          String formattedTime = '';
+
+                          // Check if the date is today
+                          if (dateTime.year == now.year &&
+                              dateTime.month == now.month &&
+                              dateTime.day == now.day) {
+                            formattedTime = 'Today';
+                          } else {
+                            // Format the date
+                            formattedTime =
+                                DateFormat('MMM d').format(dateTime);
+                          }
+
+                          // Format time (e.g., 3pm)
+                          formattedTime +=
+                              ', ' + DateFormat.jm().format(dateTime);
+
+                          return Container(
+                            margin: EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              children: [
+                                Gap(10),
+                                Row(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey, width: 0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(80)),
+                                      child: posts[index]
+                                                  ["creator_profile_picture"] ==
+                                              ""
+                                          ? const CircleAvatar(
+                                              radius: 23,
+                                              backgroundColor: Colors.white,
+                                              backgroundImage: AssetImage(
+                                                "assets/images/profile_picture.png",
+                                              ),
+                                            )
+                                          : CircleAvatar(
+                                              radius: 23,
+                                              backgroundColor: Colors.white,
+                                              backgroundImage: NetworkImage(
+                                                posts[index]
+                                                    ["creator_profile_picture"],
+                                              ),
+                                            ),
+                                    ),
+                                    SizedBox(
+                                      width: Get.width * 0.04,
+                                    ),
+                                    Flexible(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                posts[index]["creator_name"],
+                                                style: TextStyle(
+                                                    fontSize: 19,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: isDark(context)
+                                                        ? Colors.white
+                                                        : Colors.black),
+                                              ),
+                                              Text(
+                                                "@${posts[index]["creator_username"]}",
+                                                style: const TextStyle(
+                                                    fontSize: 17,
+                                                    color: Colors.grey),
+                                              ),
+                                            ],
+                                          ),
+                                          Text(formattedTime)
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: Get.height * 0.01,
+                                ),
+                                Container(
+                                  margin:
+                                      EdgeInsets.only(left: Get.width * 0.17),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Flexible(
+                                            child: Text(posts[index]["text"],
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    color: isDark(context)
+                                                        ? Colors.white
+                                                        : Colors.black,
+                                                    fontWeight:
+                                                        FontWeight.w500)),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      posts[index]["type"] == "image"
+                                          ? Container(
+                                              width: Get.width,
+                                              decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                child: Image.network(
+                                                  posts[index]["imageurl"],
+                                                  // Replace with the path to your image
+                                                  fit: BoxFit
+                                                      .fill, // Use BoxFit.fill to force the image to fill the container
+                                                ),
+                                              ),
+                                            )
+                                          : Container(),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Row(
+                                        children: [
+                                          InkWell(
+                                              onTap: () async {
+                                                if (!posts[index]["likers"]
+                                                    .contains(FirebaseAuth
+                                                        .instance
+                                                        .currentUser!
+                                                        .uid)) {
+                                                  setState(() {
+                                                    posts[index]["likes"]++;
+                                                    posts[index]["likers"].add(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!.uid);
+                                                  });
+                                                  await FirebaseTable()
+                                                      .postsTable
+                                                      .doc(posts[index]
+                                                          ["post_id"])
+                                                      .update({
+                                                    "likes":
+                                                        FieldValue.increment(1),
+                                                    "likers":
+                                                        FieldValue.arrayUnion([
+                                                      FirebaseAuth.instance
+                                                          .currentUser!.uid
+                                                    ])
+                                                  });
+                                                } else {
+                                                  setState(() {
+                                                    posts[index]["likes"]--;
+                                                    posts[index]["likers"]
+                                                        .remove(FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid);
+                                                  });
+                                                  await FirebaseTable()
+                                                      .postsTable
+                                                      .doc(posts[index]
+                                                          ["post_id"])
+                                                      .update({
+                                                    "likes":
+                                                        FieldValue.increment(
+                                                            -1),
+                                                    "likers":
+                                                        FieldValue.arrayRemove([
+                                                      FirebaseAuth.instance
+                                                          .currentUser!.uid
+                                                    ])
+                                                  });
+                                                }
+                                              },
+                                              child: Icon(posts[index]["likers"]
+                                                      .contains(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid)
+                                                  ? Icons.favorite
+                                                  : Icons.favorite_outline)),
+                                          const SizedBox(
+                                            width: 3,
+                                          ),
+                                          Text(
+                                              posts[index]["likes"].toString()),
+                                          SizedBox(
+                                            width: Get.width * 0.1,
+                                          ),
+                                          InkWell(
+                                              onTap: () {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                  builder: (context) {
+                                                    return CommentsScreen(
+                                                      postId: posts[index]
+                                                          ["post_id"],
+                                                      description: posts[index]
+                                                          ["text"],
+                                                    );
+                                                  },
+                                                ));
+                                              },
+                                              child: const Icon(
+                                                  Icons.chat_bubble_outline)),
+                                          const SizedBox(
+                                            width: 3,
+                                          ),
+                                          Text(
+                                            posts[index]["comments"].toString(),
+                                          ),
+                                          SizedBox(
+                                            width: Get.width * 0.1,
+                                          ),
+                                          const Icon(Icons.replay_outlined),
+                                          const SizedBox(
+                                            width: 3,
+                                          ),
+                                          const Text(
+                                            "0",
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 5,
+                                ),
+                                const Divider(
+                                  color: Colors.grey,
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                  )));
   }
 }
