@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -68,12 +69,58 @@ class _ProfileScreenState extends State<ProfileScreen>
             element.data()["type"],
             element.data()["likes"],
             element.data()["likers"],
-            element.data()["comments"]));
+            element.data()["comments"],
+            element.data()["happy"],
+            element.data()["sad"],
+            element.data()["fear"],
+            element.data()["anger"],
+            element.data()["disgust"],
+            element.data()["surprise"]));
         temp.add(element.data());
       });
     }
 
     temp = [];
+
+    var emotions = ["happy", "sad", "anger", "fear", "disgust", "surprise"];
+
+    String dropdownValue = "happy";
+
+    Widget emoji() {
+      return EmojiPicker(
+        onEmojiSelected: (Category? category, Emoji emoji) {},
+        onBackspacePressed: () {},
+        config: const Config(
+          columns: 7,
+          emojiSizeMax: 32 * (1.0),
+          verticalSpacing: 0,
+          horizontalSpacing: 0,
+          gridPadding: EdgeInsets.zero,
+          initCategory: Category.RECENT,
+          bgColor: Color(0xFFF2F2F2),
+          indicatorColor: Colors.blue,
+          iconColor: Colors.grey,
+          iconColorSelected: Colors.blue,
+          backspaceColor: Colors.blue,
+          skinToneDialogBgColor: Colors.white,
+          skinToneIndicatorColor: Colors.grey,
+          enableSkinTones: true,
+          recentTabBehavior: RecentTabBehavior.RECENT,
+          recentsLimit: 28,
+          noRecents: Text(
+            'No Recents',
+            style: TextStyle(fontSize: 20, color: Colors.black26),
+            textAlign: TextAlign.center,
+          ), // Needs to be const Widget
+          loadingIndicator: SizedBox.shrink(), // Needs to be const Widget
+          tabIndicatorAnimDuration: kTabScrollDuration,
+          categoryIcons: CategoryIcons(),
+          buttonMode: ButtonMode.MATERIAL,
+        ),
+      );
+    }
+
+    var unlikedIcon = [emoji(), emoji(), emoji()];
 
     data = await FirebaseTable()
         .postsTable
@@ -94,7 +141,13 @@ class _ProfileScreenState extends State<ProfileScreen>
             element.data()["type"],
             element.data()["likes"],
             element.data()["likers"],
-            element.data()["comments"]));
+            element.data()["comments"],
+            element.data()["happy"],
+            element.data()["sad"],
+            element.data()["fear"],
+            element.data()["anger"],
+            element.data()["disgust"],
+            element.data()["surprise"]));
       });
     }
 
@@ -534,85 +587,237 @@ class _ProfileScreenState extends State<ProfileScreen>
                                           ),
                                           Row(
                                             children: [
-                                              InkWell(
-                                                  onTap: () async {
-                                                    if (!userController
-                                                        .textposts[index].likers
-                                                        .contains(FirebaseAuth
-                                                            .instance
-                                                            .currentUser!
-                                                            .uid)) {
-                                                      setState(() {
-                                                        userController
-                                                            .textposts[index]
-                                                            .likes++;
-                                                        userController
-                                                            .textposts[index]
-                                                            .likers
-                                                            .add(FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid);
-                                                      });
-                                                      await FirebaseTable()
-                                                          .postsTable
-                                                          .doc(userController
-                                                              .textposts[index]
-                                                              .post_id)
-                                                          .update({
-                                                        "likes": FieldValue
-                                                            .increment(1),
-                                                        "likers": FieldValue
-                                                            .arrayUnion([
-                                                          FirebaseAuth.instance
-                                                              .currentUser!.uid
-                                                        ])
-                                                      });
-                                                    } else {
-                                                      setState(() {
-                                                        userController
-                                                            .textposts[index]
-                                                            .likes--;
-                                                        userController
-                                                            .textposts[index]
-                                                            .likers
-                                                            .remove(FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid);
-                                                      });
-                                                      await FirebaseTable()
-                                                          .postsTable
-                                                          .doc(userController
-                                                              .textposts[index]
-                                                              .post_id)
-                                                          .update({
-                                                        "likes": FieldValue
-                                                            .increment(-1),
-                                                        "likers": FieldValue
-                                                            .arrayRemove([
-                                                          FirebaseAuth.instance
-                                                              .currentUser!.uid
-                                                        ])
-                                                      });
-                                                    }
-                                                  },
-                                                  child: Icon(userController
+                                              Column(
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () async {
+                                                      if (!userController
                                                           .textposts[index]
                                                           .likers
                                                           .contains(FirebaseAuth
                                                               .instance
                                                               .currentUser!
-                                                              .uid)
-                                                      ? Icons.favorite
-                                                      : Icons
-                                                          .favorite_outline)),
-                                              const SizedBox(
-                                                width: 3,
+                                                              .uid)) {
+                                                        setState(() {
+                                                          userController
+                                                              .textposts[index]
+                                                              .likes++;
+                                                          userController
+                                                              .textposts[index]
+                                                              .likers
+                                                              .add(FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid);
+                                                        });
+                                                        await FirebaseTable()
+                                                            .postsTable
+                                                            .doc(userController
+                                                                .textposts[
+                                                                    index]
+                                                                .post_id)
+                                                            .update({
+                                                          "likes": FieldValue
+                                                              .increment(1),
+                                                          "likers": FieldValue
+                                                              .arrayUnion([
+                                                            FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid
+                                                          ])
+                                                        });
+                                                      } else {
+                                                        setState(() {
+                                                          userController
+                                                              .textposts[index]
+                                                              .likes--;
+                                                          userController
+                                                              .textposts[index]
+                                                              .likers
+                                                              .remove(FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid);
+                                                        });
+                                                        await FirebaseTable()
+                                                            .postsTable
+                                                            .doc(userController
+                                                                .textposts[
+                                                                    index]
+                                                                .post_id)
+                                                            .update({
+                                                          "likes": FieldValue
+                                                              .increment(-1),
+                                                          "likers": FieldValue
+                                                              .arrayRemove([
+                                                            FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid
+                                                          ])
+                                                        });
+                                                      }
+                                                    },
+                                                    child: Icon(userController
+                                                            .textposts[index]
+                                                            .likers
+                                                            .contains(
+                                                                FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid)
+                                                        ? Icons.favorite
+                                                        : Icons
+                                                            .favorite_outline),
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  Text(userController
+                                                      .textposts[index].likes
+                                                      .toString()),
+                                                ],
                                               ),
-                                              Text(userController
-                                                  .textposts[index].likes
-                                                  .toString()),
+                                              Column(
+                                                children: [
+                                                  InkWell(
+                                                      onTap: () async {
+                                                        if (!userController
+                                                            .textposts[index]
+                                                            .likers
+                                                            .contains(
+                                                                FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid)) {
+                                                          setState(() {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .likes++;
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .likers
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          });
+                                                          await FirebaseTable()
+                                                              .postsTable
+                                                              .doc(userController
+                                                                  .textposts[
+                                                                      index]
+                                                                  .post_id)
+                                                              .update({
+                                                            "likes": FieldValue
+                                                                .increment(1),
+                                                            "likers": FieldValue
+                                                                .arrayUnion([
+                                                              FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid
+                                                            ])
+                                                          });
+                                                        } else {
+                                                          setState(() {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .likes--;
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .likers
+                                                                .remove(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          });
+                                                          await FirebaseTable()
+                                                              .postsTable
+                                                              .doc(userController
+                                                                  .textposts[
+                                                                      index]
+                                                                  .post_id)
+                                                              .update({
+                                                            "likes": FieldValue
+                                                                .increment(-1),
+                                                            "likers": FieldValue
+                                                                .arrayRemove([
+                                                              FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid
+                                                            ])
+                                                          });
+                                                        }
+                                                      },
+                                                      child: EmojiPicker(
+                                                        onEmojiSelected:
+                                                            (Category? category,
+                                                                Emoji emoji) {},
+                                                        onBackspacePressed:
+                                                            () {},
+                                                        config: const Config(
+                                                          columns: 7,
+                                                          emojiSizeMax:
+                                                              32 * (1.0),
+                                                          verticalSpacing: 0,
+                                                          horizontalSpacing: 0,
+                                                          gridPadding:
+                                                              EdgeInsets.zero,
+                                                          initCategory:
+                                                              Category.RECENT,
+                                                          bgColor:
+                                                              Color(0xFFF2F2F2),
+                                                          indicatorColor:
+                                                              Colors.blue,
+                                                          iconColor:
+                                                              Colors.grey,
+                                                          iconColorSelected:
+                                                              Colors.blue,
+                                                          backspaceColor:
+                                                              Colors.blue,
+                                                          skinToneDialogBgColor:
+                                                              Colors.white,
+                                                          skinToneIndicatorColor:
+                                                              Colors.grey,
+                                                          enableSkinTones: true,
+                                                          recentTabBehavior:
+                                                              RecentTabBehavior
+                                                                  .RECENT,
+                                                          recentsLimit: 28,
+                                                          noRecents: Text(
+                                                            'No Recents',
+                                                            style: TextStyle(
+                                                                fontSize: 20,
+                                                                color: Colors
+                                                                    .black26),
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ), // Needs to be const Widget
+                                                          loadingIndicator: SizedBox
+                                                              .shrink(), // Needs to be const Widget
+                                                          tabIndicatorAnimDuration:
+                                                              kTabScrollDuration,
+                                                          categoryIcons:
+                                                              CategoryIcons(),
+                                                          buttonMode: ButtonMode
+                                                              .MATERIAL,
+                                                        ),
+                                                      )),
+                                                  const SizedBox(
+                                                    width: 3,
+                                                  ),
+                                                  Text(userController
+                                                      .textposts[index].likes
+                                                      .toString()),
+                                                ],
+                                              ),
                                               SizedBox(
                                                 width: Get.width * 0.1,
                                               ),

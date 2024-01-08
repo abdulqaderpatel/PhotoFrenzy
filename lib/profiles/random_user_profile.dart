@@ -38,18 +38,23 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
 
   List<Map<String, dynamic>> textPosts = [];
   List<ImagePost> imagePosts = [];
-  
-  var postsCount=0;
+
+  var postsCount = 0;
 
   void getPosts() async {
     setState(() {
       isLoading = true;
     });
 
-    await FirebaseTable().postsTable.where("creator_id",isEqualTo: widget.data["id"]).count().get().then(
-          (res) => postsCount=res.count,
-      onError: (e) => print("Error completing: $e"),
-    );
+    await FirebaseTable()
+        .postsTable
+        .where("creator_id", isEqualTo: widget.data["id"])
+        .count()
+        .get()
+        .then(
+          (res) => postsCount = res.count,
+          onError: (e) => print("Error completing: $e"),
+        );
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
         .postsTable
@@ -84,12 +89,15 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
             element.data()["type"],
             element.data()["likes"],
             element.data()["likers"],
-            element.data()["comments"]));
+            element.data()["comments"],
+            element.data()["happy"],
+            element.data()["sad"],
+            element.data()["fear"],
+            element.data()["anger"],
+            element.data()["disgust"],
+            element.data()["surprise"]));
       });
     }
-
-
-
 
     setState(() {
       isLoading = false;
@@ -214,7 +222,9 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                         children: [
                                                           Column(
                                                             children: [
-                                                              Text(postsCount.toString(),
+                                                              Text(
+                                                                  postsCount
+                                                                      .toString(),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           19,
@@ -236,7 +246,10 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                           const Gap(40),
                                                           Column(
                                                             children: [
-                                                              Text(client["followers"].length.toString(),
+                                                              Text(
+                                                                  client["followers"]
+                                                                      .length
+                                                                      .toString(),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           19,
@@ -258,7 +271,10 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                           const Gap(40),
                                                           Column(
                                                             children: [
-                                                              Text(client["following"].length.toString(),
+                                                              Text(
+                                                                  client["following"]
+                                                                      .length
+                                                                      .toString(),
                                                                   style: TextStyle(
                                                                       fontSize:
                                                                           19,
@@ -324,7 +340,6 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                                           "following":
                                                                               FieldValue.arrayRemove([
                                                                             client["id"],
-
                                                                           ])
                                                                         });
                                                                         FirebaseTable()
@@ -543,10 +558,9 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                         SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (BuildContext context, int index) {
-
                               DateTime dateTime =
-                              DateTime.fromMillisecondsSinceEpoch(int.parse(
-                                 textPosts[index]["post_id"]));
+                                  DateTime.fromMillisecondsSinceEpoch(
+                                      int.parse(textPosts[index]["post_id"]));
 
                               // Get current DateTime
                               DateTime now = DateTime.now();
@@ -581,25 +595,25 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                   color: Colors.grey,
                                                   width: 0.8),
                                               borderRadius:
-                                              BorderRadius.circular(80)),
-                                          child: textPosts[index]
-                                              ["creator_profile_picture"] ==
-                                              ""
+                                                  BorderRadius.circular(80)),
+                                          child: textPosts[index][
+                                                      "creator_profile_picture"] ==
+                                                  ""
                                               ? const CircleAvatar(
-                                            radius: 23,
-                                            backgroundColor: Colors.white,
-                                            backgroundImage: AssetImage(
-                                              "assets/images/profile_picture.png",
-                                            ),
-                                          )
+                                                  radius: 23,
+                                                  backgroundColor: Colors.white,
+                                                  backgroundImage: AssetImage(
+                                                    "assets/images/profile_picture.png",
+                                                  ),
+                                                )
                                               : CircleAvatar(
-                                            radius: 23,
-                                            backgroundColor: Colors.white,
-                                            backgroundImage: NetworkImage(
-                                             textPosts[index]
-                                                  ["creator_profile_picture"],
-                                            ),
-                                          ),
+                                                  radius: 23,
+                                                  backgroundColor: Colors.white,
+                                                  backgroundImage: NetworkImage(
+                                                    textPosts[index][
+                                                        "creator_profile_picture"],
+                                                  ),
+                                                ),
                                         ),
                                         SizedBox(
                                           width: Get.width * 0.04,
@@ -607,19 +621,21 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                         Flexible(
                                           child: Row(
                                             mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                                MainAxisAlignment.spaceBetween,
                                             children: [
                                               Column(
                                                 mainAxisAlignment:
-                                                MainAxisAlignment.center,
+                                                    MainAxisAlignment.center,
                                                 crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                    CrossAxisAlignment.start,
                                                 children: [
                                                   Text(
                                                     textPosts[index]
                                                         ["creator_name"],
                                                     style: TextStyle(
-                                                        fontSize: 19,fontWeight: FontWeight.w800,
+                                                        fontSize: 19,
+                                                        fontWeight:
+                                                            FontWeight.w800,
                                                         color: isDark(context)
                                                             ? Colors.white
                                                             : Colors.black),
@@ -650,12 +666,14 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                             children: [
                                               Flexible(
                                                 child: Text(
-                                                  textPosts[index]["text"],
+                                                    textPosts[index]["text"],
                                                     style: TextStyle(
                                                         fontSize: 15,
                                                         color: isDark(context)
                                                             ? Colors.white
-                                                            : Colors.black,fontWeight: FontWeight.w500)),
+                                                            : Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.w500)),
                                               ),
                                             ],
                                           ),
@@ -666,25 +684,26 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                             children: [
                                               InkWell(
                                                   onTap: () async {
-                                                    if (!textPosts[index]["likers"]
-                                                        .contains(FirebaseAuth
-                                                        .instance
-                                                        .currentUser!
-                                                        .uid)) {
-                                                      setState(() {
-                                                      textPosts[index]
-                                                            ["likes"]++;
-                                                      textPosts[index]
+                                                    if (!textPosts[index]
                                                             ["likers"]
-                                                            .add(FirebaseAuth
+                                                        .contains(FirebaseAuth
                                                             .instance
                                                             .currentUser!
-                                                            .uid);
+                                                            .uid)) {
+                                                      setState(() {
+                                                        textPosts[index]
+                                                            ["likes"]++;
+                                                        textPosts[index]
+                                                                ["likers"]
+                                                            .add(FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid);
                                                       });
                                                       await FirebaseTable()
                                                           .postsTable
                                                           .doc(textPosts[index]
-                                                      ["post_id"])
+                                                              ["post_id"])
                                                           .update({
                                                         "likes": FieldValue
                                                             .increment(1),
@@ -694,22 +713,21 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                               .currentUser!.uid
                                                         ])
                                                       });
-
                                                     } else {
                                                       setState(() {
-                                                       textPosts[index]
+                                                        textPosts[index]
                                                             ["likes"]--;
-                                                      textPosts[index]
-                                                            ["likers"]
+                                                        textPosts[index]
+                                                                ["likers"]
                                                             .remove(FirebaseAuth
-                                                            .instance
-                                                            .currentUser!
-                                                            .uid);
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid);
                                                       });
                                                       await FirebaseTable()
                                                           .postsTable
                                                           .doc(textPosts[index]
-                                                          ["post_id"])
+                                                              ["post_id"])
                                                           .update({
                                                         "likes": FieldValue
                                                             .increment(-1),
@@ -719,24 +737,21 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                               .currentUser!.uid
                                                         ])
                                                       });
-
                                                     }
                                                   },
-                                                  child: Icon(
-                                                      textPosts[index]
-                                                      ["likers"]
-                                                      .contains(FirebaseAuth
-                                                      .instance
-                                                      .currentUser!
-                                                      .uid)
+                                                  child: Icon(textPosts[index]
+                                                              ["likers"]
+                                                          .contains(FirebaseAuth
+                                                              .instance
+                                                              .currentUser!
+                                                              .uid)
                                                       ? Icons.favorite
                                                       : Icons
-                                                      .favorite_outline)),
+                                                          .favorite_outline)),
                                               const SizedBox(
                                                 width: 3,
                                               ),
-                                              Text(
-                                                  textPosts[index]["likes"]
+                                              Text(textPosts[index]["likes"]
                                                   .toString()),
                                               SizedBox(
                                                 width: Get.width * 0.1,
@@ -745,28 +760,27 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                   onTap: () {
                                                     Navigator.push(context,
                                                         MaterialPageRoute(
-                                                          builder: (context) {
-                                                            return CommentsScreen(
-                                                              postId:
-                                                                  textPosts[index]
+                                                      builder: (context) {
+                                                        return CommentsScreen(
+                                                          postId:
+                                                              textPosts[index]
                                                                   ["post_id"],
-                                                              description:
-                                                             textPosts[
-                                                              index]
+                                                          description:
+                                                              textPosts[index]
                                                                   ["text"],
-                                                            );
-                                                          },
-                                                        ));
+                                                        );
+                                                      },
+                                                    ));
                                                   },
                                                   child: const Icon(Icons
                                                       .chat_bubble_outline)),
                                               const SizedBox(
                                                 width: 3,
                                               ),
-                                             Text(
-                                              textPosts[index]["comments"]
-                                                    .toString(),),
-
+                                              Text(
+                                                textPosts[index]["comments"]
+                                                    .toString(),
+                                              ),
                                               SizedBox(
                                                 width: Get.width * 0.1,
                                               ),
@@ -785,7 +799,6 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                     const SizedBox(
                                       height: 5,
                                     ),
-
                                     const Divider(
                                       color: Colors.grey,
                                     ),
@@ -816,9 +829,9 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                 onTap: () {
                                   Navigator.push(context,
                                       MaterialPageRoute(builder: (context) {
-                                        //TODO
+                                    //TODO
                                     return RandomImagePostsListScreen(
-                                      imagePosts, index);
+                                        imagePosts, index);
                                   }));
                                 },
                                 child: Container(

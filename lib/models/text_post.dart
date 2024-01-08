@@ -9,6 +9,12 @@ class TextPost {
   int likes;
   List<dynamic> likers;
   int comments;
+  List<dynamic> happy;
+  List<dynamic> sad;
+  List<dynamic> fear;
+  List<dynamic> anger;
+  List<dynamic> digust;
+  List<dynamic> surprise;
 
   TextPost(
       this.creator_id,
@@ -20,5 +26,11 @@ class TextPost {
       this.type,
       this.likes,
       this.likers,
-      this.comments);
+      this.comments,
+      this.happy,
+      this.sad,
+      this.fear,
+      this.anger,
+      this.digust,
+      this.surprise);
 }

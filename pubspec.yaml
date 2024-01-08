@@ -49,6 +49,7 @@ dependencies:
   intl:
   dotted_border:
   camera:
+  emoji_picker_flutter:
 
 
 

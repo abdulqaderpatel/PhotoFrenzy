@@ -271,7 +271,13 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                           element.data()["type"],
                           element.data()["likes"],
                           element.data()["likers"],
-                          element.data()["comments"]));
+                          element.data()["comments"],
+                          element.data()["happy"],
+                          element.data()["sad"],
+                          element.data()["fear"],
+                          element.data()["anger"],
+                          element.data()["disgust"],
+                          element.data()["surprise"]));
                       temp.add(element.data());
                     });
                   }
@@ -298,7 +304,13 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                           element.data()["type"],
                           element.data()["likes"],
                           element.data()["likers"],
-                          element.data()["comments"]));
+                          element.data()["comments"],
+                          element.data()["happy"],
+                          element.data()["sad"],
+                          element.data()["fear"],
+                          element.data()["anger"],
+                          element.data()["disgust"],
+                          element.data()["surprise"]));
                     });
                   }
 
@@ -397,7 +409,13 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                             element.data()["type"],
                             element.data()["likes"],
                             element.data()["likers"],
-                            element.data()["comments"]));
+                            element.data()["comments"],
+                            element.data()["happy"],
+                            element.data()["sad"],
+                            element.data()["fear"],
+                            element.data()["anger"],
+                            element.data()["disgust"],
+                            element.data()["surprise"]));
                         temp.add(element.data());
                       });
                     }
@@ -424,7 +442,13 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                             element.data()["type"],
                             element.data()["likes"],
                             element.data()["likers"],
-                            element.data()["comments"]));
+                            element.data()["comments"],
+                            element.data()["happy"],
+                            element.data()["sad"],
+                            element.data()["fear"],
+                            element.data()["anger"],
+                            element.data()["disgust"],
+                            element.data()["surprise"]));
                       });
                     }
 
@@ -452,7 +476,6 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                       children: [
                         Column(
                           children: [
-
                             InkWell(
                               onTap: () {
                                 getImageGallery();

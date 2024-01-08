@@ -99,7 +99,13 @@ class _AddPostScreenState extends State<AddPostScreen> {
                             "text": textController.text,
                             "likes": 0,
                             "likers": [],
-                            "comments": 0
+                            "comments": 0,
+                            "happy": [],
+                            "sad": [],
+                            "anger": [],
+                            "fear": [],
+                            "disgust": [],
+                            "surprise": [],
                           });
                           userController.userPostCount.value++;
                           showToast(message: "Post created successfully");
@@ -115,6 +121,12 @@ class _AddPostScreenState extends State<AddPostScreen> {
                               0,
                               [],
                               0,
+                              [],
+                              [],
+                              [],
+                              [],
+                              [],
+                              [],
                             ),
                           );
                           setState(() {
@@ -141,23 +153,35 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                 "imageurl": newUrl.toString(),
                                 "likes": 0,
                                 "likers": [],
-                                "comments": 0
+                                "comments": 0,
+                                "happy": [],
+                                "sad": [],
+                                "anger": [],
+                                "fear": [],
+                                "disgust": [],
+                                "surprise": [],
                               });
                               userController.userPostCount.value++;
                               showToast(message: "Post created successfully");
                               userController.imageposts.add(ImagePost(
-                                  FirebaseAuth.instance.currentUser!.uid,
-                                  FirebaseAuth
-                                      .instance.currentUser!.displayName,
-                                  temp[0]["profile_picture"],
-                                  temp[0]["username"],
-                                  newUrl.toString(),
-                                  id,
-                                  "image",
-                                  "text",
-                                  0,
-                                  [],
-                                  0));
+                                FirebaseAuth.instance.currentUser!.uid,
+                                FirebaseAuth.instance.currentUser!.displayName,
+                                temp[0]["profile_picture"],
+                                temp[0]["username"],
+                                newUrl.toString(),
+                                id,
+                                "image",
+                                "text",
+                                0,
+                                [],
+                                0,
+                                [],
+                                [],
+                                [],
+                                [],
+                                [],
+                                [],
+                              ));
                               setState(
                                 () {
                                   buttonLoading = false;
