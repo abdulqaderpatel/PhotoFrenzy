@@ -13,7 +13,7 @@ class TextPost {
   List<dynamic> sad;
   List<dynamic> fear;
   List<dynamic> anger;
-  List<dynamic> digust;
+  List<dynamic> disgust;
   List<dynamic> surprise;
 
   TextPost(
@@ -31,6 +31,6 @@ class TextPost {
       this.sad,
       this.fear,
       this.anger,
-      this.digust,
+      this.disgust,
       this.surprise);
 }

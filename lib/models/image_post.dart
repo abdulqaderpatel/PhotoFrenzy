@@ -14,7 +14,7 @@ class ImagePost {
   List<dynamic> sad;
   List<dynamic> fear;
   List<dynamic> anger;
-  List<dynamic> digust;
+  List<dynamic> disgust;
   List<dynamic> surprise;
 
   ImagePost(
@@ -33,6 +33,6 @@ class ImagePost {
       this.sad,
       this.fear,
       this.anger,
-      this.digust,
+      this.disgust,
       this.surprise);
 }
