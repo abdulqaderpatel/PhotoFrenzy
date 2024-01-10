@@ -397,7 +397,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                     Text(
                                                       client["username"],
                                                       style: TextStyle(
-                                                          fontSize: 18,
+                                                          fontSize: 22,
                                                           fontWeight:
                                                               FontWeight.bold,
                                                           color: isDark(context)
@@ -607,208 +607,95 @@ class _ProfileScreenState extends State<ProfileScreen>
                                             height: 10,
                                           ),
                                           Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: [
-                                              Column(
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () async {
-                                                      if (!userController
+                                              InkWell(
+                                                onTap: () async {
+                                                  if (!userController
+                                                      .textposts[index].likers
+                                                      .contains(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid)) {
+                                                    setState(() {
+                                                      userController
+                                                          .textposts[index]
+                                                          .likes++;
+                                                      userController
                                                           .textposts[index]
                                                           .likers
-                                                          .contains(FirebaseAuth
+                                                          .add(FirebaseAuth
                                                               .instance
                                                               .currentUser!
-                                                              .uid)) {
-                                                        setState(() {
-                                                          userController
-                                                              .textposts[index]
-                                                              .likes++;
-                                                          userController
-                                                              .textposts[index]
-                                                              .likers
-                                                              .add(FirebaseAuth
-                                                                  .instance
-                                                                  .currentUser!
-                                                                  .uid);
-                                                        });
-                                                        await FirebaseTable()
-                                                            .postsTable
-                                                            .doc(userController
-                                                                .textposts[
-                                                                    index]
-                                                                .post_id)
-                                                            .update({
-                                                          "likes": FieldValue
-                                                              .increment(1),
-                                                          "likers": FieldValue
-                                                              .arrayUnion([
-                                                            FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid
-                                                          ])
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          userController
-                                                              .textposts[index]
-                                                              .likes--;
-                                                          userController
-                                                              .textposts[index]
-                                                              .likers
-                                                              .remove(FirebaseAuth
-                                                                  .instance
-                                                                  .currentUser!
-                                                                  .uid);
-                                                        });
-                                                        await FirebaseTable()
-                                                            .postsTable
-                                                            .doc(userController
-                                                                .textposts[
-                                                                    index]
-                                                                .post_id)
-                                                            .update({
-                                                          "likes": FieldValue
-                                                              .increment(-1),
-                                                          "likers": FieldValue
-                                                              .arrayRemove([
-                                                            FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid
-                                                          ])
-                                                        });
-                                                      }
-                                                    },
-                                                    child: Icon(userController
+                                                              .uid);
+                                                    });
+                                                    await FirebaseTable()
+                                                        .postsTable
+                                                        .doc(userController
+                                                            .textposts[index]
+                                                            .post_id)
+                                                        .update({
+                                                      "likes":
+                                                          FieldValue.increment(
+                                                              1),
+                                                      "likers": FieldValue
+                                                          .arrayUnion([
+                                                        FirebaseAuth.instance
+                                                            .currentUser!.uid
+                                                      ])
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      userController
+                                                          .textposts[index]
+                                                          .likes--;
+                                                      userController
+                                                          .textposts[index]
+                                                          .likers
+                                                          .remove(FirebaseAuth
+                                                              .instance
+                                                              .currentUser!
+                                                              .uid);
+                                                    });
+                                                    await FirebaseTable()
+                                                        .postsTable
+                                                        .doc(userController
+                                                            .textposts[index]
+                                                            .post_id)
+                                                        .update({
+                                                      "likes":
+                                                          FieldValue.increment(
+                                                              -1),
+                                                      "likers": FieldValue
+                                                          .arrayRemove([
+                                                        FirebaseAuth.instance
+                                                            .currentUser!.uid
+                                                      ])
+                                                    });
+                                                  }
+                                                },
+                                                child: Obx(
+                                                  () => SizedBox(
+                                                    height: 33,
+                                                    child:
+                                                        ReactionButton<String>(
+                                                      toggle: false,
+                                                      direction:
+                                                          ReactionsBoxAlignment
+                                                              .rtl,
+                                                      onReactionChanged:
+                                                          (Reaction<String>?
+                                                              reaction) async {
+                                                        if (!userController
                                                             .textposts[index]
                                                             .likers
                                                             .contains(
                                                                 FirebaseAuth
                                                                     .instance
                                                                     .currentUser!
-                                                                    .uid)
-                                                        ? Icons.favorite
-                                                        : Icons
-                                                            .favorite_outline),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  Text(userController
-                                                      .textposts[index].likes
-                                                      .toString()),
-                                                ],
-                                              ),
-                                              Column(
-                                                children: [
-                                                  InkWell(
-                                                    onTap: () async {
-                                                      if (!userController
-                                                          .textposts[index]
-                                                          .likers
-                                                          .contains(FirebaseAuth
-                                                              .instance
-                                                              .currentUser!
-                                                              .uid)) {
-                                                        setState(() {
-                                                          userController
-                                                              .textposts[index]
-                                                              .likes++;
-                                                          userController
-                                                              .textposts[index]
-                                                              .likers
-                                                              .add(FirebaseAuth
-                                                                  .instance
-                                                                  .currentUser!
-                                                                  .uid);
-                                                        });
-                                                        await FirebaseTable()
-                                                            .postsTable
-                                                            .doc(userController
-                                                                .textposts[
-                                                                    index]
-                                                                .post_id)
-                                                            .update({
-                                                          "likes": FieldValue
-                                                              .increment(1),
-                                                          "likers": FieldValue
-                                                              .arrayUnion([
-                                                            FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid
-                                                          ])
-                                                        });
-                                                      } else {
-                                                        setState(() {
-                                                          userController
-                                                              .textposts[index]
-                                                              .likes--;
-                                                          userController
-                                                              .textposts[index]
-                                                              .likers
-                                                              .remove(FirebaseAuth
-                                                                  .instance
-                                                                  .currentUser!
-                                                                  .uid);
-                                                        });
-                                                        await FirebaseTable()
-                                                            .postsTable
-                                                            .doc(userController
-                                                                .textposts[
-                                                                    index]
-                                                                .post_id)
-                                                            .update({
-                                                          "likes": FieldValue
-                                                              .increment(-1),
-                                                          "likers": FieldValue
-                                                              .arrayRemove([
-                                                            FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid
-                                                          ])
-                                                        });
-                                                      }
-                                                    },
-                                                    child: SizedBox(
-                                                      height: 50,
-                                                      child: ReactionButton<
-                                                          String>(
-                                                        toggle: false,
-                                                        direction:
-                                                            ReactionsBoxAlignment
-                                                                .rtl,
-                                                        onReactionChanged:
-                                                            (Reaction<String>?
-                                                                reaction) async {
-                                                          if (!userController
-                                                              .textposts[index]
-                                                              .likers
-                                                              .contains(
-                                                                  FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid)) {
-                                                            await FirebaseTable()
-                                                                .postsTable
-                                                                .doc(userController
-                                                                    .textposts[
-                                                                        index]
-                                                                    .post_id)
-                                                                .update({
-                                                              "likers": FieldValue
-                                                                  .arrayUnion([
-                                                                FirebaseAuth
-                                                                    .instance
-                                                                    .currentUser!
-                                                                    .uid
-                                                              ]),
-                                                              "likes": FieldValue
-                                                                  .increment(1)
-                                                            });
-
+                                                                    .uid)) {
+                                                          setState(() {
                                                             userController
                                                                 .textposts[
                                                                     index]
@@ -821,310 +708,448 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                                 .textposts[
                                                                     index]
                                                                 .likes++;
-                                                          }
+                                                          });
+                                                          await FirebaseTable()
+                                                              .postsTable
+                                                              .doc(userController
+                                                                  .textposts[
+                                                                      index]
+                                                                  .post_id)
+                                                              .update({
+                                                            "likers": FieldValue
+                                                                .arrayUnion([
+                                                              FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid
+                                                            ]),
+                                                            "likes": FieldValue
+                                                                .increment(1)
+                                                          });
+                                                        }
 
-                                                          var userReaction =
-                                                              "none";
-                                                          userReaction = userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .happy
-                                                                  .contains(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid)
-                                                              ? "happy"
-                                                              : userController
-                                                                      .textposts[
-                                                                          index]
-                                                                      .sad
-                                                                      .contains(FirebaseAuth
-                                                                          .instance
-                                                                          .currentUser!
-                                                                          .uid)
-                                                                  ? "sad"
-                                                                  : userController
-                                                                          .textposts[index]
-                                                                          .fear
-                                                                          .contains(FirebaseAuth.instance.currentUser!.uid)
-                                                                      ? "fear"
-                                                                      : userController.textposts[index].anger.contains(FirebaseAuth.instance.currentUser!.uid)
-                                                                          ? "anger"
-                                                                          : userController.textposts[index].disgust.contains(FirebaseAuth.instance.currentUser!.uid)
-                                                                              ? "disgust"
-                                                                              : userController.textposts[index].surprise.contains(FirebaseAuth.instance.currentUser!.uid)
-                                                                                  ? "surprise"
-                                                                                  : "none";
-                                                          if (userReaction ==
-                                                              "none") {
-                                                            await FirebaseTable()
-                                                                .postsTable
-                                                                .doc(userController
-                                                                    .textposts[
-                                                                        index]
-                                                                    .post_id)
-                                                                .update({
-                                                              "${reaction!.value}":
-                                                                  FieldValue
-                                                                      .arrayUnion([
-                                                                FirebaseAuth
+                                                        var userReaction =
+                                                            "none";
+                                                        userReaction = userController
+                                                                .textposts[
+                                                                    index]
+                                                                .happy
+                                                                .contains(FirebaseAuth
                                                                     .instance
                                                                     .currentUser!
-                                                                    .uid
-                                                              ]),
-                                                            });
-                                                          } else {
-                                                            await FirebaseTable()
-                                                                .postsTable
-                                                                .doc(userController
+                                                                    .uid)
+                                                            ? "happy"
+                                                            : userController
                                                                     .textposts[
                                                                         index]
-                                                                    .post_id)
-                                                                .update({
-                                                              "${reaction!.value}":
-                                                                  FieldValue
-                                                                      .arrayUnion([
-                                                                FirebaseAuth
-                                                                    .instance
-                                                                    .currentUser!
-                                                                    .uid
-                                                              ]),
-                                                              userReaction:
-                                                                  FieldValue
-                                                                      .arrayRemove([
-                                                                FirebaseAuth
-                                                                    .instance
-                                                                    .currentUser!
-                                                                    .uid
-                                                              ])
-                                                            });
-                                                          }
-                                                          if (!userController
-                                                              .textposts[index]
-                                                              .likers
-                                                              .contains(
-                                                                  FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid)) {
-                                                            if (reaction
-                                                                    .value ==
-                                                                "happy") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .happy
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "sad") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .sad
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "fear") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .fear
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "disgust") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .disgust
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "anger") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .anger
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "surprise") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .surprise
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            }
-                                                          } else {
-                                                            userReaction ==
-                                                                    "happy"
-                                                                ? userController
-                                                                    .textposts[
-                                                                        index]
-                                                                    .happy
-                                                                    .remove(FirebaseAuth
-                                                                        .instance
-                                                                        .currentUser!
-                                                                        .uid)
-                                                                : userReaction ==
-                                                                        "sad"
-                                                                    ? userController
-                                                                        .textposts[
-                                                                            index]
-                                                                        .sad
-                                                                        .remove(FirebaseAuth
-                                                                            .instance
-                                                                            .currentUser!
-                                                                            .uid)
-                                                                    : userReaction ==
-                                                                            "disgust"
-                                                                        ? userController.textposts[index].disgust.remove(FirebaseAuth
-                                                                            .instance
-                                                                            .currentUser!
-                                                                            .uid)
-                                                                        : userReaction ==
-                                                                                "anger"
-                                                                            ? userController.textposts[index].anger.remove(FirebaseAuth.instance.currentUser!.uid)
-                                                                            : userReaction == "fear"
-                                                                                ? userController.textposts[index].fear.remove(FirebaseAuth.instance.currentUser!.uid)
-                                                                                : userController.textposts[index].surprise.remove(FirebaseAuth.instance.currentUser!.uid);
-                                                            if (reaction
-                                                                    .value ==
-                                                                "happy") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .happy
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "sad") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .sad
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "fear") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .fear
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "disgust") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .disgust
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "anger") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .anger
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            } else if (reaction
-                                                                    .value ==
-                                                                "surprise") {
-                                                              userController
-                                                                  .textposts[
-                                                                      index]
-                                                                  .surprise
-                                                                  .add(FirebaseAuth
-                                                                      .instance
-                                                                      .currentUser!
-                                                                      .uid);
-                                                            }
-                                                          }
-                                                        },
-                                                        reactions: reactions,
-                                                        placeholder: Reaction<
-                                                                String>(
-                                                            value: null,
-                                                            icon: !userController
-                                                                    .textposts[
-                                                                        index]
-                                                                    .likers
+                                                                    .sad
                                                                     .contains(FirebaseAuth
                                                                         .instance
                                                                         .currentUser!
                                                                         .uid)
-                                                                ? Text("react")
+                                                                ? "sad"
                                                                 : userController
-                                                                        .textposts[
-                                                                            index]
-                                                                        .happy
-                                                                        .contains(FirebaseAuth
-                                                                            .instance
-                                                                            .currentUser!
-                                                                            .uid)
-                                                                    ? Text(
-                                                                        emojis[0]
-                                                                            .code)
-                                                                    : userController.textposts[index].sad.contains(FirebaseAuth.instance.currentUser!.uid)
-                                                                        ? Text(emojis[1].code)
-                                                                        : userController.textposts[index].fear.contains(FirebaseAuth.instance.currentUser!.uid)
-                                                                            ? Text(emojis[2].code)
-                                                                            : userController.textposts[index].anger.contains(FirebaseAuth.instance.currentUser!.uid)
-                                                                                ? Text(emojis[3].code)
-                                                                                : userController.textposts[index].disgust.contains(FirebaseAuth.instance.currentUser!.uid)
-                                                                                    ? Text(emojis[4].code)
-                                                                                    : Text(emojis[5].code)),
-                                                        boxColor: Colors.black
-                                                            .withOpacity(0.5),
-                                                        boxRadius: 10,
-                                                        itemsSpacing: 0,
-                                                        itemSize:
-                                                            const Size(35, 35),
-                                                      ),
+                                                                        .textposts[index]
+                                                                        .fear
+                                                                        .contains(FirebaseAuth.instance.currentUser!.uid)
+                                                                    ? "fear"
+                                                                    : userController.textposts[index].anger.contains(FirebaseAuth.instance.currentUser!.uid)
+                                                                        ? "anger"
+                                                                        : userController.textposts[index].disgust.contains(FirebaseAuth.instance.currentUser!.uid)
+                                                                            ? "disgust"
+                                                                            : userController.textposts[index].surprise.contains(FirebaseAuth.instance.currentUser!.uid)
+                                                                                ? "surprise"
+                                                                                : "none";
+                                                        if (userReaction ==
+                                                            "none") {
+                                                          await FirebaseTable()
+                                                              .postsTable
+                                                              .doc(userController
+                                                                  .textposts[
+                                                                      index]
+                                                                  .post_id)
+                                                              .update({
+                                                            "${reaction!.value}":
+                                                                FieldValue
+                                                                    .arrayUnion([
+                                                              FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid
+                                                            ]),
+                                                          });
+                                                        } else {
+                                                          await FirebaseTable()
+                                                              .postsTable
+                                                              .doc(userController
+                                                                  .textposts[
+                                                                      index]
+                                                                  .post_id)
+                                                              .update({
+                                                            "${reaction!.value}":
+                                                                FieldValue
+                                                                    .arrayUnion([
+                                                              FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid
+                                                            ]),
+                                                            userReaction:
+                                                                FieldValue
+                                                                    .arrayRemove([
+                                                              FirebaseAuth
+                                                                  .instance
+                                                                  .currentUser!
+                                                                  .uid
+                                                            ])
+                                                          });
+                                                        }
+                                                        if (!userController
+                                                            .textposts[index]
+                                                            .likers
+                                                            .contains(
+                                                                FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid)) {
+                                                          if (reaction.value ==
+                                                              "happy") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .happy
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "sad") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .sad
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "fear") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .fear
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "disgust") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .disgust
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "anger") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .anger
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "surprise") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .surprise
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          }
+                                                        } else {
+                                                          userReaction ==
+                                                                  "happy"
+                                                              ? userController
+                                                                  .textposts[
+                                                                      index]
+                                                                  .happy
+                                                                  .remove(FirebaseAuth
+                                                                      .instance
+                                                                      .currentUser!
+                                                                      .uid)
+                                                              : userReaction ==
+                                                                      "sad"
+                                                                  ? userController
+                                                                      .textposts[
+                                                                          index]
+                                                                      .sad
+                                                                      .remove(FirebaseAuth
+                                                                          .instance
+                                                                          .currentUser!
+                                                                          .uid)
+                                                                  : userReaction ==
+                                                                          "disgust"
+                                                                      ? userController
+                                                                          .textposts[
+                                                                              index]
+                                                                          .disgust
+                                                                          .remove(FirebaseAuth.instance.currentUser!.uid)
+                                                                      : userReaction == "anger"
+                                                                          ? userController.textposts[index].anger.remove(FirebaseAuth.instance.currentUser!.uid)
+                                                                          : userReaction == "fear"
+                                                                              ? userController.textposts[index].fear.remove(FirebaseAuth.instance.currentUser!.uid)
+                                                                              : userController.textposts[index].surprise.remove(FirebaseAuth.instance.currentUser!.uid);
+                                                          if (reaction.value ==
+                                                              "happy") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .happy
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "sad") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .sad
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "fear") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .fear
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "disgust") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .disgust
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "anger") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .anger
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          } else if (reaction
+                                                                  .value ==
+                                                              "surprise") {
+                                                            userController
+                                                                .textposts[
+                                                                    index]
+                                                                .surprise
+                                                                .add(FirebaseAuth
+                                                                    .instance
+                                                                    .currentUser!
+                                                                    .uid);
+                                                          }
+                                                        }
+                                                      },
+                                                      reactions: reactions,
+                                                      placeholder: Reaction<
+                                                              String>(
+                                                          value: null,
+                                                          icon: !userController
+                                                                  .textposts[
+                                                                      index]
+                                                                  .likers
+                                                                  .contains(FirebaseAuth
+                                                                      .instance
+                                                                      .currentUser!
+                                                                      .uid)
+                                                              ? const Icon(Icons
+                                                                  .thumb_up)
+                                                              : userController
+                                                                      .textposts[
+                                                                          index]
+                                                                      .happy
+                                                                      .contains(
+                                                                          FirebaseAuth.instance.currentUser!.uid)
+                                                                  ? Text(emojis[0].code, style: const TextStyle(fontSize: 22))
+                                                                  : userController.textposts[index].sad.contains(FirebaseAuth.instance.currentUser!.uid)
+                                                                      ? Text(emojis[1].code, style: const TextStyle(fontSize: 22))
+                                                                      : userController.textposts[index].fear.contains(FirebaseAuth.instance.currentUser!.uid)
+                                                                          ? Text(emojis[2].code, style: const TextStyle(fontSize: 22))
+                                                                          : userController.textposts[index].anger.contains(FirebaseAuth.instance.currentUser!.uid)
+                                                                              ? Text(emojis[3].code, style: const TextStyle(fontSize: 22))
+                                                                              : userController.textposts[index].disgust.contains(FirebaseAuth.instance.currentUser!.uid)
+                                                                                  ? Text(emojis[4].code, style: const TextStyle(fontSize: 22))
+                                                                                  : Text(emojis[5].code, style: const TextStyle(fontSize: 22))),
+                                                      boxColor: Colors.black
+                                                          .withOpacity(0.5),
+                                                      boxRadius: 10,
+                                                      itemsSpacing: 0,
+                                                      itemSize:
+                                                          const Size(35, 35),
                                                     ),
                                                   ),
-                                                  const SizedBox(
-                                                    width: 3,
-                                                  ),
-                                                  Text(userController
-                                                      .textposts[index].likes
-                                                      .toString()),
-                                                ],
+                                                ),
+                                              ),
+                                              const SizedBox(
+                                                width: 3,
+                                              ),
+                                              InkWell(
+                                                onTap: () {
+                                                  showDialog<void>(
+                                                    context: context,
+                                                    barrierDismissible: false,
+                                                    // user must tap button!
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Text(
+                                                                'Reactions',
+                                                                style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
+                                                              )
+                                                            ]),
+                                                        content: Container(
+                                                          margin:
+                                                              EdgeInsets.all(
+                                                                  10),
+                                                          width: Get.width,
+                                                          child: Column(mainAxisSize: MainAxisSize.min,
+                                                              children: [
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      emojis[0].code,
+                                                                      style: TextStyle(fontSize: 22),
+                                                                    ),
+                                                                    Text(userController.textposts[index].happy.length.toString())
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      emojis[1].code,
+                                                                      style: TextStyle(fontSize: 22),
+                                                                    ),
+                                                                    Text(userController.textposts[index].sad.length.toString())
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      emojis[2].code,
+                                                                      style: TextStyle(fontSize: 22),
+                                                                    ),
+                                                                    Text(userController.textposts[index].fear.length.toString())
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      emojis[3].code,
+                                                                      style: TextStyle(fontSize: 22),
+                                                                    ),
+                                                                    Text(userController.textposts[index].anger.length.toString())
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      emojis[4].code,
+                                                                      style: TextStyle(fontSize: 22),
+                                                                    ),
+                                                                    Text(userController.textposts[index].disgust.length.toString())
+                                                                  ],
+                                                                ),
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                      emojis[5].code,
+                                                                      style: TextStyle(fontSize: 22),
+                                                                    ),
+                                                                    Text(userController.textposts[index].surprise.length.toString())
+                                                                  ],
+                                                                ),
+                                                              ]
+
+
+
+                                                        ),
+                                                        ),
+                                                        actions: <Widget>[
+                                                          Center(
+                                                            child: TextButton(
+                                                              child: const Text(
+                                                                'Ok',
+                                                                style: TextStyle(
+                                                                    color: Colors
+                                                                        .red,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600),
+                                                              ),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                child: Text(userController
+                                                    .textposts[index].likes
+                                                    .toString()),
                                               ),
                                               SizedBox(
                                                 width: Get.width * 0.1,

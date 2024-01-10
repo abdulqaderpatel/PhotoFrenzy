@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_emoji/flutter_emoji.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
@@ -26,6 +28,65 @@ class ImagePostsListScreen extends StatefulWidget {
 class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
   UserController userController = Get.put(UserController());
   ItemScrollController itemScrollController = ItemScrollController();
+
+  var parser = EmojiParser();
+
+  var a = EmojiParser().get("coffee");
+
+  var reactions = [
+    Reaction<String>(
+      value: 'happy',
+      icon: Text(
+        Emoji("happy", "😊").code,
+        style: TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'sad',
+      icon: Text(
+        Emoji("sad", "😔").code,
+        style: TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'fear',
+      icon: Text(
+        Emoji("fear", "😨").code,
+        style: TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'anger',
+      icon: Text(
+        Emoji("anger", "😠").code,
+        style: TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'disgust',
+      icon: Text(
+        Emoji("disgust", "🤢").code,
+        style: TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'surprise',
+      icon: Text(
+        Emoji("surprise", "😲").code,
+        style: TextStyle(fontSize: 22),
+      ),
+    ),
+  ];
+
+  var emojis = [
+    Emoji("happy", "😊"),
+    Emoji("sad", "😔"),
+    Emoji("fear", "😨"),
+    Emoji("anger", "😠"),
+    Emoji("disgust", "🤢"),
+    Emoji("surprise", "😲")
+  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -169,58 +230,548 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Row(
+                          Row(crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  if (!widget.images[index].likers.contains(
-                                      FirebaseAuth.instance.currentUser!.uid)) {
+                                  if (!userController
+                                      .imageposts[index].likers
+                                      .contains(FirebaseAuth
+                                      .instance
+                                      .currentUser!
+                                      .uid)) {
                                     setState(() {
-                                      widget.images[index].likes++;
-                                      widget.images[index].likers.add(
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid);
+                                      userController
+                                          .imageposts[index]
+                                          .likes++;
+                                      userController
+                                          .imageposts[index]
+                                          .likers
+                                          .add(FirebaseAuth
+                                          .instance
+                                          .currentUser!
+                                          .uid);
                                     });
                                     await FirebaseTable()
                                         .postsTable
-                                        .doc(widget.images[index].post_id)
+                                        .doc(userController
+                                        .imageposts[index]
+                                        .post_id)
                                         .update({
-                                      "likes": FieldValue.increment(1),
-                                      "likers": FieldValue.arrayUnion([
-                                        FirebaseAuth.instance.currentUser!.uid
+                                      "likes":
+                                      FieldValue.increment(
+                                          1),
+                                      "likers": FieldValue
+                                          .arrayUnion([
+                                        FirebaseAuth.instance
+                                            .currentUser!.uid
                                       ])
                                     });
-
                                   } else {
                                     setState(() {
-                                      widget.images[index].likes--;
-                                      widget.images[index].likers.remove(
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid);
+                                      userController
+                                          .imageposts[index]
+                                          .likes--;
+                                      userController
+                                          .imageposts[index]
+                                          .likers
+                                          .remove(FirebaseAuth
+                                          .instance
+                                          .currentUser!
+                                          .uid);
                                     });
                                     await FirebaseTable()
                                         .postsTable
-                                        .doc(widget.images[index].post_id)
+                                        .doc(userController
+                                        .imageposts[index]
+                                        .post_id)
                                         .update({
-                                      "likes": FieldValue.increment(-1),
-                                      "likers": FieldValue.arrayRemove([
-                                        FirebaseAuth.instance.currentUser!.uid
+                                      "likes":
+                                      FieldValue.increment(
+                                          -1),
+                                      "likers": FieldValue
+                                          .arrayRemove([
+                                        FirebaseAuth.instance
+                                            .currentUser!.uid
                                       ])
                                     });
-
                                   }
                                 },
-                                child: Icon(widget.images[index].likers
-                                        .contains(FirebaseAuth
-                                            .instance.currentUser!.uid)
-                                    ? Icons.favorite
-                                    : Icons.favorite_outline),
+                                child: Obx(
+                                      () => SizedBox(
+                                    height: 33,
+                                    child:
+                                    ReactionButton<String>(
+                                      toggle: false,
+                                      direction:
+                                      ReactionsBoxAlignment
+                                          .rtl,
+                                      onReactionChanged:
+                                          (Reaction<String>?
+                                      reaction) async {
+                                        if (!userController
+                                            .imageposts[index]
+                                            .likers
+                                            .contains(
+                                            FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid)) {
+                                          setState(() {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .likers
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .likes++;
+                                          });
+                                          await FirebaseTable()
+                                              .postsTable
+                                              .doc(userController
+                                              .imageposts[
+                                          index]
+                                              .post_id)
+                                              .update({
+                                            "likers": FieldValue
+                                                .arrayUnion([
+                                              FirebaseAuth
+                                                  .instance
+                                                  .currentUser!
+                                                  .uid
+                                            ]),
+                                            "likes": FieldValue
+                                                .increment(1)
+                                          });
+                                        }
+
+                                        var userReaction =
+                                            "none";
+                                        userReaction = userController
+                                            .imageposts[
+                                        index]
+                                            .happy
+                                            .contains(FirebaseAuth
+                                            .instance
+                                            .currentUser!
+                                            .uid)
+                                            ? "happy"
+                                            : userController
+                                            .imageposts[
+                                        index]
+                                            .sad
+                                            .contains(FirebaseAuth
+                                            .instance
+                                            .currentUser!
+                                            .uid)
+                                            ? "sad"
+                                            : userController
+                                            .imageposts[index]
+                                            .fear
+                                            .contains(FirebaseAuth.instance.currentUser!.uid)
+                                            ? "fear"
+                                            : userController.imageposts[index].anger.contains(FirebaseAuth.instance.currentUser!.uid)
+                                            ? "anger"
+                                            : userController.imageposts[index].disgust.contains(FirebaseAuth.instance.currentUser!.uid)
+                                            ? "disgust"
+                                            : userController.imageposts[index].surprise.contains(FirebaseAuth.instance.currentUser!.uid)
+                                            ? "surprise"
+                                            : "none";
+                                        if (userReaction ==
+                                            "none") {
+                                          await FirebaseTable()
+                                              .postsTable
+                                              .doc(userController
+                                              .imageposts[
+                                          index]
+                                              .post_id)
+                                              .update({
+                                            "${reaction!.value}":
+                                            FieldValue
+                                                .arrayUnion([
+                                              FirebaseAuth
+                                                  .instance
+                                                  .currentUser!
+                                                  .uid
+                                            ]),
+                                          });
+                                        } else {
+                                          await FirebaseTable()
+                                              .postsTable
+                                              .doc(userController
+                                              .imageposts[
+                                          index]
+                                              .post_id)
+                                              .update({
+                                            "${reaction!.value}":
+                                            FieldValue
+                                                .arrayUnion([
+                                              FirebaseAuth
+                                                  .instance
+                                                  .currentUser!
+                                                  .uid
+                                            ]),
+                                            userReaction:
+                                            FieldValue
+                                                .arrayRemove([
+                                              FirebaseAuth
+                                                  .instance
+                                                  .currentUser!
+                                                  .uid
+                                            ])
+                                          });
+                                        }
+                                        if (!userController
+                                            .imageposts[index]
+                                            .likers
+                                            .contains(
+                                            FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid)) {
+                                          if (reaction.value ==
+                                              "happy") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .happy
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "sad") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .sad
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "fear") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .fear
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "disgust") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .disgust
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "anger") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .anger
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "surprise") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .surprise
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          }
+                                        } else {
+                                          userReaction ==
+                                              "happy"
+                                              ? userController
+                                              .imageposts[
+                                          index]
+                                              .happy
+                                              .remove(FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .uid)
+                                              : userReaction ==
+                                              "sad"
+                                              ? userController
+                                              .imageposts[
+                                          index]
+                                              .sad
+                                              .remove(FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .uid)
+                                              : userReaction ==
+                                              "disgust"
+                                              ? userController
+                                              .imageposts[
+                                          index]
+                                              .disgust
+                                              .remove(FirebaseAuth.instance.currentUser!.uid)
+                                              : userReaction == "anger"
+                                              ? userController.imageposts[index].anger.remove(FirebaseAuth.instance.currentUser!.uid)
+                                              : userReaction == "fear"
+                                              ? userController.imageposts[index].fear.remove(FirebaseAuth.instance.currentUser!.uid)
+                                              : userController.imageposts[index].surprise.remove(FirebaseAuth.instance.currentUser!.uid);
+                                          if (reaction.value ==
+                                              "happy") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .happy
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "sad") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .sad
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "fear") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .fear
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "disgust") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .disgust
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "anger") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .anger
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "surprise") {
+                                            userController
+                                                .imageposts[
+                                            index]
+                                                .surprise
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          }
+                                        }
+                                      },
+                                      reactions: reactions,
+                                      placeholder: Reaction<
+                                          String>(
+                                          value: null,
+                                          icon: !userController
+                                              .imageposts[
+                                          index]
+                                              .likers
+                                              .contains(FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .uid)
+                                              ? const Icon(Icons
+                                              .thumb_up)
+                                              : userController
+                                              .imageposts[
+                                          index]
+                                              .happy
+                                              .contains(
+                                              FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[0].code, style: const TextStyle(fontSize: 22))
+                                              : userController.imageposts[index].sad.contains(FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[1].code, style: const TextStyle(fontSize: 22))
+                                              : userController.imageposts[index].fear.contains(FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[2].code, style: const TextStyle(fontSize: 22))
+                                              : userController.imageposts[index].anger.contains(FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[3].code, style: const TextStyle(fontSize: 22))
+                                              : userController.imageposts[index].disgust.contains(FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[4].code, style: const TextStyle(fontSize: 22))
+                                              : Text(emojis[5].code, style: const TextStyle(fontSize: 22))),
+                                      boxColor: Colors.black
+                                          .withOpacity(0.5),
+                                      boxRadius: 10,
+                                      itemsSpacing: 0,
+                                      itemSize:
+                                      const Size(35, 35),
+                                    ),
+                                  ),
+                                ),
                               ),
                               const SizedBox(
                                 width: 3,
                               ),
-                              Text(
-                                widget.images[index].likes.toString(),
+                              InkWell(
+                                onTap: () {
+                                  showDialog<void>(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    // user must tap button!
+                                    builder:
+                                        (BuildContext context) {
+                                      return AlertDialog(
+                                        title: const Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .center,
+                                            children: [
+                                              Text(
+                                                'Reactions',
+                                                style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .bold),
+                                              )
+                                            ]),
+                                        content: Container(
+                                          margin:
+                                          EdgeInsets.all(
+                                              10),
+                                          width: Get.width,
+                                          child: Column(mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      emojis[0].code,
+                                                      style: TextStyle(fontSize: 22),
+                                                    ),
+                                                    Text(userController.imageposts[index].happy.length.toString())
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      emojis[1].code,
+                                                      style: TextStyle(fontSize: 22),
+                                                    ),
+                                                    Text(userController.imageposts[index].sad.length.toString())
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      emojis[2].code,
+                                                      style: TextStyle(fontSize: 22),
+                                                    ),
+                                                    Text(userController.imageposts[index].fear.length.toString())
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      emojis[3].code,
+                                                      style: TextStyle(fontSize: 22),
+                                                    ),
+                                                    Text(userController.imageposts[index].anger.length.toString())
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      emojis[4].code,
+                                                      style: TextStyle(fontSize: 22),
+                                                    ),
+                                                    Text(userController.imageposts[index].disgust.length.toString())
+                                                  ],
+                                                ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      emojis[5].code,
+                                                      style: TextStyle(fontSize: 22),
+                                                    ),
+                                                    Text(userController.imageposts[index].surprise.length.toString())
+                                                  ],
+                                                ),
+                                              ]
+
+
+
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          Center(
+                                            child: TextButton(
+                                              child: const Text(
+                                                'Ok',
+                                                style: TextStyle(
+                                                    color: Colors
+                                                        .red,
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .w600),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(
+                                                    context)
+                                                    .pop();
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Text(userController
+                                    .imageposts[index].likes
+                                    .toString()),
                               ),
                               SizedBox(
                                 width: Get.width * 0.1,
