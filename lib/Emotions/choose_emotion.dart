@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:get/get.dart';
+import 'package:photofrenzy/Emotions/emotion_categorized_posts.dart';
 
 import '../global/theme_mode.dart';
 
 class ChooseEmotion extends StatefulWidget {
-  const ChooseEmotion({super.key});
+  final List<Map<String, dynamic>> posts;
+
+  const ChooseEmotion({required this.posts, super.key});
 
   @override
   State<ChooseEmotion> createState() => _ChooseEmotionState();
@@ -22,11 +25,17 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
   ];
 
   @override
+  void initState() {
+    // TODO: implement initState
+    print(widget.posts);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Column(
+        title: const Column(
           children: [
             Text("Choose Your Emotion"),
             Text(
@@ -41,39 +50,49 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
         child: SingleChildScrollView(
           child: Container(
             height: 800,
-            margin: EdgeInsets.all(10),
+            margin: const EdgeInsets.all(10),
             child: Column(
               children: [
                 Expanded(
                   child: GridView.builder(
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: emojis.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          mainAxisSpacing: 30,
-                          crossAxisSpacing: 20,
-                          crossAxisCount: 2),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                              mainAxisSpacing: 30,
+                              crossAxisSpacing: 20,
+                              crossAxisCount: 2),
                       itemBuilder: (context, index) {
-                        return Container(
-                          color: Theme.of(context).colorScheme.background,
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  emojis[index].code,
-                                  style: TextStyle(fontSize: 30),
-                                ),
-                                Text(
-                                  emojis[index].name,
-                                  style: TextStyle(fontSize: 20),
-                                )
-                              ],
+                        return InkWell(
+                          onTap: () {
+                            Navigator.push(context, MaterialPageRoute(builder: (context){
+                              return EmotionCategorizedPosts(
+                                  posts: widget.posts,
+                                  emotion: emojis[index].name);
+                            }));
+                          },
+                          child: Container(
+                            color: Theme.of(context).colorScheme.background,
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    emojis[index].code,
+                                    style: const TextStyle(fontSize: 30),
+                                  ),
+                                  Text(
+                                    emojis[index].name,
+                                    style: const TextStyle(fontSize: 20),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         );
                       }),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 ClipRRect(
@@ -81,24 +100,30 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
                     child: Container(
                       height: 150,
                       width: Get.width,
-                     decoration: BoxDecoration( color: Colors.red,
-                      image: DecorationImage(opacity: 0.75,
-                        image: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu97ixVlYnMizNnrUHMZ5-cwUzK507xFWgfQ&usqp=CAU"),
-                        fit: BoxFit.cover,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        image: DecorationImage(
+                          opacity: 0.75,
+                          image: NetworkImage(
+                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu97ixVlYnMizNnrUHMZ5-cwUzK507xFWgfQ&usqp=CAU"),
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                      child: Column(mainAxisAlignment: MainAxisAlignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             "Confused about how you feel?",
-                            style: TextStyle(color: Colors.white70,fontSize: 17),
+                            style:
+                                TextStyle(color: Colors.white70, fontSize: 17),
                           ),
                           Text(
                             "Use the emotion detector",
                             style: TextStyle(
                                 color: isDark(context)
                                     ? Colors.white
-                                    : Colors.black,fontSize: 22),
+                                    : Colors.black,
+                                fontSize: 22),
                           )
                         ],
                       ),

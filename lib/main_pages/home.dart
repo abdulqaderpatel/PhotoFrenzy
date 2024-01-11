@@ -222,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ):Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,children: [
                 InkWell(onTap:(){
-                  Get.to(ChooseEmotion());
+                  Get.to(ChooseEmotion(posts: posts,));
                 },child: Icon(Icons.emoji_emotions)),
                 Theme(
                   data: Theme.of(context).copyWith(
