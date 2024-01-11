@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:get/get.dart';
 import 'package:photofrenzy/Emotions/emotion_categorized_posts.dart';
+import 'package:photofrenzy/Emotions/emotion_detector.dart';
 
 import '../global/theme_mode.dart';
 
@@ -26,6 +27,7 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     print(widget.posts);
   }
@@ -95,39 +97,45 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
                 const SizedBox(
                   height: 10,
                 ),
-                ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
-                      height: 150,
-                      width: Get.width,
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        image: DecorationImage(
-                          opacity: 0.75,
-                          image: NetworkImage(
-                              "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu97ixVlYnMizNnrUHMZ5-cwUzK507xFWgfQ&usqp=CAU"),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            "Confused about how you feel?",
-                            style:
-                                TextStyle(color: Colors.white70, fontSize: 17),
+                InkWell(onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context){
+                    return EmotionDetector();
+                  }));
+                },
+                  child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        height: 150,
+                        width: Get.width,
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          image: DecorationImage(
+                            opacity: 0.75,
+                            image: NetworkImage(
+                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTu97ixVlYnMizNnrUHMZ5-cwUzK507xFWgfQ&usqp=CAU"),
+                            fit: BoxFit.cover,
                           ),
-                          Text(
-                            "Use the emotion detector",
-                            style: TextStyle(
-                                color: isDark(context)
-                                    ? Colors.white
-                                    : Colors.black,
-                                fontSize: 22),
-                          )
-                        ],
-                      ),
-                    ))
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Confused about how you feel?",
+                              style:
+                                  TextStyle(color: Colors.white70, fontSize: 17),
+                            ),
+                            Text(
+                              "Use the emotion detector",
+                              style: TextStyle(
+                                  color: isDark(context)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontSize: 22),
+                            )
+                          ],
+                        ),
+                      )),
+                )
               ],
             ),
           ),
