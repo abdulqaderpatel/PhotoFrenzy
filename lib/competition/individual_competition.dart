@@ -1,19 +1,15 @@
 import 'dart:io';
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:collection/collection.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
-
 import 'package:http/http.dart' as http;
 import '../global/show_message.dart';
 import '../global/theme_mode.dart';
@@ -41,10 +37,13 @@ class _IndividualCompetitionsScreenState
 
   List<Map<String, dynamic>> items = [];
 
+  var participants = [];
   var winners = [];
+  var userResults={};
+  var userRank=0;
 
   var winnerPrimaryColor = [
-    Color(0xffaf9500),
+    const Color(0xffaf9500),
     const Color(0xffd7d7d7),
     const Color(0xff6a3805),
   ];
@@ -85,7 +84,6 @@ class _IndividualCompetitionsScreenState
         .doc(widget.competitionDetails["id"])
         .collection("Images")
         .orderBy("votes", descending: true)
-        .limit(3)
         .get();
 
     for (var element in data.docs) {
@@ -93,7 +91,29 @@ class _IndividualCompetitionsScreenState
         temp.add(element.data());
       });
     }
-    winners = temp;
+    participants = temp;
+
+    for (int i = 0; i < participants.length; i++) {
+      if (i == 3) {
+        break;
+      }
+      winners.add(participants[i]);
+    }
+
+    for (int i = 0; i < participants.length; i++) {
+    if(participants[i]["creator"]==FirebaseAuth.instance.currentUser!.uid)
+      {
+        setState(() {
+          userRank=i+1;
+          userResults=participants[i];
+        });
+
+        break;
+      }
+
+    }
+
+
   }
 
   void checkUserDetails() async {
@@ -109,7 +129,7 @@ class _IndividualCompetitionsScreenState
       });
     }
     var compData = temp;
-    print(compData);
+
 
     hasUserUploaded = compData[0]["uploaders"]
         .contains(FirebaseAuth.instance.currentUser!.uid);
@@ -176,7 +196,7 @@ class _IndividualCompetitionsScreenState
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Container(
+                    SizedBox(
                       height: 220,
                       width: 300,
                       child: Image.network(
@@ -185,7 +205,7 @@ class _IndividualCompetitionsScreenState
                       ),
                     ),
                     const Gap(5),
-                    Text("Votes: ${votes} "),
+                    const Text("Votes: votes "),
                     const SizedBox(height: 16.0),
                     ElevatedButton(
                       onPressed: hasUserVoted
@@ -217,7 +237,9 @@ class _IndividualCompetitionsScreenState
                                 });
                                 getData();
                                 getUserData();
-                                Navigator.pop(context);
+                                if(context.mounted) {
+                                  Navigator.pop(context);
+                                }
                                 setDialogState(() {});
                               }
                             },
@@ -235,6 +257,7 @@ class _IndividualCompetitionsScreenState
 
   @override
   void initState() {
+    super.initState();
     // TODO: implement initState
     incrementCounter();
     checkUserDetails();
@@ -342,15 +365,15 @@ class _IndividualCompetitionsScreenState
                                                           )
                                                         : Image.file(
                                                             postImage!,
-                                                            // Replace with the path to your image
+
                                                             fit: BoxFit
-                                                                .fill, // Use BoxFit.fill to force the image to fill the container
+                                                                .fill,
                                                           ),
                                               )
                                             : DottedBorder(
                                                 color: Colors.grey,
                                                 strokeWidth: 1,
-                                                dashPattern: [3, 3, 3, 3],
+                                                dashPattern:const [3, 3, 3, 3],
                                                 child: Container(
                                                   margin: const EdgeInsets
                                                       .symmetric(
@@ -419,13 +442,12 @@ class _IndividualCompetitionsScreenState
                                       const Gap(30),
                                       ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            minimumSize: Size(Get.width, 40),
+                                            foregroundColor: Colors.white, minimumSize: Size(Get.width, 40),
                                             backgroundColor: Colors.orange,
                                             textStyle: const TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w600),
                                             primary: Colors.blue,
-                                            onPrimary: Colors.white,
                                             // Background color
                                           ),
                                           onPressed: buttonLoading
@@ -490,7 +512,9 @@ class _IndividualCompetitionsScreenState
                                                     showToast(
                                                         message:
                                                             "Post created successfully");
-                                                    Navigator.pop(context);
+                                                    if(context.mounted) {
+                                                      Navigator.pop(context);
+                                                    }
                                                     getData();
                                                     getUserData();
                                                     setState(() {
@@ -622,7 +646,7 @@ class _IndividualCompetitionsScreenState
                                 crossAxisSpacing: 8.0,
                                 // Space between images horizontally
                                 mainAxisSpacing:
-                                    8.0, // Space between images vertically
+                                    8.0,
                               ),
                               itemBuilder: (BuildContext context, int index) {
                                 return InkWell(
@@ -668,163 +692,452 @@ class _IndividualCompetitionsScreenState
                 ? const Center(
                     child: CircularProgressIndicator(),
                   )
-                : SingleChildScrollView(
-                    child: SafeArea(
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: const BoxDecoration(
-                                borderRadius: BorderRadius.only(
-                                    bottomLeft: Radius.circular(25),
-                                    bottomRight: Radius.circular(25))),
-                            height: Get.height * 0.4,
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(25),
-                                  bottomRight: Radius.circular(25)),
-                              child: Image.network(
-                                widget.competitionDetails["image"],
-                                fit: BoxFit.cover,
+                : SafeArea(
+                  child: ListView(
+                    children: [
+                      Container(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(25),
+                                bottomRight: Radius.circular(25))),
+                        height: Get.height * 0.4,
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                              bottomLeft: Radius.circular(25),
+                              bottomRight: Radius.circular(25)),
+                          child: Image.network(
+                            widget.competitionDetails["image"],
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        child: Column(
+                          children: [
+                            Text(
+                              widget.competitionDetails["name"],
+                              style: TextStyle(
+                                  color: isDark(context)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25),
+                            ),
+                            const Gap(10),
+                            Text(
+                              "Theme: ${widget.competitionDetails["type"]}",
+                              style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey),
+                            ),
+                            const Gap(15),
+                            Text(
+                              "Your Results",
+                              style: TextStyle(
+                                  color: isDark(context)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25),
+                            ),
+                            const Gap(10),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                  bottom: 25),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .spaceBetween,
+                                    children: [
+                                      Container(
+                                        width: 80,
+                                        height: 80,
+                                        decoration: const BoxDecoration(
+                                          gradient:
+                                          LinearGradient(
+                                            colors: [
+                                              Colors.green,
+                                              Colors.yellow
+                                            ],
+                                            begin: Alignment
+                                                .topCenter,
+                                            end: Alignment
+                                                .bottomCenter,
+                                          ),
+                                        ),
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment
+                                              .center,
+                                          children: [
+                                            Text(
+                                              (userRank)
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                  color: Colors
+                                                      .black,
+                                                  fontSize: 24,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .w600),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Column(
+                                        children: [
+                                          if(userResults.isNotEmpty)
+                                          //
+                                          Text(
+                                            userResults["id"],
+                                            style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight:
+                                                FontWeight
+                                                    .w600,
+                                                color: isDark(
+                                                    context)
+                                                    ? Colors.white
+                                                    : Colors
+                                                    .black),
+                                          ),
+                                          Text(
+                                              "votes: ${userResults["votes"]}",
+                                              style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .w500,
+                                                  color: Colors
+                                                      .grey))
+                                        ],
+                                      ),
+                                      Container(
+                                        width: 80,
+                                      )
+                                    ],
+                                  ),
+                                  const Gap(15),
+                                  Container(
+                                    width: Get.width,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.blue,
+                                            width: userResults[
+                                            "creator"] ==
+                                                FirebaseAuth
+                                                    .instance
+                                                    .currentUser!
+                                                    .uid
+                                                ? 2
+                                                : 0.5),
+                                        borderRadius:
+                                        const BorderRadius
+                                            .all(
+                                            Radius.circular(
+                                                10))),
+                                    child:(userResults["image"]!=null)?ClipRRect(
+                                      borderRadius:
+                                      const BorderRadius.all(
+                                          Radius.circular(
+                                              10)),
+                                      child: Image.network(
+                                        userResults["image"],
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ):Container(),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            child: Column(
-                              children: [
-                                Text(
-                                  widget.competitionDetails["name"],
-                                  style: TextStyle(
-                                      color: isDark(context)
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 25),
-                                ),
-                                const Gap(10),
-                                Text(
-                                  "Theme: ${widget.competitionDetails["type"]}",
-                                  style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey),
-                                ),
-                                const Gap(15),
-                                Text(
-                                  "Winners",
-                                  style: TextStyle(
-                                      color: isDark(context)
-                                          ? Colors.white
-                                          : Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 25),
-                                ),
-                                const Gap(10),
-                                SingleChildScrollView(
-                                  child: Container(
-                                    height: 500,
-                                    child: ListView.builder(
-                                        itemCount: winners.length,
-                                        itemBuilder: (context, index) {
-                                          return Container(margin: EdgeInsets.only(bottom: 25),
-                                            child: Column(
+                            const Gap(15),
+                            Text(
+                              "Winners",
+                              style: TextStyle(
+                                  color: isDark(context)
+                                      ? Colors.white
+                                      : Colors.black,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 25),
+                            ),
+                            const Gap(10),
+                            Container(height: 300,
+                              child: ListView(
+                                  children:
+                                    winners.mapIndexed((index,winner) {
+                                      return Container(
+                                        margin: const EdgeInsets.only(
+                                            bottom: 25),
+                                        child: Column(
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    Container(
-                                                      width: 80,
-                                                      height: 80,
-                                                      decoration: BoxDecoration(
-                                                        gradient: LinearGradient(
-                                                          colors: [
-                                                            winnerPrimaryColor[index],
-                                                            winnerSecondaryColor[index]
-                                                          ],
-                                                          begin: Alignment.topCenter,
-                                                          end: Alignment.bottomCenter,
-                                                        ),
-                                                      ),
-                                                      child:  Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment.center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment.center,
-                                                        children: [
-                                                          Text(
-                                                            (index+1).toString(),
-                                                            style: const TextStyle(
-                                                                color: Colors.black,
-                                                                fontSize: 24,
-                                                                fontWeight:
-                                                                    FontWeight.w600),
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
-                                  
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                          winners[index]["id"],
-                                                          style: TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight.w600,
-                                                              color: isDark(context)
-                                                                  ? Colors.white
-                                                                  : Colors.black),
-                                                        ),
-                                                        Text(
-                                                            "votes: ${winners[index]["votes"]}",
-                                                            style: TextStyle(
-                                                                fontSize: 16,
-                                                                fontWeight:
-                                                                    FontWeight.w500,
-                                                                color: Colors.grey))
-                                                      ],
-                                                    ),
-                                                    Container(
-                                                      width: 80,
-                                                    )
-                                                  ],
-                                                ),
-                                                Gap(15),
-                                                Container(width: Get.width,
+                                                Container(
+                                                  width: 80,
+                                                  height: 80,
                                                   decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: Colors.blue,
-                                                          width: items[index]["creator"] ==
-                                                              FirebaseAuth.instance
-                                                                  .currentUser!.uid
-                                                              ? 2
-                                                              : 0.5),
-                                                      borderRadius: const BorderRadius.all(
-                                                          Radius.circular(10))),
-                                                  child: ClipRRect(
-                                                    borderRadius: const BorderRadius.all(
-                                                        Radius.circular(10)),
-                                                    child: Image.network(
-                                                      winners[index]["image"],
-                                                      fit: BoxFit.fill,
+                                                    gradient:
+                                                    LinearGradient(
+                                                      colors: [
+                                                        winnerPrimaryColor[
+                                                        index],
+                                                        winnerSecondaryColor[
+                                                        index]
+                                                      ],
+                                                      begin: Alignment
+                                                          .topCenter,
+                                                      end: Alignment
+                                                          .bottomCenter,
                                                     ),
                                                   ),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .center,
+                                                    children: [
+                                                      Text(
+                                                        (index + 1)
+                                                            .toString(),
+                                                        style: const TextStyle(
+                                                            color: Colors
+                                                                .black,
+                                                            fontSize: 24,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w600),
+                                                      )
+                                                    ],
+                                                  ),
                                                 ),
+                                                Column(
+                                                  children: [
+                                                    Text(
+                                                      winners[index]["id"],
+                                                      style: TextStyle(
+                                                          fontSize: 20,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w600,
+                                                          color: isDark(
+                                                              context)
+                                                              ? Colors.white
+                                                              : Colors
+                                                              .black),
+                                                    ),
+                                                    Text(
+                                                        "votes: ${winners[index]["votes"]}",
+                                                        style: const TextStyle(
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500,
+                                                            color: Colors
+                                                                .grey))
+                                                  ],
+                                                ),
+                                                Container(
+                                                  width: 80,
+                                                )
                                               ],
-                                  
                                             ),
-                                          );
-                                        }),
+                                            const Gap(15),
+                                            Container(
+                                              width: Get.width,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: Colors.blue,
+                                                      width: items[index][
+                                                      "creator"] ==
+                                                          FirebaseAuth
+                                                              .instance
+                                                              .currentUser!
+                                                              .uid
+                                                          ? 2
+                                                          : 0.5),
+                                                  borderRadius:
+                                                  const BorderRadius
+                                                      .all(
+                                                      Radius.circular(
+                                                          10))),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                const BorderRadius.all(
+                                                    Radius.circular(
+                                                        10)),
+                                                child: Image.network(
+                                                  winners[index]["image"],
+                                                  fit: BoxFit.fill,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList()
                                   ),
-                                ),
-                              ],
                             ),
-                          ),
-                        ],
+                            const Gap(10),
+
+                            SizedBox(
+                              width: Get.width * 0.44,
+                              height: Get.height * 0.05,
+                              child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: Colors.white, minimumSize: Size(Get.width, 40),
+                                    backgroundColor: Colors.red,
+                                    textStyle: const TextStyle(
+                                        fontSize: 15, fontWeight: FontWeight.w600),
+                                    // Background color
+                                  ),
+                                  onPressed: () {
+                                    showDialog<void>(
+                                      context: context,
+                                      barrierDismissible: false,
+                                      // user must tap button!
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                Text(
+                                                  'Complete List',
+                                                  style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight.bold),
+                                                )
+                                              ]),
+                                          content: Container(
+                                            margin: const EdgeInsets.all(10),
+                                            width: Get.width,
+                                            child: Column(
+
+                                                mainAxisSize:
+                                                MainAxisSize.min,
+                                                children: [
+
+                                                  Expanded(
+                                                    child: ListView.builder(
+                                                        itemCount:
+                                                        participants.length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          return Container(
+                                                            margin:
+                                                            const EdgeInsets
+                                                                .only(
+                                                                bottom: 10),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                              children: [
+                                                                Container(
+                                                                  width: 40,
+                                                                  height:
+                                                                  40,
+                                                                  decoration:
+                                                                  const BoxDecoration(
+                                                                    gradient:
+                                                                    LinearGradient(
+                                                                      colors: [
+                                                                        Colors.grey,
+                                                                        Colors.blue
+                                                                      ],
+                                                                      begin:
+                                                                      Alignment.topCenter,
+                                                                      end: Alignment
+                                                                          .bottomCenter,
+                                                                    ),
+                                                                  ),
+                                                                  child:
+                                                                  Column(mainAxisSize: MainAxisSize.min,
+                                                                    mainAxisAlignment:
+                                                                    MainAxisAlignment.center,
+                                                                    crossAxisAlignment:
+                                                                    CrossAxisAlignment.center,
+                                                                    children: [
+                                                                      Text(
+                                                                        (index + 1).toString(),
+                                                                        style: const TextStyle(
+                                                                            color: Colors.black,
+                                                                            fontSize: 24,
+                                                                            fontWeight: FontWeight.w600),
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                Column(
+                                                                  children: [
+                                                                    Text(
+                                                                      winners[index]
+                                                                      [
+                                                                      "id"],
+                                                                      style: TextStyle(
+                                                                          fontSize: 20,
+                                                                          fontWeight: FontWeight.w600,
+                                                                          color: isDark(context) ? Colors.white : Colors.black),
+                                                                    ),
+                                                                    Text(
+                                                                        "votes: ${winners[index]["votes"]}",
+                                                                        style: const TextStyle(
+                                                                            fontSize: 16,
+                                                                            fontWeight: FontWeight.w500,
+                                                                            color: Colors.grey))
+                                                                  ],
+                                                                ),
+                                                                Container(
+                                                                  width: 40,
+                                                                )
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }),
+                                                  )
+                                                ]),
+                                          ),
+                                          actions: <Widget>[
+                                            Center(
+                                              child: TextButton(
+                                                child: const Text(
+                                                  'Ok',
+                                                  style: TextStyle(
+                                                      color: Colors.red,
+                                                      fontWeight:
+                                                      FontWeight.w600),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  child: const Text("Participant list")),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
+                ),
           );
   }
 }

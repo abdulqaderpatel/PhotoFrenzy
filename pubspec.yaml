@@ -52,6 +52,7 @@ dependencies:
   flutter_reaction_button:
   flutter_emoji:
   tflite_v2:
+  collection:
 
 
 
