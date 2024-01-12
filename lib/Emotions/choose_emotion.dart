@@ -99,7 +99,7 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
                 ),
                 InkWell(onTap: (){
                   Navigator.push(context, MaterialPageRoute(builder: (context){
-                    return EmotionDetector();
+                    return EmotionDetector(posts: widget.posts,);
                   }));
                 },
                   child: ClipRRect(

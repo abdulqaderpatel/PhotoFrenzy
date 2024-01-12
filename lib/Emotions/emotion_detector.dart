@@ -3,22 +3,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photofrenzy/Emotions/emotion_categorized_posts.dart';
 import 'package:tflite_v2/tflite_v2.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: EmotionDetector(),
-    );
-  }
-}
+import '../global/theme_mode.dart';
 
 class EmotionDetector extends StatefulWidget {
+  final List<Map<String, dynamic>> posts;
+
+  EmotionDetector({required this.posts});
+
   @override
   _EmotionDetectorState createState() => _EmotionDetectorState();
 }
@@ -27,9 +21,11 @@ class _EmotionDetectorState extends State<EmotionDetector> {
   final ImagePicker _picker = ImagePicker();
   XFile? _image;
   File? file;
-  var _recognitions;
+
   var v = "";
-  // var dataList = [];
+
+  var isImageSelected = false;
+
   @override
   void initState() {
     super.initState();
@@ -53,12 +49,24 @@ class _EmotionDetectorState extends State<EmotionDetector> {
         file = File(image!.path);
       });
       detectimage(file!);
-    } catch (e) {
-      print('Error picking image: $e');
-    }
+    } catch (e) {}
+  }
+
+  Future<void> getImageFromCamera() async {
+    try {
+      final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+      setState(() {
+        _image = image;
+        file = File(image!.path);
+      });
+      detectimage(file!);
+    } catch (e) {}
   }
 
   Future detectimage(File image) async {
+    setState(() {
+      isImageSelected = false;
+    });
     int startTime = new DateTime.now().millisecondsSinceEpoch;
     var recognitions = await Tflite.runModelOnImage(
       path: image.path,
@@ -67,24 +75,48 @@ class _EmotionDetectorState extends State<EmotionDetector> {
       imageMean: 127.5,
       imageStd: 127.5,
     );
+    late var value;
     setState(() {
-      _recognitions = recognitions;
-      v = recognitions.toString();
-      // dataList = List<Map<String, dynamic>>.from(jsonDecode(v));
+      v = recognitions![0]["label"].substring(2);
+      value = recognitions[0]["confidence"];
     });
-    print("//////////////////////////////////////////////////");
-    print(_recognitions);
-    // print(dataList);
-    print("//////////////////////////////////////////////////");
-    int endTime = new DateTime.now().millisecondsSinceEpoch;
-    print("Inference took ${endTime - startTime}ms");
+
+    for (int i = 1; i < recognitions!.length; i++) {
+      if (recognitions[i]["confidence"] > value) {
+        setState(() {
+          v = recognitions[i].substring(2);
+        });
+      }
+    }
+
+    setState(() {
+      isImageSelected = true;
+    });
+    await Future.delayed(const Duration(seconds: 2));
+    setState(() {
+      isImageSelected=false;
+    });
+    if (context.mounted) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) {
+        return EmotionCategorizedPosts(posts: widget.posts, emotion: v);
+      }));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter TFlite'),
+        centerTitle: true,
+        title: const Column(
+          children: [
+            Text('Emotion Detector'),
+            Text(
+              "Upload a picture and we will determine your mood!",
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            )
+          ],
+        ),
       ),
       body: Center(
         child: Column(
@@ -98,14 +130,39 @@ class _EmotionDetectorState extends State<EmotionDetector> {
                 fit: BoxFit.cover,
               )
             else
-              Text('No image selected'),
-            SizedBox(height: 20),
+              const Text('No image selected'),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _pickImage,
-              child: Text('Pick Image from Gallery'),
+              child: const Text('Pick Image from Gallery'),
             ),
-            SizedBox(height: 20),
-            Text(v),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: getImageFromCamera,
+              child: const Text('Pick Image from Camera'),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            if (isImageSelected)
+              Column(
+                children: [
+                  Text(
+                    "Looks like your mood is $v",
+                    style: TextStyle(fontSize: 18,
+                        color: isDark(context) ? Colors.white : Colors.black),
+                  ),
+                  const SizedBox(height: 10,),
+                  Text(
+                    "Redirecting to posts..",
+                    style: TextStyle(fontSize: 18,
+                        color: isDark(context) ? Colors.white : Colors.black),
+                  ),
+                  const SizedBox(height: 2,),
+
+                  const CircularProgressIndicator()
+                ],
+              )
           ],
         ),
       ),
