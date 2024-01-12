@@ -32,6 +32,7 @@ final UserController userController = Get.put(UserController());
 
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TabController _tabController;
 
   var isLoading = false;
@@ -128,42 +129,42 @@ class _ProfileScreenState extends State<ProfileScreen>
       value: 'happy',
       icon: Text(
         Emoji("happy", "😊").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'sad',
       icon: Text(
         Emoji("sad", "😔").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'fear',
       icon: Text(
         Emoji("fear", "😨").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'anger',
       icon: Text(
         Emoji("anger", "😠").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'disgust',
       icon: Text(
         Emoji("disgust", "🤢").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'surprise',
       icon: Text(
         Emoji("surprise", "😲").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
   ];
@@ -188,40 +189,84 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Gap(50),
-            const Text("Profile"),
-            PopupMenuButton(
-                icon: const Icon(Icons.menu),
-                itemBuilder: (context) {
-                  return [
-                    PopupMenuItem(
-                        onTap: () {
-                          Future.delayed(Duration.zero, () {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return const EditUserProfileScreen();
-                            }));
-                          });
-                        },
-                        child: const Text("Edit profile")),
-                    PopupMenuItem(
-                        onTap: () async {
-                          showToast(message: "Logged out successfully");
-                          await FirebaseAuth.instance.signOut();
-                          if (context.mounted) {
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) {
-                              return const LoginScreen();
-                            }));
-                          }
-                        },
-                        child: const Text("Logout"))
-                  ];
-                })
+        elevation: 0,
+        centerTitle: true,
+        title: const Text("Profile"),
+      ),
+      drawer: Drawer(
+        child: Column(
+          children: <Widget>[
+            Container(
+              width: Get.width,
+              color: Colors.blue,
+              child: const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.blue,
+                ),
+                child: Text(
+                  'More Info',
+                  style: TextStyle(color: Colors.white, fontSize: 24),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            InkWell(
+              onTap: () {
+                Get.to(const EditUserProfileScreen());
+              },
+              child: Text(
+                "Edit Profile",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: isDark(context) ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            InkWell(
+              onTap: () {
+                Get.to(const EditUserProfileScreen());
+              },
+              child: Text(
+                "Competitions",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: isDark(context) ? Colors.white : Colors.black,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            InkWell(
+              onTap: ()async{
+                showToast(message: "Logged out successfully");
+                await FirebaseAuth.instance.signOut();
+                if (context.mounted) {
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (context) {
+                        return const LoginScreen();
+                      }));
+                }
+              },
+              child: Text(
+                "Logout",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.red,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
           ],
         ),
       ),
@@ -234,6 +279,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                   (BuildContext context, bool innerBoxIsScrolled) {
                 return [
                   SliverAppBar(
+                    automaticallyImplyLeading: false,
+                    actions: [Container()],
                     expandedHeight: 400.0,
                     floating: false,
                     pinned: false,
@@ -506,10 +553,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   ', ' + DateFormat.jm().format(dateTime);
 
                               return Container(
-                                margin: EdgeInsets.symmetric(horizontal: 10),
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 10),
                                 child: Column(
                                   children: [
-                                    Gap(10),
+                                    const Gap(10),
                                     Row(
                                       children: [
                                         Container(
@@ -567,7 +615,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                   ),
                                                   Text(
                                                     "@${userController.textposts[index].creator_username}",
-                                                    style: TextStyle(
+                                                    style: const TextStyle(
                                                         fontSize: 17,
                                                         color: Colors.grey),
                                                   ),
@@ -1046,82 +1094,135 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                             ]),
                                                         content: Container(
                                                           margin:
-                                                              EdgeInsets.all(
-                                                                  10),
+                                                              const EdgeInsets
+                                                                  .all(10),
                                                           width: Get.width,
-                                                          child: Column(mainAxisSize: MainAxisSize.min,
+                                                          child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
                                                               children: [
                                                                 Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment.spaceBetween,
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
                                                                     Text(
-                                                                      emojis[0].code,
-                                                                      style: TextStyle(fontSize: 22),
+                                                                      emojis[0]
+                                                                          .code,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              22),
                                                                     ),
-                                                                    Text(userController.textposts[index].happy.length.toString())
+                                                                    Text(userController
+                                                                        .textposts[
+                                                                            index]
+                                                                        .happy
+                                                                        .length
+                                                                        .toString())
                                                                   ],
                                                                 ),
                                                                 Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment.spaceBetween,
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
                                                                     Text(
-                                                                      emojis[1].code,
-                                                                      style: TextStyle(fontSize: 22),
+                                                                      emojis[1]
+                                                                          .code,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              22),
                                                                     ),
-                                                                    Text(userController.textposts[index].sad.length.toString())
+                                                                    Text(userController
+                                                                        .textposts[
+                                                                            index]
+                                                                        .sad
+                                                                        .length
+                                                                        .toString())
                                                                   ],
                                                                 ),
                                                                 Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment.spaceBetween,
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
                                                                     Text(
-                                                                      emojis[2].code,
-                                                                      style: TextStyle(fontSize: 22),
+                                                                      emojis[2]
+                                                                          .code,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              22),
                                                                     ),
-                                                                    Text(userController.textposts[index].fear.length.toString())
+                                                                    Text(userController
+                                                                        .textposts[
+                                                                            index]
+                                                                        .fear
+                                                                        .length
+                                                                        .toString())
                                                                   ],
                                                                 ),
                                                                 Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment.spaceBetween,
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
                                                                     Text(
-                                                                      emojis[3].code,
-                                                                      style: TextStyle(fontSize: 22),
+                                                                      emojis[3]
+                                                                          .code,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              22),
                                                                     ),
-                                                                    Text(userController.textposts[index].anger.length.toString())
+                                                                    Text(userController
+                                                                        .textposts[
+                                                                            index]
+                                                                        .anger
+                                                                        .length
+                                                                        .toString())
                                                                   ],
                                                                 ),
                                                                 Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment.spaceBetween,
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
                                                                     Text(
-                                                                      emojis[4].code,
-                                                                      style: TextStyle(fontSize: 22),
+                                                                      emojis[4]
+                                                                          .code,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              22),
                                                                     ),
-                                                                    Text(userController.textposts[index].disgust.length.toString())
+                                                                    Text(userController
+                                                                        .textposts[
+                                                                            index]
+                                                                        .disgust
+                                                                        .length
+                                                                        .toString())
                                                                   ],
                                                                 ),
                                                                 Row(
                                                                   mainAxisAlignment:
-                                                                  MainAxisAlignment.spaceBetween,
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
                                                                   children: [
                                                                     Text(
-                                                                      emojis[5].code,
-                                                                      style: TextStyle(fontSize: 22),
+                                                                      emojis[5]
+                                                                          .code,
+                                                                      style: const TextStyle(
+                                                                          fontSize:
+                                                                              22),
                                                                     ),
-                                                                    Text(userController.textposts[index].surprise.length.toString())
+                                                                    Text(userController
+                                                                        .textposts[
+                                                                            index]
+                                                                        .surprise
+                                                                        .length
+                                                                        .toString())
                                                                   ],
                                                                 ),
-                                                              ]
-
-
-
-                                                        ),
+                                                              ]),
                                                         ),
                                                         actions: <Widget>[
                                                           Center(

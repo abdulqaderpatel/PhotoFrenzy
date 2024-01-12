@@ -57,20 +57,20 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Marketplace"),
+        title: const Text("Marketplace"),
         actions: [
           IconButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  return AddItemScreen();
+                  return const AddItemScreen();
                 }));
               },
-              icon: Icon(Icons.add))
+              icon: const Icon(Icons.add))
         ],
       ),
       backgroundColor: Theme.of(context).primaryColor,
       body: isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : SafeArea(
@@ -105,10 +105,10 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                     ],
                   ),
                   AnimatedSwitcher(
-                    duration: Duration(milliseconds: 1000),
+                    duration: const Duration(milliseconds: 1000),
                     child: isGrid == false
                         ? Container(
-                            height: 370,
+                            height: 350,
                             child: PageView.builder(
                                 itemCount: items.length,
                                 itemBuilder: (context, index) {
@@ -123,7 +123,7 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                                                   )));
                                     },
                                     child: Container(
-                                      padding: const EdgeInsets.all(15),
+                                      padding: const EdgeInsets.all(5),
                                       margin: const EdgeInsets.all(20),
                                       decoration: BoxDecoration(
                                           borderRadius:
@@ -131,7 +131,7 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                                           color: Colors.white),
                                       child: Column(
                                         children: [
-                                          Row(
+                                          Row(mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
                                               Text(
                                                 items[index]["title"],
@@ -140,8 +140,10 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                                                     fontWeight:
                                                         FontWeight.w600),
                                               ),
+
                                             ],
                                           ),
+                                          const SizedBox(height: 10,),
                                           SizedBox(
                                             height: 200,
                                             width: double.infinity,
@@ -184,7 +186,7 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                                                             BorderRadius
                                                                 .circular(25),
                                                         color: Colors.white),
-                                                    child: Icon(
+                                                    child: const Icon(
                                                       Icons.shopping_cart,
                                                       color: Colors.black,
                                                     ))
@@ -280,7 +282,7 @@ class _MarketPlaceScreenState extends State<MarketPlaceScreen> {
                                                             BorderRadius
                                                                 .circular(25),
                                                         color: Colors.white),
-                                                    child: Icon(
+                                                    child: const Icon(
                                                       Icons.shopping_cart,
                                                       color: Colors.black,
                                                     ))
