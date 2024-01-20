@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_emoji/flutter_emoji.dart';
+import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
@@ -23,6 +25,67 @@ class RandomImagePostsListScreen extends StatefulWidget {
 class _RandomImagePostsListScreenState
     extends State<RandomImagePostsListScreen> {
   ItemScrollController itemScrollController = ItemScrollController();
+
+  var parser = EmojiParser();
+
+  var a = EmojiParser().get("coffee");
+
+  var reactions = [
+    Reaction<String>(
+      value: 'happy',
+      icon: Text(
+        Emoji("happy", "😊").code,
+        style: const TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'sad',
+      icon: Text(
+        Emoji("sad", "😔").code,
+        style: const TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'fear',
+      icon: Text(
+        Emoji("fear", "😨").code,
+        style: const TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'anger',
+      icon: Text(
+        Emoji("anger", "😠").code,
+        style: const TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'disgust',
+      icon: Text(
+        Emoji("disgust", "🤢").code,
+        style: const TextStyle(fontSize: 22),
+      ),
+    ),
+    Reaction<String>(
+      value: 'surprise',
+      icon: Text(
+        Emoji("surprise", "😲").code,
+        style: const TextStyle(fontSize: 22),
+      ),
+    ),
+  ];
+
+  var emojis = [
+    Emoji("happy", "😊"),
+    Emoji("sad", "😔"),
+    Emoji("fear", "😨"),
+    Emoji("anger", "😠"),
+    Emoji("disgust", "🤢"),
+    Emoji("surprise", "😲")
+  ];
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,52 +226,595 @@ class _RandomImagePostsListScreenState
                             children: [
                               InkWell(
                                 onTap: () async {
-                                  if (!widget.images[index].likers.contains(
-                                      FirebaseAuth.instance.currentUser!.uid)) {
+                                  if (!
+                                      widget.images[index].likers
+                                      .contains(FirebaseAuth
+                                      .instance
+                                      .currentUser!
+                                      .uid)) {
                                     setState(() {
-                                      widget.images[index].likes++;
-                                      widget.images[index].likers.add(
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid);
+
+                                          widget.images[index]
+                                          .likes++;
+
+                                          widget.images[index]
+                                          .likers
+                                          .add(FirebaseAuth
+                                          .instance
+                                          .currentUser!
+                                          .uid);
                                     });
                                     await FirebaseTable()
                                         .postsTable
-                                        .doc(widget.images[index].post_id)
+                                        .doc(
+                                        widget.images[index]
+                                        .post_id)
                                         .update({
-                                      "likes": FieldValue.increment(1),
-                                      "likers": FieldValue.arrayUnion([
-                                        FirebaseAuth.instance.currentUser!.uid
+                                      "likes":
+                                      FieldValue.increment(
+                                          1),
+                                      "likers": FieldValue
+                                          .arrayUnion([
+                                        FirebaseAuth.instance
+                                            .currentUser!.uid
                                       ])
                                     });
                                   } else {
                                     setState(() {
-                                      widget.images[index].likes--;
-                                      widget.images[index].likers.remove(
-                                          FirebaseAuth
-                                              .instance.currentUser!.uid);
+
+                                          widget.images[index]
+                                          .likes--;
+
+                                          widget.images[index]
+                                          .likers
+                                          .remove(FirebaseAuth
+                                          .instance
+                                          .currentUser!
+                                          .uid);
                                     });
                                     await FirebaseTable()
                                         .postsTable
-                                        .doc(widget.images[index].post_id)
+                                        .doc(
+                                        widget.images[index]
+                                        .post_id)
                                         .update({
-                                      "likes": FieldValue.increment(-1),
-                                      "likers": FieldValue.arrayRemove([
-                                        FirebaseAuth.instance.currentUser!.uid
+                                      "likes":
+                                      FieldValue.increment(
+                                          -1),
+                                      "likers": FieldValue
+                                          .arrayRemove([
+                                        FirebaseAuth.instance
+                                            .currentUser!.uid
                                       ])
                                     });
                                   }
                                 },
-                                child: Icon(widget.images[index].likers
-                                        .contains(FirebaseAuth
-                                            .instance.currentUser!.uid)
-                                    ? Icons.favorite
-                                    : Icons.favorite_outline),
+                                child: SizedBox(
+                                    height: 33,
+                                    child:
+                                    ReactionButton<String>(
+                                      toggle: false,
+                                      direction:
+                                      ReactionsBoxAlignment
+                                          .rtl,
+                                      onReactionChanged:
+                                          (Reaction<String>?
+                                      reaction) async {
+                                        if (!
+                                            widget.images[index]
+                                            .likers
+                                            .contains(
+                                            FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid)) {
+                                          setState(() {
+
+                                                widget.images[
+                                            index]
+                                                .likers
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+
+                                                widget.images[
+                                            index]
+                                                .likes++;
+                                          });
+                                          await FirebaseTable()
+                                              .postsTable
+                                              .doc(
+                                              widget.images[
+                                          index]
+                                              .post_id)
+                                              .update({
+                                            "likers": FieldValue
+                                                .arrayUnion([
+                                              FirebaseAuth
+                                                  .instance
+                                                  .currentUser!
+                                                  .uid
+                                            ]),
+                                            "likes": FieldValue
+                                                .increment(1)
+                                          });
+                                        }
+
+                                        var userReaction =
+                                            "none";
+                                        userReaction =
+                                            widget.images[
+                                        index]
+                                            .happy
+                                            .contains(FirebaseAuth
+                                            .instance
+                                            .currentUser!
+                                            .uid)
+                                            ? "happy"
+                                            :
+                                            widget.images[
+                                        index]
+                                            .sad
+                                            .contains(FirebaseAuth
+                                            .instance
+                                            .currentUser!
+                                            .uid)
+                                            ? "sad"
+                                            :
+                                            widget.images[index]
+                                            .fear
+                                            .contains(FirebaseAuth.instance.currentUser!.uid)
+                                            ? "fear"
+                                            : widget.images[index].anger.contains(FirebaseAuth.instance.currentUser!.uid)
+                                            ? "anger"
+                                            : widget.images[index].disgust.contains(FirebaseAuth.instance.currentUser!.uid)
+                                            ? "disgust"
+                                            : widget.images[index].surprise.contains(FirebaseAuth.instance.currentUser!.uid)
+                                            ? "surprise"
+                                            : "none";
+                                        if (userReaction ==
+                                            "none") {
+                                          await FirebaseTable()
+                                              .postsTable
+                                              .doc(
+                                              widget.images[
+                                          index]
+                                              .post_id)
+                                              .update({
+                                            "${reaction!.value}":
+                                            FieldValue
+                                                .arrayUnion([
+                                              FirebaseAuth
+                                                  .instance
+                                                  .currentUser!
+                                                  .uid
+                                            ]),
+                                          });
+                                        } else {
+                                          await FirebaseTable()
+                                              .postsTable
+                                              .doc(
+                                              widget.images[
+                                          index]
+                                              .post_id)
+                                              .update({
+                                            "${reaction!.value}":
+                                            FieldValue
+                                                .arrayUnion([
+                                              FirebaseAuth
+                                                  .instance
+                                                  .currentUser!
+                                                  .uid
+                                            ]),
+                                            userReaction:
+                                            FieldValue
+                                                .arrayRemove([
+                                              FirebaseAuth
+                                                  .instance
+                                                  .currentUser!
+                                                  .uid
+                                            ])
+                                          });
+                                        }
+                                        if (!
+                                            widget.images[index]
+                                            .likers
+                                            .contains(
+                                            FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid)) {
+                                          if (reaction.value ==
+                                              "happy") {
+
+                                                widget.images[
+                                            index]
+                                                .happy
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "sad") {
+
+                                                widget.images[
+                                            index]
+                                                .sad
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "fear") {
+
+                                                widget.images[
+                                            index]
+                                                .fear
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "disgust") {
+
+                                                widget.images[
+                                            index]
+                                                .disgust
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "anger") {
+
+                                                widget.images[
+                                            index]
+                                                .anger
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "surprise") {
+
+                                                widget.images[
+                                            index]
+                                                .surprise
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          }
+                                        } else {
+                                          userReaction ==
+                                              "happy"
+                                              ?
+                                              widget.images[
+                                          index]
+                                              .happy
+                                              .remove(FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .uid)
+                                              : userReaction ==
+                                              "sad"
+                                              ?
+                                              widget.images[
+                                          index]
+                                              .sad
+                                              .remove(FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .uid)
+                                              : userReaction ==
+                                              "disgust"
+                                              ?
+                                              widget.images[
+                                          index]
+                                              .disgust
+                                              .remove(FirebaseAuth.instance.currentUser!.uid)
+                                              : userReaction == "anger"
+                                              ? widget.images[index].anger.remove(FirebaseAuth.instance.currentUser!.uid)
+                                              : userReaction == "fear"
+                                              ? widget.images[index].fear.remove(FirebaseAuth.instance.currentUser!.uid)
+                                              : widget.images[index].surprise.remove(FirebaseAuth.instance.currentUser!.uid);
+                                          if (reaction.value ==
+                                              "happy") {
+
+                                                widget.images[
+                                            index]
+                                                .happy
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "sad") {
+
+                                                widget.images[
+                                            index]
+                                                .sad
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "fear") {
+
+                                                widget.images[
+                                            index]
+                                                .fear
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "disgust") {
+
+                                                widget.images[
+                                            index]
+                                                .disgust
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "anger") {
+
+                                                widget.images[
+                                            index]
+                                                .anger
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          } else if (reaction
+                                              .value ==
+                                              "surprise") {
+
+                                                widget.images[
+                                            index]
+                                                .surprise
+                                                .add(FirebaseAuth
+                                                .instance
+                                                .currentUser!
+                                                .uid);
+                                          }
+                                        }
+                                      },
+                                      reactions: reactions,
+                                      placeholder: Reaction<
+                                          String>(
+                                          value: null,
+                                          icon: !
+                                              widget.images[
+                                          index]
+                                              .likers
+                                              .contains(FirebaseAuth
+                                              .instance
+                                              .currentUser!
+                                              .uid)
+                                              ? const Icon(Icons
+                                              .thumb_up)
+                                              :
+                                              widget.images[
+                                          index]
+                                              .happy
+                                              .contains(
+                                              FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[0].code, style: const TextStyle(fontSize: 22))
+                                              : widget.images[index].sad.contains(FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[1].code, style: const TextStyle(fontSize: 22))
+                                              : widget.images[index].fear.contains(FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[2].code, style: const TextStyle(fontSize: 22))
+                                              : widget.images[index].anger.contains(FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[3].code, style: const TextStyle(fontSize: 22))
+                                              : widget.images[index].disgust.contains(FirebaseAuth.instance.currentUser!.uid)
+                                              ? Text(emojis[4].code, style: const TextStyle(fontSize: 22))
+                                              : Text(emojis[5].code, style: const TextStyle(fontSize: 22))),
+                                      boxColor: Colors.black
+                                          .withOpacity(0.5),
+                                      boxRadius: 10,
+                                      itemsSpacing: 0,
+                                      itemSize:
+                                      const Size(35, 35),
+                                    ),
+
+                                ),
                               ),
                               const SizedBox(
                                 width: 3,
                               ),
-                              Text(
-                                widget.images[index].likes.toString(),
+                              InkWell(onTap: (){
+                                showDialog<void>(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  // user must tap button!
+                                  builder:
+                                      (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Text(
+                                              'Reactions',
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold),
+                                            )
+                                          ]),
+                                      content: Container(
+                                        margin:
+                                        const EdgeInsets
+                                            .all(10),
+                                        width: Get.width,
+                                        child: Column(
+                                            mainAxisSize:
+                                            MainAxisSize
+                                                .min,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    emojis[0]
+                                                        .code,
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        22),
+                                                  ),
+                                                  Text(
+                                                      widget.images[
+                                                  index]
+                                                      .happy
+                                                      .length
+                                                      .toString())
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    emojis[1]
+                                                        .code,
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        22),
+                                                  ),
+                                                  Text(
+                                                      widget.images[
+                                                  index]
+                                                      .sad
+                                                      .length
+                                                      .toString())
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    emojis[2]
+                                                        .code,
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        22),
+                                                  ),
+                                                  Text(
+                                                      widget.images[
+                                                  index]
+                                                      .fear
+                                                      .length
+                                                      .toString())
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    emojis[3]
+                                                        .code,
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        22),
+                                                  ),
+                                                  Text(
+                                                      widget.images[
+                                                  index]
+                                                      .anger
+                                                      .length
+                                                      .toString())
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    emojis[4]
+                                                        .code,
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        22),
+                                                  ),
+                                                  Text(
+                                                      widget.images[
+                                                  index]
+                                                      .disgust
+                                                      .length
+                                                      .toString())
+                                                ],
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    emojis[5]
+                                                        .code,
+                                                    style: const TextStyle(
+                                                        fontSize:
+                                                        22),
+                                                  ),
+                                                  Text(
+                                                      widget.images[
+                                                  index]
+                                                      .surprise
+                                                      .length
+                                                      .toString())
+                                                ],
+                                              ),
+                                            ]),
+                                      ),
+                                      actions: <Widget>[
+                                        Center(
+                                          child: TextButton(
+                                            child: const Text(
+                                              'Ok',
+                                              style: TextStyle(
+                                                  color: Colors
+                                                      .red,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .w600),
+                                            ),
+                                            onPressed: () {
+                                              Navigator.of(
+                                                  context)
+                                                  .pop();
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                },
+                                child: Text(
+                                  widget.images[index].likes.toString(),
+                                ),
                               ),
                               SizedBox(
                                 width: Get.width * 0.1,

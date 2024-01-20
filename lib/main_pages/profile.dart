@@ -181,89 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     Emoji("surprise", "😲")
   ];
 
-  Map<String, dynamic>? paymentIntent;
 
-  void makePayment() async {
-    try {
-      paymentIntent = await createPaymentIntent();
-
-      var gpay = const PaymentSheetGooglePay(
-          merchantCountryCode: "IND", currencyCode: "IND", testEnv: true);
-      await Stripe.instance.initPaymentSheet(
-        paymentSheetParameters: SetupPaymentSheetParameters(
-            billingDetails: const BillingDetails(
-                address: Address(
-                    country: "IN",
-                    city: "",
-                    line1: "",
-                    line2: "",
-                    postalCode: "",
-                    state: "")),
-            paymentIntentClientSecret: paymentIntent!["client_secret"],
-            style: ThemeMode.dark,
-            merchantDisplayName: "timepas",
-            googlePay: gpay
-        ),
-      );
-
-      displayPaymentSheet();
-    } catch (e) {
-      throw Exception(e.toString());
-    }
-  }
-
-  void displayPaymentSheet() async {
-    try {
-      await Stripe.instance.presentPaymentSheet();
-
-
-
-      const serviceId = 'service_mvh1mfq';
-      const templateId = 'template_1h0pxtb';
-      const userid = "D7BfmJv7IK0otiGd6";
-
-      final url = Uri.parse("https://api.emailjs.com/api/v1.0/email/send");
-      await http.post(url,
-          headers: {
-            'origin': 'http://localhost',
-            'Content-Type': 'application/json'
-          },
-          body: jsonEncode({
-            'service_id': serviceId,
-            'template_id': templateId,
-            'user_id': userid,
-            "template_params": {
-              "name": FirebaseAuth.instance.currentUser!.displayName,
-              "to_email": FirebaseAuth.instance.currentUser!.email,
-              "event": "timepass"
-            }
-          }));
-
-
-    } catch (e) {
-
-    }
-  }
-
-  createPaymentIntent() async {
-    try {
-      Map<String, dynamic> body = {
-        "amount": (50 * 100).toString(),
-        "currency": "inr"
-      };
-      http.Response response = await http.post(
-          Uri.parse("https://api.stripe.com/v1/payment_intents"),
-          body: body,
-          headers: {
-            "Authorization":
-            "Bearer sk_test_51NjJbkSDqOoAu1Yvou3QlHodXEQKoN5nrvK6WP8t2kAdyzKAE2Jmd6umSMZuvh6WjhUvyO8VZpbJo1zFJSyaMvpP00rKeK3kPR",
-            "Content-Type": "application/x-www-form-urlencoded"
-          });
-      return json.decode(response.body);
-    } catch (e) {
-
-    }
-  }
 
   @override
   void initState() {
@@ -562,9 +480,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                         ),
                                                       ),
                                                     ),
-                                                    ElevatedButton(onPressed: (){
-                                                      makePayment();
-                                                    }, child: Text("gfds"))
+
                                                   ],
                                                 ),
                                                 const Gap(5),
