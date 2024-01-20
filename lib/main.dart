@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
 import 'package:photofrenzy/authentication/login.dart';
 import 'package:photofrenzy/authentication/verify_email.dart';
@@ -11,6 +12,8 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey =
+  "pk_test_51NjJbkSDqOoAu1YvgQpN7weD8MzoNFW7rCOPBMnAZaJlWnpXkW2EvauiTP8PYpnQC73YJbX9K3jnkMBqVKTHqdTE00frWxNHzF";
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

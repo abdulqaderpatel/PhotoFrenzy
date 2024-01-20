@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -5,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +21,7 @@ import '../models/image_post.dart';
 import '../profiles/edit_user_profile.dart';
 import '../user_posts/comments.dart';
 import '../user_posts/image_posts_list.dart';
-
+import 'package:http/http.dart' as http;
 class ProfileScreen extends StatefulWidget {
   final String id;
 
@@ -177,6 +180,90 @@ class _ProfileScreenState extends State<ProfileScreen>
     Emoji("disgust", "🤢"),
     Emoji("surprise", "😲")
   ];
+
+  Map<String, dynamic>? paymentIntent;
+
+  void makePayment() async {
+    try {
+      paymentIntent = await createPaymentIntent();
+
+      var gpay = const PaymentSheetGooglePay(
+          merchantCountryCode: "IND", currencyCode: "IND", testEnv: true);
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+            billingDetails: const BillingDetails(
+                address: Address(
+                    country: "IN",
+                    city: "",
+                    line1: "",
+                    line2: "",
+                    postalCode: "",
+                    state: "")),
+            paymentIntentClientSecret: paymentIntent!["client_secret"],
+            style: ThemeMode.dark,
+            merchantDisplayName: "timepas",
+            googlePay: gpay
+        ),
+      );
+
+      displayPaymentSheet();
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  void displayPaymentSheet() async {
+    try {
+      await Stripe.instance.presentPaymentSheet();
+
+
+
+      const serviceId = 'service_mvh1mfq';
+      const templateId = 'template_1h0pxtb';
+      const userid = "D7BfmJv7IK0otiGd6";
+
+      final url = Uri.parse("https://api.emailjs.com/api/v1.0/email/send");
+      await http.post(url,
+          headers: {
+            'origin': 'http://localhost',
+            'Content-Type': 'application/json'
+          },
+          body: jsonEncode({
+            'service_id': serviceId,
+            'template_id': templateId,
+            'user_id': userid,
+            "template_params": {
+              "name": FirebaseAuth.instance.currentUser!.displayName,
+              "to_email": FirebaseAuth.instance.currentUser!.email,
+              "event": "timepass"
+            }
+          }));
+
+
+    } catch (e) {
+
+    }
+  }
+
+  createPaymentIntent() async {
+    try {
+      Map<String, dynamic> body = {
+        "amount": (50 * 100).toString(),
+        "currency": "inr"
+      };
+      http.Response response = await http.post(
+          Uri.parse("https://api.stripe.com/v1/payment_intents"),
+          body: body,
+          headers: {
+            "Authorization":
+            "Bearer sk_test_51NjJbkSDqOoAu1Yvou3QlHodXEQKoN5nrvK6WP8t2kAdyzKAE2Jmd6umSMZuvh6WjhUvyO8VZpbJo1zFJSyaMvpP00rKeK3kPR",
+            "Content-Type": "application/x-www-form-urlencoded"
+          });
+      return json.decode(response.body);
+    } catch (e) {
+
+    }
+  }
 
   @override
   void initState() {
@@ -475,6 +562,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                         ),
                                                       ),
                                                     ),
+                                                    ElevatedButton(onPressed: (){
+                                                      makePayment();
+                                                    }, child: Text("gfds"))
                                                   ],
                                                 ),
                                                 const Gap(5),
@@ -1356,6 +1446,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           ),
                         ),
                       ),
+
                     ],
                   ),
                 ],

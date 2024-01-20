@@ -53,6 +53,8 @@ dependencies:
   flutter_emoji:
   tflite_v2:
   collection:
+  flutter_email_sender:
+  flutter_stripe:
 
 
 
