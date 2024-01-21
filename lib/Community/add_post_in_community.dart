@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:photofrenzy/global/show_message.dart';
 import 'package:video_player/video_player.dart';
 
 import '../global/firebase_tables.dart';
@@ -69,19 +71,129 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
             SizedBox(
               width: Get.width,
               child: ElevatedButton(
-                onPressed: buttonLoading ? null : () async {
-                  if(dropdownValue=="Text")
-                    {
+                onPressed: buttonLoading
+                    ? null
+                    : () async {
+                        List<Map<String, dynamic>> temp = [];
+                        var data = await FirebaseTable()
+                            .usersTable
+                            .where("id",
+                                isEqualTo:
+                                    FirebaseAuth.instance.currentUser!.uid)
+                            .get();
 
-                    }
-                  else if(dropdownValue=="Image")
-                    {
+                        for (var element in data.docs) {
+                          setState(() {
+                            temp.add(element.data());
+                          });
+                        }
 
-                    }
-                  else{
+                        String id =
+                            DateTime.now().millisecondsSinceEpoch.toString();
 
-                  }
-                },
+                        setState(() {
+                          buttonLoading = true;
+                        });
+                        if (dropdownValue == "Text") {
+                          await FirebaseTable()
+                              .communitiesTable
+                              .doc(widget.community)
+                              .collection("Posts")
+                              .doc(id)
+                              .set({
+                            "creator_name": temp[0]["name"],
+                            "creator_username": temp[0]["username"],
+                            "creator_profile_picture": temp[0]
+                                ["profile_picture"],
+                            "post_id": id,
+                            "creator_id":
+                                FirebaseAuth.instance.currentUser!.uid,
+                            "type": "text",
+                            "text": textController.text,
+                            "likes": 0,
+                            "likers": [],
+                            "comments": 0,
+                            "happy": [],
+                            "sad": [],
+                            "anger": [],
+                            "fear": [],
+                            "disgust": [],
+                            "surprise": [],
+                          });
+                        } else if (dropdownValue == "Image") {
+                          Reference ref = FirebaseStorage.instance.ref(
+                              "/${FirebaseAuth.instance.currentUser!.uid}/$id");
+                          UploadTask uploadTask =
+                              ref.putFile(postImage!.absolute);
+                          Future.value(uploadTask).then((value) async {
+                            var newUrl = await ref.getDownloadURL();
+                            await FirebaseTable()
+                                .communitiesTable
+                                .doc(widget.community)
+                                .collection("Posts")
+                                .doc(id)
+                                .set({
+                              "creator_name": temp[0]["name"],
+                              "creator_username": temp[0]["username"],
+                              "creator_profile_picture": temp[0]
+                                  ["profile_picture"],
+                              "post_id": id,
+                              "creator_id":
+                                  FirebaseAuth.instance.currentUser!.uid,
+                              "type": "image",
+                              "text": textController.text,
+                              "imageurl": newUrl.toString(),
+                              "likes": 0,
+                              "likers": [],
+                              "comments": 0,
+                              "happy": [],
+                              "sad": [],
+                              "anger": [],
+                              "fear": [],
+                              "disgust": [],
+                              "surprise": [],
+                            });
+                          });
+                        } else {
+                          Reference ref = FirebaseStorage.instance.ref(
+                              "/${FirebaseAuth.instance.currentUser!.uid}/$id");
+                          UploadTask uploadTask =
+                          ref.putFile(video!.absolute);
+                          Future.value(uploadTask).then((value) async {
+                            var newUrl = await ref.getDownloadURL();
+                            await FirebaseTable()
+                                .communitiesTable
+                                .doc(widget.community)
+                                .collection("Posts")
+                                .doc(id)
+                                .set({
+                              "creator_name": temp[0]["name"],
+                              "creator_username": temp[0]["username"],
+                              "creator_profile_picture": temp[0]
+                              ["profile_picture"],
+                              "post_id": id,
+                              "creator_id":
+                              FirebaseAuth.instance.currentUser!.uid,
+                              "type": "video",
+                              "text": textController.text,
+                              "imageurl": newUrl.toString(),
+                              "likes": 0,
+                              "likers": [],
+                              "comments": 0,
+                              "happy": [],
+                              "sad": [],
+                              "anger": [],
+                              "fear": [],
+                              "disgust": [],
+                              "surprise": [],
+                            });
+                          });
+                        }
+                        showToast(message: "Post created successfully");
+                        setState(() {
+                          buttonLoading = false;
+                        });
+                      },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     shape: RoundedRectangleBorder(
@@ -102,152 +214,158 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
         ),
       ),
       body: SafeArea(
-        child: Container(
-          margin: const EdgeInsets.all(10),
-          width: Get.width,
-          child: Column(
-            children: [
-              Theme(
-                data: Theme.of(context).copyWith(
-                  canvasColor: Theme.of(context).colorScheme.background,
-                ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  width: Get.width * 0.4,
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.background,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<String>(
-                      value: dropdownValue,
-                      icon: const Icon(
-                        Icons.arrow_downward,
-                        color: Colors.white,
+        child: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.all(10),
+            width: Get.width,
+            child: Column(
+              children: [
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    canvasColor: Theme.of(context).colorScheme.background,
+                  ),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    width: Get.width * 0.4,
+                    decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.background,
+                        borderRadius: BorderRadius.circular(10)),
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        value: dropdownValue,
+                        icon: const Icon(
+                          Icons.arrow_downward,
+                          color: Colors.white,
+                        ),
+                        elevation: 16,
+                        style: const TextStyle(color: Colors.white),
+                        onChanged: (String? value) {
+                          // This is called when the user selects an item.
+                          setState(() {
+                            dropdownValue = value!;
+                          });
+                        },
+                        items:
+                            list.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
                       ),
-                      elevation: 16,
-                      style: const TextStyle(color: Colors.white),
-                      onChanged: (String? value) {
-                        // This is called when the user selects an item.
-                        setState(() {
-                          dropdownValue = value!;
-                        });
-                      },
-                      items: list.map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
                     ),
                   ),
                 ),
-              ),
-              TextField(
-                  maxLines: 5,
-                  controller: textController,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                    hintText: "Write something here..",
-                  )),
-              dropdownValue == "Text"
-                  ? Container()
-                  : dropdownValue == "Image"
-                      ? SingleChildScrollView(
-                          child: Column(
-                            children: [
-                              Stack(
-                                children: [
-                                  Positioned(
-                                    child: Container(
-                                      constraints: BoxConstraints(
-                                          minWidth: Get.width,
-                                          minHeight: Get.height * 0.4,
-                                          maxHeight: Get.height * 0.5),
-                                      margin: const EdgeInsets.only(top: 10),
-                                      child: postImage!.path.isEmpty
-                                          ? InkWell(
-                                              onTap: () {
-                                                getImageFromGallery();
-                                              },
-                                              child: const Center(
-                                                child: Icon(Icons.add),
+                TextField(
+                    maxLines: 5,
+                    controller: textController,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: "Write something here..",
+                    )),
+                dropdownValue == "Text"
+                    ? Container()
+                    : dropdownValue == "Image"
+                        ? SingleChildScrollView(
+                            child: Column(
+                              children: [
+                                Stack(
+                                  children: [
+                                    Positioned(
+                                      child: Container(
+                                        constraints: BoxConstraints(
+                                            minWidth: Get.width,
+                                            minHeight: Get.height * 0.4,
+                                            maxHeight: Get.height * 0.5),
+                                        margin: const EdgeInsets.only(top: 10),
+                                        child: postImage!.path.isEmpty
+                                            ? InkWell(
+                                                onTap: () {
+                                                  getImageFromGallery();
+                                                },
+                                                child: const Center(
+                                                  child: Icon(Icons.add),
+                                                ),
+                                              )
+                                            : Image.file(
+                                                postImage!,
+                                                // Replace with the path to your image
+                                                fit: BoxFit
+                                                    .fill, // Use BoxFit.fill to force the image to fill the container
                                               ),
-                                            )
-                                          : Image.file(
-                                              postImage!, // Replace with the path to your image
-                                              fit: BoxFit
-                                                  .fill, // Use BoxFit.fill to force the image to fill the container
-                                            ),
+                                      ),
                                     ),
-                                  ),
-                                  Positioned(
-                                      top: 15,
-                                      right: 10,
-                                      child: InkWell(
+                                    Positioned(
+                                        top: 15,
+                                        right: 10,
+                                        child: InkWell(
+                                          onTap: () {
+                                            setState(() {
+                                              postImage = File("");
+                                            });
+                                          },
+                                          child: const Icon(
+                                            Icons.highlight_remove,
+                                            color: Colors.white,
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )
+                        : video != null
+                            ? _controller!.value.isInitialized
+                                ? Column(
+                                    children: [
+                                      AspectRatio(
+                                        aspectRatio:
+                                            _controller!.value.aspectRatio,
+                                        child: VideoPlayer(_controller!),
+                                      ),
+                                      InkWell(
                                         onTap: () {
                                           setState(() {
-                                            postImage = File("");
+                                            _controller!.value.isPlaying
+                                                ? _controller!.pause()
+                                                : _controller!.play();
+                                            _controller!.setLooping(true);
                                           });
                                         },
-                                        child: const Icon(
-                                          Icons.highlight_remove,
-                                          color: Colors.white,
+                                        child: Icon(_controller!.value.isPlaying
+                                            ? Icons.pause
+                                            : Icons.play_arrow),
+                                      )
+                                    ],
+                                  )
+                                : Container()
+                            : Container(
+                                constraints: BoxConstraints(
+                                    minWidth: Get.width,
+                                    minHeight: Get.height * 0.4,
+                                    maxHeight: Get.height * 0.5),
+                                margin: const EdgeInsets.only(top: 10),
+                                child:  InkWell(
+                                        onTap: () {
+                                          getVideoFromGallery();
+                                        },
+                                        child: const Center(
+                                          child: Icon(Icons.add),
                                         ),
-                                      )),
-                                ],
+                                      )
+
                               ),
-                            ],
-                          ),
-                        )
-                      : video != null
-                          ? _controller!.value.isInitialized
-                              ? Column(
-                                  children: [
-                                    AspectRatio(
-                                      aspectRatio:
-                                          _controller!.value.aspectRatio,
-                                      child: VideoPlayer(_controller!),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          _controller!.value.isPlaying
-                                              ? _controller!.pause()
-                                              : _controller!.play();
-                                        });
-                                      },
-                                      child: Icon(_controller!.value.isPlaying
-                                          ? Icons.pause
-                                          : Icons.play_arrow),
-                                    )
-                                  ],
-                                )
-                              : Container()
-                          : Container(
-                              constraints: BoxConstraints(
-                                  minWidth: Get.width,
-                                  minHeight: Get.height * 0.4,
-                                  maxHeight: Get.height * 0.5),
-                              margin: const EdgeInsets.only(top: 10),
-                              child: postImage!.path.isEmpty
-                                  ? InkWell(
-                                      onTap: () {
-                                        getVideoFromGallery();
-                                      },
-                                      child: const Center(
-                                        child: Icon(Icons.add),
-                                      ),
-                                    )
-                                  : Image.file(
-                                      postImage!, // Replace with the path to your image
-                                      fit: BoxFit
-                                          .fill, // Use BoxFit.fill to force the image to fill the container
-                                    ),
-                            ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller?.dispose();
   }
 }
