@@ -68,11 +68,11 @@ class _MyHomePageState extends State<UserNavigationBar> {
       ),
       PersistentBottomNavBarItem(
         icon: Icon(
-          Icons.shop,
+          Icons.groups,
           color: isDark(context) == true ? Colors.white : Colors.black,
         ),
         inactiveIcon: const Icon(
-          Icons.shop_outlined,
+          Icons.groups_outlined,
           color: Colors.grey,
         ),
       ),
