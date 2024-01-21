@@ -55,6 +55,7 @@ dependencies:
   collection:
   flutter_email_sender:
   flutter_stripe:
+  video_player:
 
 
 

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:photofrenzy/global/theme_mode.dart';
 import 'package:photofrenzy/main_pages/add_post.dart';
-import 'package:photofrenzy/main_pages/marketplace.dart';
+import 'package:photofrenzy/main_pages/community.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/main_pages/search.dart';
 
@@ -27,7 +27,7 @@ class _MyHomePageState extends State<UserNavigationBar> {
       const HomeScreen(),
       const SearchScreen(),
       const AddPostScreen(),
-      const MarketPlaceScreen(),
+      const Community(),
       ProfileScreen(
         id: FirebaseAuth.instance.currentUser!.uid,
       ),
