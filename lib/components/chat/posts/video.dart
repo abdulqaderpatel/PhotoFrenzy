@@ -1,24 +1,26 @@
 
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoCard extends StatefulWidget {
   final String videoUrl;
+  final String message;
 
-  VideoCard({required this.videoUrl});
+  VideoCard({required this.videoUrl,this.message="fgjdlkgfjs gklfjgkls gjklsdf gjdfklsgjdklgdfjlkjgklfgjdkls"});
 
   @override
   _VideoCardState createState() => _VideoCardState();
 }
 
 class _VideoCardState extends State<VideoCard> {
-  late VideoPlayerController _controller;
+  late CachedVideoPlayerController _controller;
   late Future<void> _initializeVideoPlayerFuture;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.videoUrl);
+    _controller = CachedVideoPlayerController.network("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4");
     _initializeVideoPlayerFuture = _controller.initialize();
     _controller.setLooping(true); // Optional: Set video to loop
   }
@@ -33,7 +35,7 @@ class _VideoCardState extends State<VideoCard> {
   Widget build(BuildContext context) {
     return Card(
       elevation: 5,
-      margin: EdgeInsets.all(10),
+
       child: Column(
         children: [
           AspectRatio(
@@ -51,7 +53,7 @@ class _VideoCardState extends State<VideoCard> {
                 future: _initializeVideoPlayerFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
-                    return VideoPlayer(_controller);
+                    return CachedVideoPlayer(_controller);
                   } else {
                     return Center(
                       child: CircularProgressIndicator(),
@@ -83,7 +85,7 @@ class _VideoCardState extends State<VideoCard> {
             ],
           ),
           ListTile(
-            title: Text('Video Title'), // Add title if needed
+            title: Text(this.widget.message), // Add title if needed
           ),
         ],
       ),

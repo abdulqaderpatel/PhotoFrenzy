@@ -65,9 +65,7 @@ class _IndividualCompetitionsScreenState
     });
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
-        .competitionsTable
-        .doc(widget.competitionDetails["id"])
-        .collection("Images")
+        .competitionSubmissionsTable
         .get();
 
     for (var element in data.docs) {
@@ -79,10 +77,9 @@ class _IndividualCompetitionsScreenState
     items = temp;
 
     temp = [];
-    data = await FirebaseTable()
-        .competitionsTable
-        .doc(widget.competitionDetails["id"])
-        .collection("Images")
+    data =
+    await FirebaseTable()
+        .competitionSubmissionsTable
         .orderBy("votes", descending: true)
         .get();
 
@@ -146,9 +143,7 @@ class _IndividualCompetitionsScreenState
     winners.clear();
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
-        .competitionsTable
-        .doc(widget.competitionDetails["id"])
-        .collection("Images")
+        .competitionSubmissionsTable
         .get();
 
     for (var element in data.docs) {
@@ -221,10 +216,8 @@ class _IndividualCompetitionsScreenState
                                     message:
                                         "You cannot vote for your own pictures!");
                               } else {
-                                await FirebaseFirestore.instance
-                                    .collection("Competitions")
-                                    .doc(widget.competitionDetails["id"])
-                                    .collection("Images")
+                                await FirebaseTable()
+                                    .competitionSubmissionsTable
                                     .doc(id)
                                     .update({"votes": FieldValue.increment(1)});
 
@@ -478,17 +471,16 @@ class _IndividualCompetitionsScreenState
                                                       .then((value) async {
                                                     var newUrl = await ref
                                                         .getDownloadURL();
-                                                    await FirebaseTable()
-                                                        .competitionsTable
-                                                        .doc(widget
-                                                                .competitionDetails[
-                                                            "id"])
-                                                        .collection("Images")
+                                                     await FirebaseTable()
+                                                        .competitionSubmissionsTable
                                                         .doc(time.toString())
                                                         .set({
+                                                       "competition_id":widget.competitionDetails["id"],
+                                                       "start_time":widget.competitionDetails["start_time"],
+                                                       "end_time":widget.competitionDetails["end_time"],
                                                       "id": time.toString(),
                                                       "image":
-                                                          newUrl.toString(),
+                                                          newUrl.toString(),"name":FirebaseAuth.instance.currentUser!.photoURL,
                                                       "creator": FirebaseAuth
                                                           .instance
                                                           .currentUser!

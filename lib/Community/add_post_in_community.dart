@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_video_player/cached_video_player.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
   List<String> list = <String>["Text", "Image", "Video"];
   String dropdownValue = "Text";
 
-  VideoPlayerController? _controller;
+  CachedVideoPlayerController? _controller;
 
   final textController = TextEditingController();
   File? postImage = File("");
@@ -48,7 +49,7 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
     if (pickedFile != null) {
       setState(() {
         video = File(pickedFile.path);
-        _controller = VideoPlayerController.file(video!)
+        _controller = CachedVideoPlayerController.file(video!)
           ..initialize().then((value) {
             _controller!.play();
           });
@@ -321,7 +322,7 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                                       AspectRatio(
                                         aspectRatio:
                                             _controller!.value.aspectRatio,
-                                        child: VideoPlayer(_controller!),
+                                        child: CachedVideoPlayer(_controller!),
                                       ),
                                       InkWell(
                                         onTap: () {

@@ -1067,7 +1067,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                 height: Get.height * 0.01,
                               ),
                               Container(
-                                margin: EdgeInsets.only(left: Get.width * 0.15),
+                                margin: EdgeInsets.only(left: Get.width * 0.17),
                                 child: Column(
                                   children: [
                                     Row(
@@ -1862,707 +1862,703 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                               SizedBox(
                                 height: Get.height * 0.01,
                               ),
-                              Row(
-                                children: [
-                                  Flexible(
-                                    child: Text(
-                                        textPosts[index]["text"],
-                                        style: TextStyle(
-                                            fontSize: 15,
-                                            color: isDark(context)
-                                                ? Colors.white
-                                                : Colors.black,
-                                            fontWeight:
-                                            FontWeight.w500)),
-                                  ),
-                                ],
-                              ),
-                              VideoCard(
-                                  videoUrl: textPosts[index]["imageurl"]),
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
-                                child: Row(
+                              Container(margin: EdgeInsets.only(left: Get.width*0.14),
+                                child: Column(
                                   children: [
-                                    InkWell(
-                                      onTap: () async {
-                                        if (!textPosts[index]["likers"]
-                                            .contains(FirebaseAuth
-                                            .instance
-                                            .currentUser!
-                                            .uid)) {
-                                          setState(() {
-                                            textPosts[index]
-                                            ["likes"]++;
-                                            textPosts[index]
-                                            ["likers"]
-                                                .add(FirebaseAuth
-                                                .instance
-                                                .currentUser!
-                                                .uid);
-                                          });
-                                          await FirebaseTable()
-                                              .communitiesTable.doc(
-                                              widget.community["name"])
-                                              .collection(
-                                              "Posts")
-                                              .doc(
-                                              textPosts[index]
-                                              ["post_id"])
-                                              .update({
-                                            "likes":
-                                            FieldValue.increment(
-                                                1),
-                                            "likers": FieldValue
-                                                .arrayUnion([
-                                              FirebaseAuth.instance
-                                                  .currentUser!.uid
-                                            ])
-                                          });
-                                        } else {
-                                          setState(() {
-                                            textPosts[index]["likes"]--;
 
-                                            textPosts[index]
-                                            ["likers"]
-                                                .remove(FirebaseAuth
-                                                .instance
-                                                .currentUser!
-                                                .uid);
-                                          });
-                                          await FirebaseTable()
-                                              .communitiesTable.doc(
-                                              widget.community["name"])
-                                              .collection(
-                                              "Posts")
-                                              .doc(textPosts[index]
-                                          ["post_id"])
-                                              .update({
-                                            "likes":
-                                            FieldValue.increment(
-                                                -1),
-                                            "likers": FieldValue
-                                                .arrayRemove([
-                                              FirebaseAuth.instance
-                                                  .currentUser!.uid
-                                            ])
-                                          });
-                                        }
-                                      },
-                                      child: SizedBox(
-                                        height: 33,
-                                        child:
-                                        ReactionButton<String>(
-                                          toggle: false,
-                                          direction:
-                                          ReactionsBoxAlignment
-                                              .rtl,
-                                          onReactionChanged:
-                                              (Reaction<String>?
-                                          reaction) async {
-                                            if (!
-                                            textPosts[index]
-                                            ["likers"]
-                                                .contains(
-                                                FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid)) {
-                                              setState(() {
-                                                textPosts[
-                                                index]
-                                                ["likers"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-
-                                                textPosts[
-                                                index]
-                                                ["likes"]++;
-                                              });
-                                              await FirebaseTable()
-                                                  .communitiesTable.doc(
-                                                  widget.community["name"])
-                                                  .collection("Posts")
-                                                  .doc(
-                                                  textPosts[
-                                                  index]
-                                                  ["post_id"])
-                                                  .update({
-                                                "likers": FieldValue
-                                                    .arrayUnion([
-                                                  FirebaseAuth
-                                                      .instance
-                                                      .currentUser!
-                                                      .uid
-                                                ]),
-                                                "likes": FieldValue
-                                                    .increment(1)
-                                              });
-                                            }
-
-                                            var userReaction =
-                                                "none";
-                                            userReaction =
-                                            textPosts[
-                                            index]
-                                            ["happy"]
-                                                .contains(FirebaseAuth
-                                                .instance
-                                                .currentUser!
-                                                .uid)
-                                                ? "happy"
-                                                :
-                                            textPosts[
-                                            index]
-                                            ["sad"]
-                                                .contains(FirebaseAuth
-                                                .instance
-                                                .currentUser!
-                                                .uid)
-                                                ? "sad"
-                                                :
-                                            textPosts[index]
-                                            ["fear"]
-                                                .contains(
-                                                FirebaseAuth.instance
-                                                    .currentUser!
-                                                    .uid)
-                                                ? "fear"
-                                                : textPosts[index]["anger"]
-                                                .contains(
-                                                FirebaseAuth.instance
-                                                    .currentUser!
-                                                    .uid)
-                                                ? "anger"
-                                                : textPosts[index]["disgust"]
-                                                .contains(
-                                                FirebaseAuth.instance
-                                                    .currentUser!
-                                                    .uid)
-                                                ? "disgust"
-                                                : textPosts[index]["surprise"]
-                                                .contains(
-                                                FirebaseAuth.instance
-                                                    .currentUser!
-                                                    .uid)
-                                                ? "surprise"
-                                                : "none";
-                                            if (userReaction ==
-                                                "none") {
-                                              await FirebaseTable()
-                                                  .communitiesTable.doc(
-                                                  widget.community["name"])
-                                                  .collection("Posts")
-                                                  .doc(
-                                                  textPosts[
-                                                  index]
-                                                  ["post_id"])
-                                                  .update({
-                                                "${reaction!.value}":
-                                                FieldValue
-                                                    .arrayUnion([
-                                                  FirebaseAuth
-                                                      .instance
-                                                      .currentUser!
-                                                      .uid
-                                                ]),
-                                              });
-                                            } else {
-                                              await FirebaseTable()
-                                                  .communitiesTable.doc(
-                                                  widget.community["name"])
-                                                  .collection("Posts")
-                                                  .doc(
-                                                  textPosts[
-                                                  index]
-                                                  ["post_id"])
-                                                  .update({
-                                                "${reaction!.value}":
-                                                FieldValue
-                                                    .arrayUnion([
-                                                  FirebaseAuth
-                                                      .instance
-                                                      .currentUser!
-                                                      .uid
-                                                ]),
-                                                userReaction:
-                                                FieldValue
-                                                    .arrayRemove([
-                                                  FirebaseAuth
-                                                      .instance
-                                                      .currentUser!
-                                                      .uid
-                                                ])
-                                              });
-                                            }
-                                            if (!
-                                            textPosts[index]
-                                            ["likers"]
-                                                .contains(
-                                                FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid)) {
-                                              if (reaction.value ==
-                                                  "happy") {
-                                                textPosts[
-                                                index]
-                                                ["happy"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "sad") {
-                                                textPosts[
-                                                index]
-                                                ["sad"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "fear") {
-                                                textPosts[
-                                                index]
-                                                ["fear"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "disgust") {
-                                                textPosts[
-                                                index]
-                                                ["disgust"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "anger") {
-                                                textPosts[
-                                                index]
-                                                ["anger"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "surprise") {
-                                                textPosts[
-                                                index]
-                                                ["surprise"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              }
-                                            } else {
-                                              userReaction ==
-                                                  "happy"
-                                                  ?
-                                              textPosts[
-                                              index]
-                                              ["happy"]
-                                                  .remove(FirebaseAuth
-                                                  .instance
-                                                  .currentUser!
-                                                  .uid)
-                                                  : userReaction ==
-                                                  "sad"
-                                                  ?
-                                              textPosts[
-                                              index]
-                                              ["sad"]
-                                                  .remove(FirebaseAuth
-                                                  .instance
-                                                  .currentUser!
-                                                  .uid)
-                                                  : userReaction ==
-                                                  "disgust"
-                                                  ?
-                                              textPosts[
-                                              index]
-                                              ["disgust"]
-                                                  .remove(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!
-                                                      .uid)
-                                                  : userReaction == "anger"
-                                                  ? textPosts[index]["anger"]
-                                                  .remove(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!
-                                                      .uid)
-                                                  : userReaction == "fear"
-                                                  ? textPosts[index]["fear"]
-                                                  .remove(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!
-                                                      .uid)
-                                                  : textPosts[index]["surprise"]
-                                                  .remove(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!
-                                                      .uid);
-                                              if (reaction.value ==
-                                                  "happy") {
-                                                textPosts[
-                                                index]
-                                                ["happy"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "sad") {
-                                                textPosts[
-                                                index]
-                                                ["sad"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "fear") {
-                                                textPosts[
-                                                index]
-                                                ["fear"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "disgust") {
-                                                textPosts[
-                                                index]
-                                                ["disgust"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "anger") {
-                                                textPosts[
-                                                index]
-                                                ["anger"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              } else if (reaction
-                                                  .value ==
-                                                  "surprise") {
-                                                textPosts[
-                                                index]
-                                                ["surprise"]
-                                                    .add(FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid);
-                                              }
-                                            }
-                                          },
-                                          reactions: reactions,
-                                          placeholder: Reaction<
-                                              String>(
-                                              value: null,
-                                              icon: !
-                                              textPosts[
-                                              index]
-                                              ["likers"]
+                                    VideoCard(
+                                        videoUrl: textPosts[index]["imageurl"]),
+                                    SizedBox(height: 10,),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      child: Row(
+                                        children: [
+                                          InkWell(
+                                            onTap: () async {
+                                              if (!textPosts[index]["likers"]
                                                   .contains(FirebaseAuth
                                                   .instance
                                                   .currentUser!
-                                                  .uid)
-                                                  ? const Icon(Icons
-                                                  .thumb_up)
-                                                  :
-                                              textPosts[
-                                              index]
-                                              ["happy"]
-                                                  .contains(
-                                                  FirebaseAuth.instance
+                                                  .uid)) {
+                                                setState(() {
+                                                  textPosts[index]
+                                                  ["likes"]++;
+                                                  textPosts[index]
+                                                  ["likers"]
+                                                      .add(FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid);
+                                                });
+                                                await FirebaseTable()
+                                                    .communitiesTable.doc(
+                                                    widget.community["name"])
+                                                    .collection(
+                                                    "Posts")
+                                                    .doc(
+                                                    textPosts[index]
+                                                    ["post_id"])
+                                                    .update({
+                                                  "likes":
+                                                  FieldValue.increment(
+                                                      1),
+                                                  "likers": FieldValue
+                                                      .arrayUnion([
+                                                    FirebaseAuth.instance
+                                                        .currentUser!.uid
+                                                  ])
+                                                });
+                                              } else {
+                                                setState(() {
+                                                  textPosts[index]["likes"]--;
+
+                                                  textPosts[index]
+                                                  ["likers"]
+                                                      .remove(FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid);
+                                                });
+                                                await FirebaseTable()
+                                                    .communitiesTable.doc(
+                                                    widget.community["name"])
+                                                    .collection(
+                                                    "Posts")
+                                                    .doc(textPosts[index]
+                                                ["post_id"])
+                                                    .update({
+                                                  "likes":
+                                                  FieldValue.increment(
+                                                      -1),
+                                                  "likers": FieldValue
+                                                      .arrayRemove([
+                                                    FirebaseAuth.instance
+                                                        .currentUser!.uid
+                                                  ])
+                                                });
+                                              }
+                                            },
+                                            child: SizedBox(
+                                              height: 33,
+                                              child:
+                                              ReactionButton<String>(
+                                                toggle: false,
+                                                direction:
+                                                ReactionsBoxAlignment
+                                                    .rtl,
+                                                onReactionChanged:
+                                                    (Reaction<String>?
+                                                reaction) async {
+                                                  if (!
+                                                  textPosts[index]
+                                                  ["likers"]
+                                                      .contains(
+                                                      FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid)) {
+                                                    setState(() {
+                                                      textPosts[
+                                                      index]
+                                                      ["likers"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+
+                                                      textPosts[
+                                                      index]
+                                                      ["likes"]++;
+                                                    });
+                                                    await FirebaseTable()
+                                                        .communitiesTable.doc(
+                                                        widget.community["name"])
+                                                        .collection("Posts")
+                                                        .doc(
+                                                        textPosts[
+                                                        index]
+                                                        ["post_id"])
+                                                        .update({
+                                                      "likers": FieldValue
+                                                          .arrayUnion([
+                                                        FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid
+                                                      ]),
+                                                      "likes": FieldValue
+                                                          .increment(1)
+                                                    });
+                                                  }
+
+                                                  var userReaction =
+                                                      "none";
+                                                  userReaction =
+                                                  textPosts[
+                                                  index]
+                                                  ["happy"]
+                                                      .contains(FirebaseAuth
+                                                      .instance
                                                       .currentUser!
                                                       .uid)
-                                                  ? Text(emojis[0].code,
-                                                  style: const TextStyle(
-                                                      fontSize: 22))
-                                                  : textPosts[index]["sad"]
-                                                  .contains(
-                                                  FirebaseAuth.instance
+                                                      ? "happy"
+                                                      :
+                                                  textPosts[
+                                                  index]
+                                                  ["sad"]
+                                                      .contains(FirebaseAuth
+                                                      .instance
                                                       .currentUser!
                                                       .uid)
-                                                  ? Text(emojis[1].code,
-                                                  style: const TextStyle(
-                                                      fontSize: 22))
-                                                  : textPosts[index]["fear"]
-                                                  .contains(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!
-                                                      .uid)
-                                                  ? Text(emojis[2].code,
-                                                  style: const TextStyle(
-                                                      fontSize: 22))
-                                                  : textPosts[index]["anger"]
-                                                  .contains(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!
-                                                      .uid)
-                                                  ? Text(emojis[3].code,
-                                                  style: const TextStyle(
-                                                      fontSize: 22))
-                                                  : textPosts[index]["disgust"]
-                                                  .contains(
-                                                  FirebaseAuth.instance
-                                                      .currentUser!
-                                                      .uid)
-                                                  ? Text(emojis[4].code,
-                                                  style: const TextStyle(
-                                                      fontSize: 22))
-                                                  : Text(emojis[5].code,
-                                                  style: const TextStyle(
-                                                      fontSize: 22))),
-                                          boxColor: Colors.black
-                                              .withOpacity(0.5),
-                                          boxRadius: 10,
-                                          itemsSpacing: 0,
-                                          itemSize:
-                                          const Size(35, 35),
-                                        ),
+                                                      ? "sad"
+                                                      :
+                                                  textPosts[index]
+                                                  ["fear"]
+                                                      .contains(
+                                                      FirebaseAuth.instance
+                                                          .currentUser!
+                                                          .uid)
+                                                      ? "fear"
+                                                      : textPosts[index]["anger"]
+                                                      .contains(
+                                                      FirebaseAuth.instance
+                                                          .currentUser!
+                                                          .uid)
+                                                      ? "anger"
+                                                      : textPosts[index]["disgust"]
+                                                      .contains(
+                                                      FirebaseAuth.instance
+                                                          .currentUser!
+                                                          .uid)
+                                                      ? "disgust"
+                                                      : textPosts[index]["surprise"]
+                                                      .contains(
+                                                      FirebaseAuth.instance
+                                                          .currentUser!
+                                                          .uid)
+                                                      ? "surprise"
+                                                      : "none";
+                                                  if (userReaction ==
+                                                      "none") {
+                                                    await FirebaseTable()
+                                                        .communitiesTable.doc(
+                                                        widget.community["name"])
+                                                        .collection("Posts")
+                                                        .doc(
+                                                        textPosts[
+                                                        index]
+                                                        ["post_id"])
+                                                        .update({
+                                                      "${reaction!.value}":
+                                                      FieldValue
+                                                          .arrayUnion([
+                                                        FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid
+                                                      ]),
+                                                    });
+                                                  } else {
+                                                    await FirebaseTable()
+                                                        .communitiesTable.doc(
+                                                        widget.community["name"])
+                                                        .collection("Posts")
+                                                        .doc(
+                                                        textPosts[
+                                                        index]
+                                                        ["post_id"])
+                                                        .update({
+                                                      "${reaction!.value}":
+                                                      FieldValue
+                                                          .arrayUnion([
+                                                        FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid
+                                                      ]),
+                                                      userReaction:
+                                                      FieldValue
+                                                          .arrayRemove([
+                                                        FirebaseAuth
+                                                            .instance
+                                                            .currentUser!
+                                                            .uid
+                                                      ])
+                                                    });
+                                                  }
+                                                  if (!
+                                                  textPosts[index]
+                                                  ["likers"]
+                                                      .contains(
+                                                      FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid)) {
+                                                    if (reaction.value ==
+                                                        "happy") {
+                                                      textPosts[
+                                                      index]
+                                                      ["happy"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "sad") {
+                                                      textPosts[
+                                                      index]
+                                                      ["sad"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "fear") {
+                                                      textPosts[
+                                                      index]
+                                                      ["fear"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "disgust") {
+                                                      textPosts[
+                                                      index]
+                                                      ["disgust"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "anger") {
+                                                      textPosts[
+                                                      index]
+                                                      ["anger"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "surprise") {
+                                                      textPosts[
+                                                      index]
+                                                      ["surprise"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    }
+                                                  } else {
+                                                    userReaction ==
+                                                        "happy"
+                                                        ?
+                                                    textPosts[
+                                                    index]
+                                                    ["happy"]
+                                                        .remove(FirebaseAuth
+                                                        .instance
+                                                        .currentUser!
+                                                        .uid)
+                                                        : userReaction ==
+                                                        "sad"
+                                                        ?
+                                                    textPosts[
+                                                    index]
+                                                    ["sad"]
+                                                        .remove(FirebaseAuth
+                                                        .instance
+                                                        .currentUser!
+                                                        .uid)
+                                                        : userReaction ==
+                                                        "disgust"
+                                                        ?
+                                                    textPosts[
+                                                    index]
+                                                    ["disgust"]
+                                                        .remove(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid)
+                                                        : userReaction == "anger"
+                                                        ? textPosts[index]["anger"]
+                                                        .remove(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid)
+                                                        : userReaction == "fear"
+                                                        ? textPosts[index]["fear"]
+                                                        .remove(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid)
+                                                        : textPosts[index]["surprise"]
+                                                        .remove(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid);
+                                                    if (reaction.value ==
+                                                        "happy") {
+                                                      textPosts[
+                                                      index]
+                                                      ["happy"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "sad") {
+                                                      textPosts[
+                                                      index]
+                                                      ["sad"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "fear") {
+                                                      textPosts[
+                                                      index]
+                                                      ["fear"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "disgust") {
+                                                      textPosts[
+                                                      index]
+                                                      ["disgust"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "anger") {
+                                                      textPosts[
+                                                      index]
+                                                      ["anger"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    } else if (reaction
+                                                        .value ==
+                                                        "surprise") {
+                                                      textPosts[
+                                                      index]
+                                                      ["surprise"]
+                                                          .add(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!
+                                                          .uid);
+                                                    }
+                                                  }
+                                                },
+                                                reactions: reactions,
+                                                placeholder: Reaction<
+                                                    String>(
+                                                    value: null,
+                                                    icon: !
+                                                    textPosts[
+                                                    index]
+                                                    ["likers"]
+                                                        .contains(FirebaseAuth
+                                                        .instance
+                                                        .currentUser!
+                                                        .uid)
+                                                        ? const Icon(Icons
+                                                        .thumb_up)
+                                                        :
+                                                    textPosts[
+                                                    index]
+                                                    ["happy"]
+                                                        .contains(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid)
+                                                        ? Text(emojis[0].code,
+                                                        style: const TextStyle(
+                                                            fontSize: 22))
+                                                        : textPosts[index]["sad"]
+                                                        .contains(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid)
+                                                        ? Text(emojis[1].code,
+                                                        style: const TextStyle(
+                                                            fontSize: 22))
+                                                        : textPosts[index]["fear"]
+                                                        .contains(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid)
+                                                        ? Text(emojis[2].code,
+                                                        style: const TextStyle(
+                                                            fontSize: 22))
+                                                        : textPosts[index]["anger"]
+                                                        .contains(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid)
+                                                        ? Text(emojis[3].code,
+                                                        style: const TextStyle(
+                                                            fontSize: 22))
+                                                        : textPosts[index]["disgust"]
+                                                        .contains(
+                                                        FirebaseAuth.instance
+                                                            .currentUser!
+                                                            .uid)
+                                                        ? Text(emojis[4].code,
+                                                        style: const TextStyle(
+                                                            fontSize: 22))
+                                                        : Text(emojis[5].code,
+                                                        style: const TextStyle(
+                                                            fontSize: 22))),
+                                                boxColor: Colors.black
+                                                    .withOpacity(0.5),
+                                                boxRadius: 10,
+                                                itemsSpacing: 0,
+                                                itemSize:
+                                                const Size(35, 35),
+                                              ),
+                                            ),
+
+                                          ),
+                                          const SizedBox(
+                                            width: 3,
+                                          ),
+                                          InkWell(onTap: () {
+                                            showDialog<void>(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              // user must tap button!
+                                              builder:
+                                                  (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Row(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .center,
+                                                      children: [
+                                                        Text(
+                                                          'Reactions',
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .bold),
+                                                        )
+                                                      ]),
+                                                  content: Container(
+                                                    margin:
+                                                    const EdgeInsets
+                                                        .all(10),
+                                                    width: Get.width,
+                                                    child: Column(
+                                                        mainAxisSize:
+                                                        MainAxisSize
+                                                            .min,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                emojis[0]
+                                                                    .code,
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                    22),
+                                                              ),
+                                                              Text(textPosts[
+                                                              index]
+                                                              ["happy"]
+                                                                  .length
+                                                                  .toString())
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                emojis[1]
+                                                                    .code,
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                    22),
+                                                              ),
+                                                              Text(textPosts[
+                                                              index]
+                                                              ["sad"]
+                                                                  .length
+                                                                  .toString())
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                emojis[2]
+                                                                    .code,
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                    22),
+                                                              ),
+                                                              Text(textPosts[
+                                                              index]
+                                                              ["fear"]
+                                                                  .length
+                                                                  .toString())
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                emojis[3]
+                                                                    .code,
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                    22),
+                                                              ),
+                                                              Text(textPosts[
+                                                              index]
+                                                              ["anger"]
+                                                                  .length
+                                                                  .toString())
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                emojis[4]
+                                                                    .code,
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                    22),
+                                                              ),
+                                                              Text(textPosts[
+                                                              index]
+                                                              ["disgust"]
+                                                                  .length
+                                                                  .toString())
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              Text(
+                                                                emojis[5]
+                                                                    .code,
+                                                                style: const TextStyle(
+                                                                    fontSize:
+                                                                    22),
+                                                              ),
+                                                              Text(textPosts[
+                                                              index]
+                                                              ["surprise"]
+                                                                  .length
+                                                                  .toString())
+                                                            ],
+                                                          ),
+                                                        ]),
+                                                  ),
+                                                  actions: <Widget>[
+                                                    Center(
+                                                      child: TextButton(
+                                                        child: const Text(
+                                                          'Ok',
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .red,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .w600),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(
+                                                              context)
+                                                              .pop();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                            child: Text(textPosts[index]["likes"]
+                                                .toString()),
+                                          ),
+                                          SizedBox(
+                                            width: Get.width * 0.1,
+                                          ),
+                                          InkWell(
+                                              onTap: () {
+                                                Navigator.push(context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) {
+                                                        return CommentsScreen(
+                                                          postId:
+                                                          textPosts[index]
+                                                          ["post_id"],
+                                                          description:
+                                                          textPosts[index]
+                                                          ["text"],
+                                                        );
+                                                      },
+                                                    ));
+                                              },
+                                              child: const Icon(Icons
+                                                  .chat_bubble_outline)),
+                                          const SizedBox(
+                                            width: 3,
+                                          ),
+                                          Text(
+                                            textPosts[index]["comments"]
+                                                .toString(),
+                                          ),
+                                          SizedBox(
+                                            width: Get.width * 0.1,
+                                          ),
+                                          const Icon(Icons.replay_outlined),
+                                          const SizedBox(
+                                            width: 3,
+                                          ),
+                                          const Text(
+                                            "0",
+                                          ),
+                                        ],
                                       ),
 
                                     ),
-                                    const SizedBox(
-                                      width: 3,
-                                    ),
-                                    InkWell(onTap: () {
-                                      showDialog<void>(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        // user must tap button!
-                                        builder:
-                                            (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment
-                                                    .center,
-                                                children: [
-                                                  Text(
-                                                    'Reactions',
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .bold),
-                                                  )
-                                                ]),
-                                            content: Container(
-                                              margin:
-                                              const EdgeInsets
-                                                  .all(10),
-                                              width: Get.width,
-                                              child: Column(
-                                                  mainAxisSize:
-                                                  MainAxisSize
-                                                      .min,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          emojis[0]
-                                                              .code,
-                                                          style: const TextStyle(
-                                                              fontSize:
-                                                              22),
-                                                        ),
-                                                        Text(textPosts[
-                                                        index]
-                                                        ["happy"]
-                                                            .length
-                                                            .toString())
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          emojis[1]
-                                                              .code,
-                                                          style: const TextStyle(
-                                                              fontSize:
-                                                              22),
-                                                        ),
-                                                        Text(textPosts[
-                                                        index]
-                                                        ["sad"]
-                                                            .length
-                                                            .toString())
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          emojis[2]
-                                                              .code,
-                                                          style: const TextStyle(
-                                                              fontSize:
-                                                              22),
-                                                        ),
-                                                        Text(textPosts[
-                                                        index]
-                                                        ["fear"]
-                                                            .length
-                                                            .toString())
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          emojis[3]
-                                                              .code,
-                                                          style: const TextStyle(
-                                                              fontSize:
-                                                              22),
-                                                        ),
-                                                        Text(textPosts[
-                                                        index]
-                                                        ["anger"]
-                                                            .length
-                                                            .toString())
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          emojis[4]
-                                                              .code,
-                                                          style: const TextStyle(
-                                                              fontSize:
-                                                              22),
-                                                        ),
-                                                        Text(textPosts[
-                                                        index]
-                                                        ["disgust"]
-                                                            .length
-                                                            .toString())
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                      children: [
-                                                        Text(
-                                                          emojis[5]
-                                                              .code,
-                                                          style: const TextStyle(
-                                                              fontSize:
-                                                              22),
-                                                        ),
-                                                        Text(textPosts[
-                                                        index]
-                                                        ["surprise"]
-                                                            .length
-                                                            .toString())
-                                                      ],
-                                                    ),
-                                                  ]),
-                                            ),
-                                            actions: <Widget>[
-                                              Center(
-                                                child: TextButton(
-                                                  child: const Text(
-                                                    'Ok',
-                                                    style: TextStyle(
-                                                        color: Colors
-                                                            .red,
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .w600),
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.of(
-                                                        context)
-                                                        .pop();
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                      child: Text(textPosts[index]["likes"]
-                                          .toString()),
-                                    ),
-                                    SizedBox(
-                                      width: Get.width * 0.1,
-                                    ),
-                                    InkWell(
-                                        onTap: () {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                builder: (context) {
-                                                  return CommentsScreen(
-                                                    postId:
-                                                    textPosts[index]
-                                                    ["post_id"],
-                                                    description:
-                                                    textPosts[index]
-                                                    ["text"],
-                                                  );
-                                                },
-                                              ));
-                                        },
-                                        child: const Icon(Icons
-                                            .chat_bubble_outline)),
-                                    const SizedBox(
-                                      width: 3,
-                                    ),
-                                    Text(
-                                      textPosts[index]["comments"]
-                                          .toString(),
-                                    ),
-                                    SizedBox(
-                                      width: Get.width * 0.1,
-                                    ),
-                                    const Icon(Icons.replay_outlined),
-                                    const SizedBox(
-                                      width: 3,
-                                    ),
-                                    const Text(
-                                      "0",
-                                    ),
                                   ],
                                 ),
-
                               ),
+
+
+
                               const SizedBox(
                                 height: 5,
                               ),

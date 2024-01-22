@@ -11,8 +11,10 @@ class FirebaseTable extends StatelessWidget {
   final chatsTable = FirebaseFirestore.instance.collection("Chats");
   final competitionsTable =
       FirebaseFirestore.instance.collection("Competitions");
+  final competitionSubmissionsTable =
+      FirebaseFirestore.instance.collection("CompetitionSubmissions");
   final productsTable = FirebaseFirestore.instance.collection("Products");
-  final communitiesTable=FirebaseFirestore.instance.collection("Communities");
+  final communitiesTable = FirebaseFirestore.instance.collection("Communities");
 
   FirebaseTable({super.key});
 

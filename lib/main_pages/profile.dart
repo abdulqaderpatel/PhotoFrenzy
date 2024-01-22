@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/models/text_post.dart';
 import '../authentication/login.dart';
+import '../competition/user_competition_details.dart';
 import '../controllers/user_controller.dart';
 import '../global/firebase_tables.dart';
 import '../global/show_message.dart';
@@ -235,7 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
             InkWell(
               onTap: () {
-                Get.to(const EditUserProfileScreen());
+                Get.to(const UserCompetitionDetails());
               },
               child: Text(
                 "Competitions",
