@@ -1,17 +1,13 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/models/text_post.dart';
+import 'package:share_plus/share_plus.dart';
 import '../authentication/login.dart';
 import '../competition/user_competition_details.dart';
 import '../controllers/user_controller.dart';
@@ -22,7 +18,7 @@ import '../models/image_post.dart';
 import '../profiles/edit_user_profile.dart';
 import '../user_posts/comments.dart';
 import '../user_posts/image_posts_list.dart';
-import 'package:http/http.dart' as http;
+
 class ProfileScreen extends StatefulWidget {
   final String id;
 
@@ -55,7 +51,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         .get()
         .then(
           (res) => userController.userPostCount.value = res.count,
-          onError: (e) => print("Error completing: $e"),
+          onError: (e) =>
+              showErrorDialog(context, "Error completing the process"),
         );
 
     List<Map<String, dynamic>> temp = [];
@@ -182,6 +179,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     Emoji("surprise", "😲")
   ];
 
+  void shareText(BuildContext context,String text) async {
+      await Share.share(
+        text,
+      );
+  }
 
 
   @override
@@ -231,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             InkWell(
@@ -247,21 +249,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             InkWell(
-              onTap: ()async{
+              onTap: () async {
                 showToast(message: "Logged out successfully");
                 await FirebaseAuth.instance.signOut();
                 if (context.mounted) {
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) {
-                        return const LoginScreen();
-                      }));
+                    return const LoginScreen();
+                  }));
                 }
               },
-              child: Text(
+              child: const Text(
                 "Logout",
                 style: TextStyle(
                   fontSize: 20,
@@ -270,7 +272,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
           ],
@@ -481,7 +483,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                         ),
                                                       ),
                                                     ),
-
                                                   ],
                                                 ),
                                                 const Gap(5),
@@ -1295,7 +1296,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               SizedBox(
                                                 width: Get.width * 0.1,
                                               ),
-                                              const Icon(Icons.replay_outlined),
+                                              InkWell(onTap: (){
+                                                shareText(context, userController.textposts[index].text!);
+                                              },child: const Icon(Icons.replay_outlined)),
                                               const SizedBox(
                                                 width: 3,
                                               ),
@@ -1363,7 +1366,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 ],

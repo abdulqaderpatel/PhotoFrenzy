@@ -58,6 +58,9 @@ dependencies:
   video_player:
   cached_network_image:
   cached_video_player:
+  share_plus:
+  dio:
+  path_provider:
 
 
   cupertino_icons: ^1.0.2

@@ -11,7 +11,6 @@ class UserCompetitionDetails extends StatefulWidget {
 }
 
 class _UserCompetitionDetailsState extends State<UserCompetitionDetails> {
-
   var textPosts = [];
   var isLoaded = false;
 
@@ -21,7 +20,8 @@ class _UserCompetitionDetailsState extends State<UserCompetitionDetails> {
     });
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
-        .competitionSubmissionsTable.where("creator",isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+        .competitionSubmissionsTable
+        .where("creator", isEqualTo: FirebaseAuth.instance.currentUser!.uid)
         .get();
 
     for (var element in data.docs) {
@@ -32,13 +32,9 @@ class _UserCompetitionDetailsState extends State<UserCompetitionDetails> {
 
     textPosts = temp;
 
-
-
     setState(() {
       isLoaded = false;
     });
-
-
   }
 
   @override
@@ -52,11 +48,10 @@ class _UserCompetitionDetailsState extends State<UserCompetitionDetails> {
     return Scaffold(
       body: SafeArea(
         child: Container(
-          margin: EdgeInsets.all(10),
-          child: Column(
-            children: [],
-          ),
-        ),
+            margin: const EdgeInsets.all(10),
+            child: ListView.builder(itemBuilder: (context, index) {
+              return Text(textPosts[index]["competition_id"]);
+            })),
       ),
     );
   }

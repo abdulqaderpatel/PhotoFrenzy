@@ -1,17 +1,21 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/models/image_post.dart';
 import 'package:photofrenzy/user_posts/comments.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../global/theme_mode.dart';
 
@@ -28,6 +32,33 @@ class ImagePostsListScreen extends StatefulWidget {
 class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
   UserController userController = Get.put(UserController());
   ItemScrollController itemScrollController = ItemScrollController();
+
+
+  Future<XFile> getImageFileFromUrl(String imageUrl) async {
+    try {
+      final response = await Dio().get(imageUrl, options: Options(responseType: ResponseType.bytes));
+
+      final Directory tempDir = await getTemporaryDirectory();
+      final String tempPath = tempDir.path;
+
+      final File file = File('$tempPath/temp_image.jpg');
+      await file.writeAsBytes(response.data);
+
+      return XFile(file.path);
+    } catch (e) {
+      print('Error downloading image: $e');
+      return XFile("");
+    }
+  }
+
+  void shareImage(BuildContext context,String text,String image) async {
+
+    await Share.shareXFiles(
+      [await getImageFileFromUrl(image)],
+      text: text,
+    );
+
+  }
 
   var parser = EmojiParser();
 
@@ -799,7 +830,9 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                               SizedBox(
                                 width: Get.width * 0.1,
                               ),
-                              const Icon(Icons.replay_outlined),
+                              InkWell(onTap: (){
+                                shareImage(context, userController.imageposts[index].text!, userController.imageposts[index].imageurl!);
+                              },child: const Icon(Icons.replay_outlined)),
                               const SizedBox(
                                 width: 3,
                               ),

@@ -1,4 +1,5 @@
 
+
 import 'package:cached_video_player/cached_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -20,7 +21,7 @@ class _VideoCardState extends State<VideoCard> {
   @override
   void initState() {
     super.initState();
-    _controller = CachedVideoPlayerController.network("https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4");
+    _controller = CachedVideoPlayerController.network(widget.videoUrl);
     _initializeVideoPlayerFuture = _controller.initialize();
     _controller.setLooping(true); // Optional: Set video to loop
   }
@@ -55,7 +56,7 @@ class _VideoCardState extends State<VideoCard> {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return CachedVideoPlayer(_controller);
                   } else {
-                    return Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
@@ -67,7 +68,7 @@ class _VideoCardState extends State<VideoCard> {
             alignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: Icon(Icons.play_arrow),
+                icon: const Icon(Icons.play_arrow),
                 onPressed: () {
                   if (!_controller.value.isPlaying) {
                     _controller.play();
@@ -75,7 +76,7 @@ class _VideoCardState extends State<VideoCard> {
                 },
               ),
               IconButton(
-                icon: Icon(Icons.pause),
+                icon: const Icon(Icons.pause),
                 onPressed: () {
                   if (_controller.value.isPlaying) {
                     _controller.pause();

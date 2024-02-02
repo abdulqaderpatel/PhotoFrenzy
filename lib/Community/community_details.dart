@@ -1867,7 +1867,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                   children: [
 
                                     VideoCard(
-                                        videoUrl: textPosts[index]["imageurl"]),
+                                        videoUrl: textPosts[index]["imageurl"],message: textPosts[index]["text"],),
                                     SizedBox(height: 10,),
                                     Container(
                                       padding: EdgeInsets.symmetric(horizontal: 10),
