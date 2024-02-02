@@ -49,9 +49,11 @@ class _UserCompetitionDetailsState extends State<UserCompetitionDetails> {
       body: SafeArea(
         child: Container(
             margin: const EdgeInsets.all(10),
-            child: ListView.builder(itemBuilder: (context, index) {
-              return Text(textPosts[index]["competition_id"]);
-            })),
+            child: ListView.builder(
+                itemCount: textPosts.length,
+                itemBuilder: (context, index) {
+                  return Text(textPosts[index]["competition_id"]);
+                })),
       ),
     );
   }

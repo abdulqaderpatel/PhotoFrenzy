@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent-tab-view.dart';
 import 'package:photofrenzy/global/theme_mode.dart';
 import 'package:photofrenzy/main_pages/add_post.dart';
@@ -17,91 +18,115 @@ class UserNavigationBar extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<UserNavigationBar> {
-
-
   final controller = PersistentTabController(initialIndex: 0);
 
-  // Create a list of pages or tabs
-  List<Widget> _buildScreen() {
-    return [
-      const HomeScreen(),
-      const SearchScreen(),
-      const AddPostScreen(),
-      const Community(),
-      ProfileScreen(
-        id: FirebaseAuth.instance.currentUser!.uid,
-      ),
-    ];
-  }
+  final List<Widget> userPages = [
+    const HomeScreen(),
+    const SearchScreen(),
+    const AddPostScreen(),
+    const Community(),
+    ProfileScreen(
+      id: FirebaseAuth.instance.currentUser!.uid,
+    ),
+  ];
 
-  List<PersistentBottomNavBarItem> _navBarItem() {
-    return [
-      PersistentBottomNavBarItem(
-        icon: Icon(
-          Icons.home,
-          color: isDark(context) == true ? Colors.white : Colors.black,
-        ),
-        inactiveIcon: const Icon(
-          Icons.home_outlined,
-          color: Colors.grey,
-        ),
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(
-          Icons.search,
-          color: isDark(context) == true ? Colors.white : Colors.black,
-        ),
-        inactiveIcon: const Icon(
-          Icons.search_outlined,
-          color: Colors.grey,
-        ),
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(
-          Icons.add,
-          color: isDark(context) == true ? Colors.white : Colors.black,
-        ),
-        inactiveIcon: const Icon(
-          Icons.add_outlined,
-          color: Colors.grey,
-        ),
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(
-          Icons.groups,
-          color: isDark(context) == true ? Colors.white : Colors.black,
-        ),
-        inactiveIcon: const Icon(
-          Icons.groups_outlined,
-          color: Colors.grey,
-        ),
-      ),
-      PersistentBottomNavBarItem(
-        icon: Icon(
-          Icons.person_2,
-          color: isDark(context) == true ? Colors.white : Colors.black,
-        ),
-        inactiveIcon: const Icon(
-          Icons.person_2_outlined,
-          color: Colors.grey,
-        ),
-      ),
-    ];
-  }
+  var currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: PersistentTabView(
-        context,
-        screens: _buildScreen(),
-        items: _navBarItem(),
-        backgroundColor:
-            isDark(context) == true ? const Color(0xff141C27) : Colors.white,
-        decoration: NavBarDecoration(borderRadius: BorderRadius.circular(1)),
-        navBarStyle: NavBarStyle.style3,
-        controller: controller,
-      ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+          bottomNavigationBar: BottomNavigationBar(
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            elevation: 0,
+            backgroundColor: isDark(context) == true
+                ? const Color(0xff141C27)
+                : Colors.white,
+            type: BottomNavigationBarType.fixed,
+            selectedItemColor: Colors.blue,
+            unselectedItemColor: Colors.white,
+            currentIndex: currentIndex,
+            onTap: (index) {
+              setState(() {
+                currentIndex = index;
+              });
+            },
+            items: [
+              BottomNavigationBarItem(
+                icon: currentIndex == 0
+                    ? Icon(
+                        Icons.home,
+                        color: isDark(context) == true
+                            ? Colors.white
+                            : Colors.black,
+                      )
+                    : const Icon(
+                        Icons.home_outlined,
+                        color: Colors.grey,
+                      ),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: currentIndex == 1
+                    ? Icon(
+                        Icons.search,
+                        color: isDark(context) == true
+                            ? Colors.white
+                            : Colors.black,
+                      )
+                    : const Icon(
+                        Icons.search_outlined,
+                        color: Colors.grey,
+                      ),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: currentIndex == 2
+                    ? Icon(
+                        Icons.add,
+                        color: isDark(context) == true
+                            ? Colors.white
+                            : Colors.black,
+                      )
+                    : const Icon(
+                        Icons.add_outlined,
+                        color: Colors.grey,
+                      ),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: currentIndex == 3
+                    ? Icon(
+                        Icons.groups,
+                        color: isDark(context) == true
+                            ? Colors.white
+                            : Colors.black,
+                      )
+                    : const Icon(
+                        Icons.groups_outlined,
+                        color: Colors.grey,
+                      ),
+                label: '',
+              ),
+              BottomNavigationBarItem(
+                icon: currentIndex == 4
+                    ? Icon(
+                        Icons.person_2,
+                        color: isDark(context) == true
+                            ? Colors.white
+                            : Colors.black,
+                      )
+                    : const Icon(
+                        Icons.person_2_outlined,
+                        color: Colors.grey,
+                      ),
+                label: '',
+              ),
+            ],
+          ),
+          body: userPages[currentIndex]),
     );
   }
 }

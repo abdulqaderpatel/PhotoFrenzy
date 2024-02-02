@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:photofrenzy/authentication/signup.dart';
 import 'package:photofrenzy/authentication/verify_email.dart';
 import 'package:photofrenzy/global/show_message.dart';
+import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
 
 import '../global/theme_mode.dart';
@@ -112,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 });
                               } else {
                                 try {
+
                                   await FirebaseAuth.instance
                                       .signInWithEmailAndPassword(
                                           email: emailController.text,
@@ -120,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     {
                                       if(context.mounted) {
                                         Navigator.push(context, MaterialPageRoute(builder: (context){
+                                          userController.isLoggedOut.value=false;
                                         return UserNavigationBar();
                                       }));
                                       }

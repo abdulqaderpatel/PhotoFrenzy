@@ -16,6 +16,8 @@ class UserController extends GetxController {
 
   RxInt userPostCount=0.obs;
 
+  RxBool isLoggedOut=true.obs;
+
   void addTextPost(TextPost textPost) {
     textposts.add(textPost);
   }

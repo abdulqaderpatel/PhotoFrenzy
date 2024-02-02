@@ -8,6 +8,7 @@ import 'package:photofrenzy/authentication/verify_email.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
 import 'package:photofrenzy/themes/dark_theme.dart';
 import 'package:photofrenzy/themes/light_theme.dart';
+import 'controllers/user_controller.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -30,6 +31,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  UserController userController=Get.put(UserController());
   var user = FirebaseAuth.instance.currentUser;
   var isDataLoaded = true;
   var userExists = true;
@@ -42,6 +44,10 @@ class _MyAppState extends State<MyApp> {
     } else {
       if (user!.emailVerified == false) {
         userVerified = false;
+        userController.isLoggedOut.value=false;
+      }
+      else{
+        userController.isLoggedOut.value=false;
       }
     }
     super.initState();

@@ -255,6 +255,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               onTap: () async {
                 showToast(message: "Logged out successfully");
                 await FirebaseAuth.instance.signOut();
+                userController.isLoggedOut.value=true;
                 if (context.mounted) {
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) {
