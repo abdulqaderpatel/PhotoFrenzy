@@ -179,12 +179,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     Emoji("surprise", "😲")
   ];
 
-  void shareText(BuildContext context,String text) async {
-      await Share.share(
-        text,
-      );
+  void shareText(BuildContext context, String text) async {
+    await Share.share(
+      text,
+    );
   }
-
 
   @override
   void initState() {
@@ -1296,15 +1295,16 @@ class _ProfileScreenState extends State<ProfileScreen>
                                               SizedBox(
                                                 width: Get.width * 0.1,
                                               ),
-                                              InkWell(onTap: (){
-                                                shareText(context, userController.textposts[index].text!);
-                                              },child: const Icon(Icons.replay_outlined)),
-                                              const SizedBox(
-                                                width: 3,
-                                              ),
-                                              const Text(
-                                                "0",
-                                              ),
+                                              InkWell(
+                                                  onTap: () {
+                                                    shareText(
+                                                        context,
+                                                        userController
+                                                            .textposts[index]
+                                                            .text!);
+                                                  },
+                                                  child: const Icon(
+                                                      Icons.replay_outlined)),
                                             ],
                                           ),
                                         ],

@@ -7,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import 'package:intl/intl.dart';
+import 'package:photofrenzy/global/constants.dart';
 
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
@@ -100,7 +101,6 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                 widget.posts[i]["disgust"].length &&
             widget.posts[i]["happy"].length >=
                 widget.posts[i]["surprise"].length) {
-
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
           });
@@ -125,8 +125,7 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
           });
         }
       }
-      widget.posts.map((e) {
-      });
+      widget.posts.map((e) {});
     }
     else if (widget.emotion == "anger") {
       for (int i = 0; i < widget.posts.length; i++) {
@@ -138,7 +137,6 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                 widget.posts[i]["disgust"].length &&
             widget.posts[i]["anger"].length >=
                 widget.posts[i]["surprise"].length) {
-
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
           });
@@ -158,21 +156,21 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                 widget.posts[i]["disgust"].length &&
             widget.posts[i]["fear"].length >=
                 widget.posts[i]["surprise"].length) {
-
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
           });
         }
       }
-      widget.posts.map((e) {
-      });
+      widget.posts.map((e) {});
     }
     else if (widget.emotion == "disgust") {
       for (int i = 0; i < widget.posts.length; i++) {
-        if (widget.posts[i]["disgust"].length >= widget.posts[i]["sad"].length &&
+        if (widget.posts[i]["disgust"].length >=
+            widget.posts[i]["sad"].length &&
             widget.posts[i]["disgust"].length >=
                 widget.posts[i]["anger"].length &&
-            widget.posts[i]["disgust"].length >= widget.posts[i]["fear"].length &&
+            widget.posts[i]["disgust"].length >=
+                widget.posts[i]["fear"].length &&
             widget.posts[i]["disgust"].length >=
                 widget.posts[i]["happy"].length &&
             widget.posts[i]["disgust"].length >=
@@ -182,15 +180,16 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
           });
         }
       }
-      widget.posts.map((e) {
-      });
+      widget.posts.map((e) {});
     }
     else {
       for (int i = 0; i < widget.posts.length; i++) {
-        if (widget.posts[i]["surprise"].length >= widget.posts[i]["sad"].length &&
+        if (widget.posts[i]["surprise"].length >=
+            widget.posts[i]["sad"].length &&
             widget.posts[i]["surprise"].length >=
                 widget.posts[i]["anger"].length &&
-            widget.posts[i]["surprise"].length >= widget.posts[i]["fear"].length &&
+            widget.posts[i]["surprise"].length >=
+                widget.posts[i]["fear"].length &&
             widget.posts[i]["surprise"].length >=
                 widget.posts[i]["disgust"].length &&
             widget.posts[i]["surprise"].length >=
@@ -200,9 +199,7 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
           });
         }
       }
-
     }
-
   }
 
   @override
@@ -287,7 +284,7 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                     children: [
                                       Text(
                                         emotionSpecificPosts
-                                            [index]["creator_name"],
+                                        [index]["creator_name"],
                                         style: TextStyle(
                                             fontSize: 19,
                                             fontWeight: FontWeight.w800,
@@ -320,7 +317,8 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                               Row(
                                 children: [
                                   Flexible(
-                                    child: Text(emotionSpecificPosts[index]["text"],
+                                    child: Text(
+                                        emotionSpecificPosts[index]["text"],
                                         style: TextStyle(
                                             fontSize: 15,
                                             color: isDark(context)
@@ -751,7 +749,7 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                                 style: const TextStyle(
                                                     fontSize: 22))
                                                 :
-                                                emotionSpecificPosts[index]["anger"]
+                                            emotionSpecificPosts[index]["anger"]
                                                 .contains(FirebaseAuth.instance
                                                 .currentUser!.uid)
                                                 ? Text(emojis[3].code,
@@ -820,8 +818,10 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                                           style: const TextStyle(
                                                               fontSize: 22),
                                                         ),
-                                                        Text(emotionSpecificPosts[index]["happy"]
-                                                            .length.toString())
+                                                        Text(
+                                                            emotionSpecificPosts[index]["happy"]
+                                                                .length
+                                                                .toString())
                                                       ],
                                                     ),
                                                     Row(
@@ -834,8 +834,10 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                                           style: const TextStyle(
                                                               fontSize: 22),
                                                         ),
-                                                        Text(emotionSpecificPosts[index]["sad"]
-                                                            .length.toString())
+                                                        Text(
+                                                            emotionSpecificPosts[index]["sad"]
+                                                                .length
+                                                                .toString())
                                                       ],
                                                     ),
                                                     Row(
@@ -848,8 +850,10 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                                           style: const TextStyle(
                                                               fontSize: 22),
                                                         ),
-                                                        Text(emotionSpecificPosts[index]["fear"]
-                                                            .length.toString())
+                                                        Text(
+                                                            emotionSpecificPosts[index]["fear"]
+                                                                .length
+                                                                .toString())
                                                       ],
                                                     ),
                                                     Row(
@@ -862,8 +866,10 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                                           style: const TextStyle(
                                                               fontSize: 22),
                                                         ),
-                                                        Text(emotionSpecificPosts[index]["anger"]
-                                                            .length.toString())
+                                                        Text(
+                                                            emotionSpecificPosts[index]["anger"]
+                                                                .length
+                                                                .toString())
                                                       ],
                                                     ),
                                                     Row(
@@ -876,8 +882,10 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                                           style: const TextStyle(
                                                               fontSize: 22),
                                                         ),
-                                                        Text(emotionSpecificPosts[index]["disgust"]
-                                                            .length.toString())
+                                                        Text(
+                                                            emotionSpecificPosts[index]["disgust"]
+                                                                .length
+                                                                .toString())
                                                       ],
                                                     ),
                                                     Row(
@@ -890,8 +898,10 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                                           style: const TextStyle(
                                                               fontSize: 22),
                                                         ),
-                                                        Text(emotionSpecificPosts[index]["surprise"]
-                                                            .length.toString())
+                                                        Text(
+                                                            emotionSpecificPosts[index]["surprise"]
+                                                                .length
+                                                                .toString())
                                                       ],
                                                     ),
                                                   ]
@@ -923,8 +933,9 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                         },
                                       );
                                     },
-                                    child: Text(emotionSpecificPosts[index]["likes"]
-                                        .toString()),
+                                    child: Text(
+                                        emotionSpecificPosts[index]["likes"]
+                                            .toString()),
                                   ),
                                   SizedBox(
                                     width: Get.width * 0.1,
@@ -937,7 +948,7 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                                 return CommentsScreen(
                                                   postId: emotionSpecificPosts[index]
                                                   ["post_id"],
-                                                  description:emotionSpecificPosts[index]
+                                                  description: emotionSpecificPosts[index]
                                                   ["text"],
                                                 );
                                               },
@@ -955,13 +966,16 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                   SizedBox(
                                     width: Get.width * 0.1,
                                   ),
-                                  const Icon(Icons.replay_outlined),
-                                  const SizedBox(
-                                    width: 3,
-                                  ),
-                                  const Text(
-                                    "0",
-                                  ),
+                                  InkWell(onTap: () {
+                                    emotionSpecificPosts[index]["type"] ==
+                                        "text"
+                                        ? shareText(context,
+                                        emotionSpecificPosts[index]["text"])
+                                        : shareImage(context,
+                                        emotionSpecificPosts[index]["text"],
+                                        emotionSpecificPosts[index]["imageurl"]);
+                                  }, child: const Icon(Icons.replay_outlined)),
+
                                 ],
                               ),
                             ],

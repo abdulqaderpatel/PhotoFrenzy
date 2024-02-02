@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
 
 import 'package:photofrenzy/user_posts/comments.dart';
@@ -146,13 +147,10 @@ class _TextPostsScreenState extends State<TextPostsScreen> {
                                   SizedBox(
                                     width: Get.width * 0.1,
                                   ),
-                                  const Icon(Icons.replay_outlined),
-                                  const SizedBox(
-                                    width: 3,
-                                  ),
-                                  const Text(
-                                    "0",
-                                  ),
+                                  InkWell(onTap: (){
+                                    shareText(context, client["text"]);
+                                  },child: const Icon(Icons.replay_outlined)),
+
                                 ],
                               ),
                             ],

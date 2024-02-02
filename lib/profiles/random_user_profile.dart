@@ -9,6 +9,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/individual_chat.dart';
 import 'package:photofrenzy/user_posts/random_image_posts_list.dart';
 import '../global/firebase_tables.dart';
@@ -1350,13 +1351,10 @@ class _RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                               SizedBox(
                                                 width: Get.width * 0.1,
                                               ),
-                                              const Icon(Icons.replay_outlined),
-                                              const SizedBox(
-                                                width: 3,
-                                              ),
-                                              const Text(
-                                                "0",
-                                              ),
+                                              InkWell(onTap: (){
+                                                shareText(context, textPosts[index]["text"]);
+                                              },child: const Icon(Icons.replay_outlined)),
+
                                             ],
                                           ),
                                         ],

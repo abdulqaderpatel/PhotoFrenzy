@@ -14,13 +14,12 @@ import 'package:photofrenzy/Emotions/choose_emotion.dart';
 import 'package:photofrenzy/competition/individual_competition.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
-import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/individual_chat.dart';
 import 'package:photofrenzy/models/user.dart' as user;
 import 'package:photofrenzy/user_posts/comments.dart';
+import '../global/constants.dart';
 import '../global/theme_mode.dart';
 import 'package:http/http.dart' as http;
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -46,42 +45,42 @@ class _HomeScreenState extends State<HomeScreen> {
       value: 'happy',
       icon: Text(
         Emoji("happy", "😊").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'sad',
       icon: Text(
         Emoji("sad", "😔").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'fear',
       icon: Text(
         Emoji("fear", "😨").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'anger',
       icon: Text(
         Emoji("anger", "😠").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'disgust',
       icon: Text(
         Emoji("disgust", "🤢").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
     Reaction<String>(
       value: 'surprise',
       icon: Text(
         Emoji("surprise", "😲").code,
-        style: TextStyle(fontSize: 22),
+        style: const TextStyle(fontSize: 22),
       ),
     ),
   ];
@@ -193,13 +192,13 @@ class _HomeScreenState extends State<HomeScreen> {
             paymentIntentClientSecret: paymentIntent!["client_secret"],
             style: ThemeMode.dark,
             merchantDisplayName: "PhotoFrenzy",
-          googlePay: gpay
-          ),
+            googlePay: gpay
+        ),
       );
 
       displayPaymentSheet(index);
     } catch (e) {
-throw Exception(e.toString());
+      throw Exception(e.toString());
     }
   }
 
@@ -246,8 +245,6 @@ throw Exception(e.toString());
               "event": items[index]["name"]
             }
           }));
-
-
     } catch (e) {
 
     }
@@ -256,7 +253,7 @@ throw Exception(e.toString());
   createPaymentIntent(int index) async {
     try {
       Map<String, dynamic> body = {
-        "amount": (items[index]["prize_money"]* 100).toString(),
+        "amount": (items[index]["prize_money"] * 100).toString(),
         "currency": "inr"
       };
       http.Response response = await http.post(
@@ -285,7 +282,8 @@ throw Exception(e.toString());
         ? const Center(child: CircularProgressIndicator())
         : Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(centerTitle: true,
+        appBar: AppBar(
+          centerTitle: true,
           elevation: 0,
           backgroundColor: Colors.transparent,
           automaticallyImplyLeading: false,
@@ -335,7 +333,7 @@ throw Exception(e.toString());
           ) : Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             InkWell(onTap: () {
               Get.to(ChooseEmotion(posts: posts,));
-            }, child: Icon(Icons.emoji_emotions)),
+            }, child: const Icon(Icons.emoji_emotions)),
             Theme(
               data: Theme.of(context).copyWith(
                 canvasColor: Theme
@@ -892,8 +890,8 @@ throw Exception(e.toString());
                                                       // Background color
                                                     ),
                                                     onPressed:
-                                                        ()  {
-                                                   makePayment(index);
+                                                        () {
+                                                      makePayment(index);
                                                     },
                                                     child: const Text(
                                                         "Compete")),
@@ -920,7 +918,7 @@ throw Exception(e.toString());
         )
             : SafeArea(
             child: Container(
-              margin: EdgeInsets.all(10),
+              margin: const EdgeInsets.all(10),
               child: ListView.builder(
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
@@ -949,10 +947,10 @@ throw Exception(e.toString());
                         ', ' + DateFormat.jm().format(dateTime);
 
                     return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10),
+                      margin: const EdgeInsets.symmetric(horizontal: 10),
                       child: Column(
                         children: [
-                          Gap(10),
+                          const Gap(10),
                           Row(
                             children: [
                               Container(
@@ -1507,7 +1505,7 @@ throw Exception(e.toString());
                                                   ]),
                                               content: Container(
                                                 margin:
-                                                EdgeInsets.all(
+                                                const EdgeInsets.all(
                                                     10),
                                                 width: Get.width,
                                                 child: Column(
@@ -1521,7 +1519,7 @@ throw Exception(e.toString());
                                                         children: [
                                                           Text(
                                                             emojis[0].code,
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 22),
                                                           ),
                                                           Text(
@@ -1537,7 +1535,7 @@ throw Exception(e.toString());
                                                         children: [
                                                           Text(
                                                             emojis[1].code,
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 22),
                                                           ),
                                                           Text(
@@ -1553,7 +1551,7 @@ throw Exception(e.toString());
                                                         children: [
                                                           Text(
                                                             emojis[2].code,
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 22),
                                                           ),
                                                           Text(
@@ -1569,7 +1567,7 @@ throw Exception(e.toString());
                                                         children: [
                                                           Text(
                                                             emojis[3].code,
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 22),
                                                           ),
                                                           Text(
@@ -1585,7 +1583,7 @@ throw Exception(e.toString());
                                                         children: [
                                                           Text(
                                                             emojis[4].code,
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 22),
                                                           ),
                                                           Text(
@@ -1601,7 +1599,7 @@ throw Exception(e.toString());
                                                         children: [
                                                           Text(
                                                             emojis[5].code,
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                                 fontSize: 22),
                                                           ),
                                                           Text(
@@ -1670,13 +1668,16 @@ throw Exception(e.toString());
                                     SizedBox(
                                       width: Get.width * 0.1,
                                     ),
-                                    const Icon(Icons.replay_outlined),
-                                    const SizedBox(
-                                      width: 3,
-                                    ),
-                                    const Text(
-                                      "0",
-                                    ),
+                                    InkWell(onTap: (){
+                                      posts[index]["type"] ==
+                                          "text"
+                                          ? shareText(context,
+                                          posts[index]["text"])
+                                          : shareImage(context,
+                                          posts[index]["text"],
+                                          posts[index]["imageurl"]);
+                                    },child: const Icon(Icons.replay_outlined)),
+
                                   ],
                                 ),
                               ],

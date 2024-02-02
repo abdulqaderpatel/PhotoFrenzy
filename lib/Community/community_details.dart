@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/Community/add_post_in_community.dart';
 import 'package:photofrenzy/components/chat/posts/video.dart';
+import 'package:photofrenzy/global/constants.dart';
 
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
@@ -121,7 +122,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoaded
-          ? Center(
+          ? const Center(
         child: CircularProgressIndicator(),
       )
           : SafeArea(
@@ -218,10 +219,10 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                             ', ' + DateFormat.jm().format(dateTime);
                         return textPosts[index]["type"] == "text"
                             ? Container(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
                           child: Column(
                             children: [
-                              Gap(10),
+                              const Gap(10),
                               Row(
                                 children: [
                                   Container(
@@ -277,7 +278,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                             ),
                                             Text(
                                               "@${textPosts[index]["creator_username"]}",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 17,
                                                   color: Colors.grey),
                                             ),
@@ -971,13 +972,10 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                         SizedBox(
                                           width: Get.width * 0.1,
                                         ),
-                                        const Icon(Icons.replay_outlined),
-                                        const SizedBox(
-                                          width: 3,
-                                        ),
-                                        const Text(
-                                          "0",
-                                        ),
+                                        InkWell(onTap: (){
+                                          shareText(context, textPosts[index]["text"]);
+                                        },child: const Icon(Icons.replay_outlined)),
+
                                       ],
                                     ),
                                   ],
@@ -1767,7 +1765,9 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                         SizedBox(
                                           width: Get.width * 0.1,
                                         ),
-                                        const Icon(Icons.replay_outlined),
+                                        InkWell(onTap: (){
+                                          shareImage(context, textPosts[index]["text"], textPosts[index]["imageurl"]);
+                                        },child: const Icon(Icons.replay_outlined)),
                                         const SizedBox(
                                           width: 3,
                                         ),
@@ -1788,7 +1788,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                             ],
                           ),
                         )
-                            : Container(margin: EdgeInsets.only(
+                            : Container(margin: const EdgeInsets.only(
                             left: 10, right: 10, bottom: 12),
                           child: Column(
                             children: [
@@ -1847,7 +1847,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                             ),
                                             Text(
                                               "@${textPosts[index]["creator_username"]}",
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 17,
                                                   color: Colors.grey),
                                             ),
@@ -1868,9 +1868,9 @@ class _CommunityDetailsState extends State<CommunityDetails> {
 
                                     VideoCard(
                                         videoUrl: textPosts[index]["imageurl"],message: textPosts[index]["text"],),
-                                    SizedBox(height: 10,),
+                                    const SizedBox(height: 10,),
                                     Container(
-                                      padding: EdgeInsets.symmetric(horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
                                       child: Row(
                                         children: [
                                           InkWell(
@@ -2543,12 +2543,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                             width: Get.width * 0.1,
                                           ),
                                           const Icon(Icons.replay_outlined),
-                                          const SizedBox(
-                                            width: 3,
-                                          ),
-                                          const Text(
-                                            "0",
-                                          ),
+
                                         ],
                                       ),
 
