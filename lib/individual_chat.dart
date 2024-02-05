@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+
 import 'package:get/get.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
 
-import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/models/user.dart' as user;
 
 import 'components/chat/receiver_text.dart';
@@ -16,7 +15,7 @@ class IndividualChatScreen extends StatefulWidget {
   final String combinedId;
 
   const IndividualChatScreen(
-      {required this.combinedId, required this.receiverInfo, key});
+      {super.key, required this.combinedId, required this.receiverInfo});
 
   @override
   State<IndividualChatScreen> createState() => _IndividualChatScreenState();
@@ -34,8 +33,6 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
 
     var chatTable = FirebaseFirestore.instance.collection("Chats");
     var firebaseData = await chatTable.doc(widget.combinedId).get();
-    var chatTableData =
-        await FirebaseTable().chatsTable.doc(widget.combinedId).get();
 
     if (!firebaseData.exists) {
       await chatTable
@@ -352,43 +349,40 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                       color: Color(int.parse(client["icon"]
                                           .replaceAll("#", "0xFF"))),
                                     ),
-                                    const SizedBox(
-                                      width: 5,
-                                    ),
-                                    SizedBox(
-                                      height: Get.height * 0.05,
-                                      width: Get.width * 0.76,
-                                      child: TextField(
-                                        style: TextStyle(
-                                          color: Color(
-                                            int.parse(
-                                              client["input_text"].replaceAll(
-                                                "#",
-                                                "0xFF",
+                                    Flexible(
+                                      child: SizedBox(
+                                        height: Get.height * 0.05,
+                                        width: Get.width * 0.76,
+                                        child: TextField(
+                                          style: TextStyle(
+                                            color: Color(
+                                              int.parse(
+                                                client["input_text"].replaceAll(
+                                                  "#",
+                                                  "0xFF",
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                        controller: messageController,
-                                        decoration: InputDecoration(
-                                          contentPadding: const EdgeInsets.only(
-                                              top: 5, left: 10),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30.0),
+                                          controller: messageController,
+                                          decoration: InputDecoration(
+                                            contentPadding:
+                                                const EdgeInsets.only(
+                                                    top: 5, left: 10),
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30.0),
+                                            ),
+                                            filled: true,
+                                            hintStyle: const TextStyle(
+                                                color: Colors.grey),
+                                            hintText: "Type in your text",
+                                            fillColor: Color(int.parse(
+                                                client["text_box"]
+                                                    .replaceAll("#", "0xFF"))),
                                           ),
-                                          filled: true,
-                                          hintStyle: const TextStyle(
-                                              color: Colors.grey),
-                                          hintText: "Type in your text",
-                                          fillColor: Color(int.parse(
-                                              client["text_box"]
-                                                  .replaceAll("#", "0xFF"))),
                                         ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 5,
                                     ),
                                     InkWell(
                                       onTap: () async {
@@ -457,9 +451,6 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                                         widget.receiverInfo[
                                                             "imageurl"]));
                                           }
-
-                                          print(userController
-                                              .chattingUsers[1].id);
 
                                           messageController.text = "";
                                           FocusManager.instance.primaryFocus
