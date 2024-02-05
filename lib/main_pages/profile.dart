@@ -25,12 +25,12 @@ class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, required this.id});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  ProfileScreenState createState() => ProfileScreenState();
 }
 
 final UserController userController = Get.put(UserController());
 
-class _ProfileScreenState extends State<ProfileScreen>
+class ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late TabController _tabController;
@@ -558,7 +558,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
                               // Format time (e.g., 3pm)
                               formattedTime +=
-                                  ', ' + DateFormat.jm().format(dateTime);
+                                  ', ${DateFormat.jm().format(dateTime)}';
 
                               return Container(
                                 margin:

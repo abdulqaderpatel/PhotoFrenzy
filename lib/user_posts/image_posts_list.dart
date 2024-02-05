@@ -1,6 +1,4 @@
-import 'dart:convert';
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -12,6 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
+import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/models/image_post.dart';
 import 'package:photofrenzy/user_posts/comments.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -47,7 +46,9 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
 
       return XFile(file.path);
     } catch (e) {
-      print('Error downloading image: $e');
+      if (context.mounted) {
+        showErrorDialog(context, e.toString());
+      }
       return XFile("");
     }
   }
@@ -155,7 +156,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
 
                   // Format time (e.g., 3pm)
                   formattedTime +=
-                      ', ' + DateFormat.jm().format(dateTime);
+                  ', ${DateFormat.jm().format(dateTime)}';
 
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),

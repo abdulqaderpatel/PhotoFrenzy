@@ -14,11 +14,10 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey =
-  "pk_test_51NjJbkSDqOoAu1YvgQpN7weD8MzoNFW7rCOPBMnAZaJlWnpXkW2EvauiTP8PYpnQC73YJbX9K3jnkMBqVKTHqdTE00frWxNHzF";
+      "pk_test_51NjJbkSDqOoAu1YvgQpN7weD8MzoNFW7rCOPBMnAZaJlWnpXkW2EvauiTP8PYpnQC73YJbX9K3jnkMBqVKTHqdTE00frWxNHzF";
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
 
   runApp(const MyApp());
 }
@@ -31,7 +30,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  UserController userController=Get.put(UserController());
+  UserController userController = Get.put(UserController());
   var user = FirebaseAuth.instance.currentUser;
   var isDataLoaded = true;
   var userExists = true;
@@ -44,10 +43,9 @@ class _MyAppState extends State<MyApp> {
     } else {
       if (user!.emailVerified == false) {
         userVerified = false;
-        userController.isLoggedOut.value=false;
-      }
-      else{
-        userController.isLoggedOut.value=false;
+        userController.isLoggedOut.value = false;
+      } else {
+        userController.isLoggedOut.value = false;
       }
     }
     super.initState();
@@ -64,7 +62,11 @@ class _MyAppState extends State<MyApp> {
       themeMode: ThemeMode.system,
       home: userExists == false
           ? const LoginScreen()
-          : (userVerified == false ? const VerifyEmailScreen(username: "timepass",) : UserNavigationBar()),
+          : (userVerified == false
+              ? const VerifyEmailScreen(
+                  username: "timepass",
+                )
+              : const UserNavigationBar()),
     );
   }
 }

@@ -1,16 +1,12 @@
 import 'dart:io';
-
-
 import 'package:cached_video_player/cached_video_player.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofrenzy/global/show_message.dart';
-import 'package:video_player/video_player.dart';
 
 import '../global/firebase_tables.dart';
 
@@ -159,8 +155,7 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                         } else {
                           Reference ref = FirebaseStorage.instance.ref(
                               "/${FirebaseAuth.instance.currentUser!.uid}/$id");
-                          UploadTask uploadTask =
-                          ref.putFile(video!.absolute);
+                          UploadTask uploadTask = ref.putFile(video!.absolute);
                           Future.value(uploadTask).then((value) async {
                             var newUrl = await ref.getDownloadURL();
                             await FirebaseTable()
@@ -172,10 +167,10 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                               "creator_name": temp[0]["name"],
                               "creator_username": temp[0]["username"],
                               "creator_profile_picture": temp[0]
-                              ["profile_picture"],
+                                  ["profile_picture"],
                               "post_id": id,
                               "creator_id":
-                              FirebaseAuth.instance.currentUser!.uid,
+                                  FirebaseAuth.instance.currentUser!.uid,
                               "type": "video",
                               "text": textController.text,
                               "imageurl": newUrl.toString(),
@@ -347,15 +342,14 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                                     minHeight: Get.height * 0.4,
                                     maxHeight: Get.height * 0.5),
                                 margin: const EdgeInsets.only(top: 10),
-                                child:  InkWell(
-                                        onTap: () {
-                                          getVideoFromGallery();
-                                        },
-                                        child: const Center(
-                                          child: Icon(Icons.add),
-                                        ),
-                                      )
-
+                                child: InkWell(
+                                  onTap: () {
+                                    getVideoFromGallery();
+                                  },
+                                  child: const Center(
+                                    child: Icon(Icons.add),
+                                  ),
+                                ),
                               ),
               ],
             ),

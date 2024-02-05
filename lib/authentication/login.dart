@@ -8,7 +8,6 @@ import 'package:photofrenzy/authentication/verify_email.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
-
 import '../global/theme_mode.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -92,10 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: Get.height * 0.06,
                     width: Get.width,
-                    child:
-                         ElevatedButton(
-                            onPressed:buttonLoading?null: () async {
-
+                    child: ElevatedButton(
+                      onPressed: buttonLoading
+                          ? null
+                          : () async {
                               setState(() {
                                 buttonLoading = true;
                               });
@@ -113,24 +112,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                 });
                               } else {
                                 try {
-
                                   await FirebaseAuth.instance
                                       .signInWithEmailAndPassword(
                                           email: emailController.text,
                                           password: passwordController.text);
-                                  if(FirebaseAuth.instance.currentUser!.emailVerified)
-                                    {
-                                      if(context.mounted) {
-                                        Navigator.push(context, MaterialPageRoute(builder: (context){
-                                          userController.isLoggedOut.value=false;
-                                        return UserNavigationBar();
+                                  if (FirebaseAuth
+                                      .instance.currentUser!.emailVerified) {
+                                    if (context.mounted) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        userController.isLoggedOut.value =
+                                            false;
+                                        return const UserNavigationBar();
                                       }));
-                                      }
                                     }
-                                  else{
-                                    if(context.mounted) {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context){
-                                        return VerifyEmailScreen(username: "testing",);
+                                  } else {
+                                    if (context.mounted) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return const VerifyEmailScreen(
+                                          username: "testing",
+                                        );
                                       }));
                                     }
                                   }
@@ -138,7 +140,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     buttonLoading = false;
                                   });
                                 } on FirebaseAuthException catch (e) {
-                                  print(e.toString());
                                   if (e.code == "invalid-email") {
                                     if (context.mounted) {
                                       showErrorDialog(
@@ -147,7 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     setState(() {
                                       buttonLoading = false;
                                     });
-                                  } else if (e.code == "INVALID_LOGIN_CREDENTIALS") {
+                                  } else if (e.code ==
+                                      "INVALID_LOGIN_CREDENTIALS") {
                                     if (context.mounted) {
                                       showErrorDialog(context,
                                           "the email-password combination does not exist");
@@ -159,12 +161,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                 }
                               }
                             },
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).colorScheme.primary,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8))),
-                            child:buttonLoading?CircularProgressIndicator(color: Colors.white,): Text(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).colorScheme.primary,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8))),
+                      child: buttonLoading
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : Text(
                               "Login",
                               style: GoogleFonts.lato(
                                   letterSpacing: 0,
@@ -172,7 +178,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   fontWeight: FontWeight.w600,
                                   fontSize: 20),
                             ),
-                          ),
+                    ),
                   ),
                   Gap(Get.height * 0.05),
                   Row(
@@ -205,9 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: Get.height * 0.06,
                     width: Get.width,
                     child: ElevatedButton(
-                      onPressed: () {
-                        print(FirebaseAuth.instance.currentUser!.emailVerified);
-                      },
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.all(0),
                           backgroundColor: Colors.white,
@@ -246,19 +250,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ? Colors.grey
                                     : Colors.blueGrey)),
                         InkWell(
-                            onTap: () {
-                              Navigator.pushReplacement(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return const SignupScreen();
-                              }));
-                            },
-                            child: const Text(
-                              "Sign up",
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
-                            ))
+                          onTap: () {
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const SignupScreen();
+                            }));
+                          },
+                          child: const Text(
+                            "Sign up",
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
                       ],
                     ),
                   )
