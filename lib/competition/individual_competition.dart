@@ -467,7 +467,10 @@ class _IndividualCompetitionsScreenState
                                                     await FirebaseTable()
                                                         .competitionSubmissionsTable
                                                         .doc(time.toString())
-                                                        .set({
+                                                        .set({"competition_name":widget.competitionDetails["name"],
+                                                      "competition_image": widget
+                                                              .competitionDetails[
+                                                          "image"],
                                                       "competition_id": widget
                                                               .competitionDetails[
                                                           "id"],
