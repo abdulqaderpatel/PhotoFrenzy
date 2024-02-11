@@ -1,23 +1,27 @@
 class BillModel {
-  final String customer;
-  final String address;
+  final String competition_name;
+  final String competition_image;
+  final String competition_id;
+  final String start_time;
+  final String end_time;
+  final String id;
+  final String image;
   final String name;
-  final List<LineItem> items;
+  final String creator;
+  final int prize_money;
+  final int votes;
+
   BillModel({
-    required this.customer,
-    required this.address,
-    required this.items,
+    required this.competition_name,
+    required this.competition_image,
+    required this.competition_id,
+    required this.start_time,
+    required this.end_time,
+    required this.id,
+    required this.image,
     required this.name,
+    required this.creator,
+    required this.prize_money,
+    required this.votes,
   });
-  double totalCost() {
-    return items.fold(
-        0, (previousValue, element) => previousValue + element.cost);
-  }
-}
-
-class LineItem {
-  final String description;
-  final double cost;
-
-  LineItem(this.description, this.cost);
 }

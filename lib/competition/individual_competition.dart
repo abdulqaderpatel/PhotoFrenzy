@@ -491,7 +491,8 @@ class _IndividualCompetitionsScreenState
                                                           .instance
                                                           .currentUser!
                                                           .uid,
-                                                      "votes": 0
+                                                      "votes": 0,
+                                                      "price":widget.competitionDetails["prize_money"]
                                                     });
 
                                                     await FirebaseTable()

@@ -528,6 +528,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                               fillColor: Theme.of(context).cardColor,
                               border: InputBorder.none),
                         ),
+                        Text("helol"),
                         Gap(Get.height * 0.013),
                         TextField(
                           controller: usernameController,
