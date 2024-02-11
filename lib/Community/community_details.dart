@@ -131,12 +131,8 @@ class _CommunityDetailsState extends State<CommunityDetails> {
             pinned: true,
             snap: false,
             floating: false,
-            leading: const Icon(
-              Icons.arrow_back,
-              size: 30,
-            ),
-            actions: const [
 
+            actions: const [
             ],
             expandedHeight: 165.0,
             flexibleSpace: LayoutBuilder(builder: (context, constraints) {
@@ -146,17 +142,22 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                       .padding
                       .top;
               return Container(
-                color: Theme.of(context).colorScheme.secondary,
+                color: Theme
+                    .of(context)
+                    .colorScheme
+                    .secondary,
                 child: FlexibleSpaceBar(
                   title: isAppBarExpanded
                       ? const SizedBox()
                       : Container(padding: EdgeInsets.symmetric(horizontal: 10),
-                        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                        Text("${widget.community["name"]} Photography",style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("${widget.community["name"]} Photography",
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),),
                         InkWell(
                           onTap: () {
                             Navigator.push(context,
@@ -170,9 +171,9 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                           },
                           child: const Icon(Icons.add),
                         ),
-                                            ],
-                                          ),
-                      ),
+                      ],
+                    ),
+                  ),
                   background: Stack(
                     children: [
                       const Positioned(
@@ -200,12 +201,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                             children: [
                               Row(
                                 children: [
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Icon(Icons.arrow_back),
-                                  ),
+
                                   Text(
                                     "${widget
                                         .community["name"]} Photography",
@@ -1842,8 +1838,8 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                                     ),
                                                     Text(
                                                         textPosts[
-                                                        index]
-                                                            .sad
+                                                        index]["sad"]
+
                                                             .length
                                                             .toString())
                                                   ],
@@ -1863,7 +1859,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                                     Text(
                                                         textPosts[
                                                         index]
-                                                            .fear
+                                                            ["fear"]
                                                             .length
                                                             .toString())
                                                   ],
@@ -1883,7 +1879,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                                     Text(
                                                         textPosts[
                                                         index]
-                                                            .anger
+                                                            ["anger"]
                                                             .length
                                                             .toString())
                                                   ],
@@ -1903,7 +1899,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                                     Text(
                                                         textPosts[
                                                         index]
-                                                            .disgust
+                                                           ["disgust"]
                                                             .length
                                                             .toString())
                                                   ],
@@ -1923,7 +1919,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
                                                     Text(
                                                         textPosts[
                                                         index]
-                                                            .surprise
+                                                            ["surprise"]
                                                             .length
                                                             .toString())
                                                   ],

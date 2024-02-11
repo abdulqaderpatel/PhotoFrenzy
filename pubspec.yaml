@@ -64,6 +64,7 @@ dependencies:
   remixicon:
   pdf:
   printing:
+  google_sign_in:
 
 
   cupertino_icons: ^1.0.2

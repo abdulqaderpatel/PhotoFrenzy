@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:photofrenzy/authentication/signup.dart';
 import 'package:photofrenzy/authentication/verify_email.dart';
+import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
@@ -21,6 +23,53 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   var buttonLoading = false;
+
+  googleSignIn() async {
+    setState(() {
+      buttonLoading = true;
+    });
+    final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
+    final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+        accessToken: gAuth.accessToken, idToken: gAuth.idToken);
+
+    setState(() {
+      buttonLoading = false;
+    });
+
+    return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  Future<bool> checkIfUserCreatedProfile() async {
+    List<Map<String, dynamic>> users = [];
+    var userData = await FirebaseTable()
+        .usersTable
+        .where('email', isEqualTo: FirebaseAuth.instance.currentUser?.email)
+        .get();
+
+    List<Map<String, dynamic>> userTemp = [];
+
+    for (var element in userData.docs) {
+      setState(() {
+        userTemp.add(element.data());
+      });
+    }
+
+    setState(() {
+      users = userTemp;
+    });
+
+    if (userTemp.isEmpty) {
+      return false;
+    }
+
+    if (users[0]["phone_number"] != "") {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +260,31 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: Get.height * 0.06,
                     width: Get.width,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        await googleSignIn();
+                        if (await checkIfUserCreatedProfile() == false) {
+                          await FirebaseTable()
+                              .usersTable
+                              .doc(FirebaseAuth.instance.currentUser!.uid)
+                              .set({
+                            "id": FirebaseAuth.instance.currentUser!.uid,
+                            "name":
+                                FirebaseAuth.instance.currentUser!.displayName,
+                            "email": FirebaseAuth.instance.currentUser!.email,
+                            "profile_picture": "",
+                            "bio": "",
+                            "phone_number": "",
+                            "followers": [],
+                            "following": []
+                          });
+                        }
+                        if (context.mounted) {
+                          Navigator.pushReplacement(context,
+                              MaterialPageRoute(builder: (context) {
+                            return const UserNavigationBar();
+                          }));
+                        }
+                      },
                       style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.all(0),
                           backgroundColor: Colors.white,
