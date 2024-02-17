@@ -43,7 +43,7 @@ class _CommunityDetailsState extends State<CommunityDetails> {
         temp.add(element.data());
       });
     }
-
+print("timepass");
     textPosts = temp;
 
     setState(() {
