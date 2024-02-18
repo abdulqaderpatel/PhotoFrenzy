@@ -1,5 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -62,12 +60,12 @@ class _UserCompetitionParticipationDetailsState
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue,
                   minimumSize: Size(Get.width, 40),
-                  backgroundColor: Colors.red,
+
                   textStyle: const TextStyle(
                       fontSize: 15, fontWeight: FontWeight.w600),
-                  primary: Colors.blue,
-                  onPrimary: Colors.white,
                   // Background color
                 ),
                 onPressed: () {

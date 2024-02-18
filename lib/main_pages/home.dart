@@ -817,22 +817,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .styleFrom(
                                                     foregroundColor:
                                                     Colors
-                                                        .white,
+                                                        .white, backgroundColor: Colors
+                                                        .green,
                                                     minimumSize:
                                                     Size(
                                                         Get.width,
                                                         40),
-                                                    backgroundColor:
-                                                    const Color(
-                                                        0xffff9248),
+
                                                     textStyle: const TextStyle(
                                                         fontSize:
                                                         15,
                                                         fontWeight:
                                                         FontWeight.w600),
-                                                    primary:
-                                                    Colors
-                                                        .blue,
                                                     // Background color
                                                   ),
                                                   onPressed:
@@ -874,22 +870,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   style: ElevatedButton
                                                       .styleFrom(
                                                     foregroundColor: Colors
-                                                        .white,
+                                                        .white, backgroundColor: Colors
+                                                        .amber,
                                                     minimumSize:
                                                     Size(
                                                         Get.width,
                                                         40),
-                                                    backgroundColor:
-                                                    Colors
-                                                        .orange,
+
                                                     textStyle: const TextStyle(
                                                         fontSize:
                                                         15,
                                                         fontWeight:
                                                         FontWeight.w600),
-                                                    primary:
-                                                    Colors
-                                                        .blue,
                                                     // Background color
                                                   ),
                                                   onPressed:

@@ -48,7 +48,7 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
         .get()
         .then(
           (res) => postsCount = res.count,
-      onError: (e) => showErrorDialog(context,"Error completing: $e"),
+      onError: (e) => showErrorDialog(context, "Error completing: $e"),
     );
     List<Map<String, dynamic>> temp = [];
     var data = await FirebaseTable()
@@ -370,54 +370,53 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       0.05,
                                                   child:
                                                   ElevatedButton(
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        minimumSize: Size(
-                                                            Get.width,
-                                                            40),
-                                                        backgroundColor:
-                                                        Colors.red,
-                                                        textStyle: const TextStyle(
-                                                            fontSize:
-                                                            15,
-                                                            fontWeight:
-                                                            FontWeight.w600),
-                                                        primary:
-                                                        Colors.blue,
-                                                        onPrimary:
-                                                        Colors.white,
-                                                        // Background color
-                                                      ),
-                                                      onPressed:
-                                                          () {
-                                                        FirebaseTable()
-                                                            .usersTable
-                                                            .doc(FirebaseAuth
-                                                            .instance
-                                                            .currentUser!.uid)
-                                                            .update({
-                                                          "following":
-                                                          FieldValue
-                                                              .arrayRemove([
-                                                            client["id"],
-                                                          ])
-                                                        });
-                                                        FirebaseTable()
-                                                            .usersTable
-                                                            .doc(client["id"])
-                                                            .update({
-                                                          "followers":
-                                                          FieldValue
-                                                              .arrayRemove([
-                                                            FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid
-                                                          ])
-                                                        });
-                                                      },
-                                                      child: const Text(
-                                                          "Unfollow")),
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      foregroundColor: Colors
+                                                          .white,
+                                                      backgroundColor: Colors
+                                                          .red,
+                                                      minimumSize: Size(
+                                                          Get.width,
+                                                          40),
+
+                                                      textStyle: const TextStyle(
+                                                          fontSize:
+                                                          15,
+                                                          fontWeight:
+                                                          FontWeight.w600),
+                                                      // Background color
+                                                    ),
+                                                    onPressed:
+                                                        () {
+                                                      FirebaseTable()
+                                                          .usersTable
+                                                          .doc(FirebaseAuth
+                                                          .instance
+                                                          .currentUser!.uid)
+                                                          .update({
+                                                        "following":
+                                                        FieldValue
+                                                            .arrayRemove([
+                                                          client["id"],
+                                                        ])
+                                                      });
+                                                      FirebaseTable()
+                                                          .usersTable
+                                                          .doc(client["id"])
+                                                          .update({
+                                                        "followers":
+                                                        FieldValue
+                                                            .arrayRemove([
+                                                          FirebaseAuth
+                                                              .instance
+                                                              .currentUser!
+                                                              .uid
+                                                        ])
+                                                      });
+                                                    },
+                                                    child: const Text(
+                                                        "Unfollow"),),
                                                 )
                                                     : SizedBox(
                                                   height:
@@ -429,20 +428,19 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                   ElevatedButton(
                                                       style: ElevatedButton
                                                           .styleFrom(
+                                                        foregroundColor: Colors
+                                                            .white,
+                                                        backgroundColor: Colors
+                                                            .green,
                                                         minimumSize: Size(
                                                             Get.width,
                                                             40),
-                                                        backgroundColor:
-                                                        Colors.green,
+
                                                         textStyle: const TextStyle(
                                                             fontSize:
                                                             15,
                                                             fontWeight:
                                                             FontWeight.w600),
-                                                        primary:
-                                                        Colors.blue,
-                                                        onPrimary:
-                                                        Colors.white,
                                                         // Background color
                                                       ),
                                                       onPressed:
@@ -485,15 +483,15 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       style:
                                                       ElevatedButton
                                                           .styleFrom(
+                                                        foregroundColor: Colors
+                                                            .white,
+                                                        backgroundColor: Colors
+                                                            .blue,
                                                         textStyle: const TextStyle(
                                                             fontSize: 15,
                                                             fontWeight:
                                                             FontWeight
                                                                 .w600),
-                                                        primary:
-                                                        Colors.blue,
-                                                        onPrimary:
-                                                        Colors.white,
                                                       ),
                                                       onPressed: () {
                                                         String chatId;

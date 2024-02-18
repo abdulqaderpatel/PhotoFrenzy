@@ -427,13 +427,12 @@ class _IndividualCompetitionsScreenState
                                       const Gap(30),
                                       ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.white,
+                                            foregroundColor: Colors.white, backgroundColor: Colors.blue,
                                             minimumSize: Size(Get.width, 40),
-                                            backgroundColor: Colors.orange,
+
                                             textStyle: const TextStyle(
                                                 fontSize: 15,
                                                 fontWeight: FontWeight.w600),
-                                            primary: Colors.blue,
                                             // Background color
                                           ),
                                           onPressed: buttonLoading
