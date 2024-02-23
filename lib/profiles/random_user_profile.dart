@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:photofrenzy/Follow/random_user_followers.dart';
 import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/individual_chat.dart';
@@ -211,64 +213,44 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                             Row(
                                               mainAxisAlignment:
                                               MainAxisAlignment
-                                                  .spaceBetween,
+                                                  .start,
                                               children: [
-                                                Column(
-                                                  children: [
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                              color: Colors
-                                                                  .grey,
-                                                              width: 0.8),
-                                                          borderRadius:
-                                                          BorderRadius
-                                                              .circular(
-                                                              80)),
-                                                      child: client[
-                                                      "profile_picture"] ==
-                                                          ""
-                                                          ? const CircleAvatar(
-                                                        radius: 35,
-                                                        backgroundColor:
-                                                        Colors
-                                                            .white,
-                                                        backgroundImage:
-                                                        AssetImage(
-                                                          "assets/images/profile_picture.png",
-                                                        ),
-                                                      )
-                                                          : CircleAvatar(
-                                                        radius: 35,
-                                                        backgroundColor:
-                                                        Colors
-                                                            .white,
-                                                        backgroundImage:
-                                                        NetworkImage(
-                                                          client[
-                                                          "profile_picture"],
-                                                        ),
-                                                      ),
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color: Colors
+                                                              .grey,
+                                                          width: 0.8),
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          80)),
+                                                  child: client[
+                                                  "profile_picture"] ==
+                                                      ""
+                                                      ? const CircleAvatar(
+                                                    radius: 35,
+                                                    backgroundColor:
+                                                    Colors
+                                                        .white,
+                                                    backgroundImage:
+                                                    AssetImage(
+                                                      "assets/images/profile_picture.png",
                                                     ),
-                                                    const Gap(5),
-                                                    FittedBox(
-                                                      child: Text(
-                                                        client["name"],
-                                                        style: TextStyle(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .w500,
-                                                            color: isDark(
-                                                                context)
-                                                                ? Colors
-                                                                .white
-                                                                : Colors
-                                                                .black),
-                                                      ),
+                                                  )
+                                                      : CircleAvatar(
+                                                    radius: 35,
+                                                    backgroundColor:
+                                                    Colors
+                                                        .white,
+                                                    backgroundImage:
+                                                    NetworkImage(
+                                                      client[
+                                                      "profile_picture"],
                                                     ),
-                                                  ],
+                                                  ),
                                                 ),
+                                                Gap(Get.width*0.1),
                                                 Row(
                                                   mainAxisAlignment:
                                                   MainAxisAlignment
@@ -299,30 +281,36 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       ],
                                                     ),
                                                     const Gap(40),
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                            client["followers"]
-                                                                .length
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                19,
-                                                                color: isDark(
-                                                                    context)
-                                                                    ? Colors
-                                                                    .white
-                                                                    : Colors
-                                                                    .black)),
-                                                        Text(
-                                                          "Followers",
-                                                          style: Theme
-                                                              .of(
-                                                              context)
-                                                              .textTheme
-                                                              .bodyMedium,
-                                                        ),
-                                                      ],
+                                                    InkWell(onTap: (){
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                                                        return RandomUserFollowers(id: client["id"]);
+                                                      }));
+                                                    },
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                              client["followers"]
+                                                                  .length
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                  19,
+                                                                  color: isDark(
+                                                                      context)
+                                                                      ? Colors
+                                                                      .white
+                                                                      : Colors
+                                                                      .black)),
+                                                          Text(
+                                                            "Followers",
+                                                            style: Theme
+                                                                .of(
+                                                                context)
+                                                                .textTheme
+                                                                .bodyMedium,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                     const Gap(40),
                                                     Column(
@@ -351,6 +339,25 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       ],
                                                     ),
                                                   ],
+                                                ),
+                                              ],
+                                            ),
+                                            const Gap(15),
+                                            Row(
+                                              children: [
+                                                AutoSizeText(
+                                                  client["name"],maxLines: 1,
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                      FontWeight
+                                                          .w500,
+                                                      color: isDark(
+                                                          context)
+                                                          ? Colors
+                                                          .white
+                                                          : Colors
+                                                          .black),
                                                 ),
                                               ],
                                             ),

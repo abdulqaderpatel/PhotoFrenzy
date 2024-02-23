@@ -10,10 +10,10 @@ ThemeData darkTheme = ThemeData(
       secondary: Colors.purple,
       error: Colors.red,
       errorContainer: Colors.yellow),
-  scaffoldBackgroundColor: Color(0xff151D27),
-  cardColor: Color(0xff242732),
+  scaffoldBackgroundColor: const Color(0xff151D27),
+  cardColor: const Color(0xff242732),
   dividerColor: Colors.grey[600],
-  appBarTheme: AppBarTheme(backgroundColor: Color(0xff15202B)),
+  appBarTheme: const AppBarTheme(backgroundColor: Color(0xff15202B)),
   iconTheme: const IconThemeData(color: Colors.white),
   textTheme: const TextTheme(
     displayLarge: TextStyle(

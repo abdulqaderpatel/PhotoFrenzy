@@ -65,6 +65,7 @@ dependencies:
   pdf:
   printing:
   google_sign_in:
+  auto_size_text:
 
 
   cupertino_icons: ^1.0.2

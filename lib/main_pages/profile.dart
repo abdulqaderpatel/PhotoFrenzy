@@ -6,6 +6,8 @@ import 'package:flutter_reaction_button/flutter_reaction_button.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:photofrenzy/Follow/random_user_followers.dart';
+import 'package:photofrenzy/Follow/random_user_following.dart';
 import 'package:photofrenzy/models/text_post.dart';
 import 'package:share_plus/share_plus.dart';
 import '../authentication/login.dart';
@@ -255,7 +257,7 @@ class ProfileScreenState extends State<ProfileScreen>
               onTap: () async {
                 showToast(message: "Logged out successfully");
                 await FirebaseAuth.instance.signOut();
-                userController.isLoggedOut.value=true;
+                userController.isLoggedOut.value = true;
                 if (context.mounted) {
                   Navigator.pushReplacement(context,
                       MaterialPageRoute(builder: (context) {
@@ -396,52 +398,89 @@ class ProfileScreenState extends State<ProfileScreen>
                                                         ],
                                                       ),
                                                       const Gap(45),
-                                                      Column(
-                                                        children: [
-                                                          Text(
-                                                              client["followers"]
-                                                                  .length
-                                                                  .toString(),
-                                                              style: TextStyle(
-                                                                  fontSize: 19,
-                                                                  color: isDark(
-                                                                          context)
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black)),
-                                                          Text(
-                                                            "Followers",
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyMedium,
-                                                          ),
-                                                        ],
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) {
+                                                                return RandomUserFollowers(
+                                                                    id: FirebaseAuth
+                                                                        .instance
+                                                                        .currentUser!
+                                                                        .uid);
+                                                              },
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Column(
+                                                          children: [
+                                                            Text(
+                                                                client["followers"]
+                                                                    .length
+                                                                    .toString(),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        19,
+                                                                    color: isDark(
+                                                                            context)
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Colors
+                                                                            .black)),
+                                                            Text(
+                                                              "Followers",
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium,
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                       const Gap(45),
-                                                      Column(
-                                                        children: [
-                                                          Text(
-                                                              client["following"]
-                                                                  .length
-                                                                  .toString(),
-                                                              style: TextStyle(
-                                                                  fontSize: 19,
-                                                                  color: isDark(
-                                                                          context)
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black)),
-                                                          Text(
-                                                            "Following",
-                                                            style: Theme.of(
-                                                                    context)
-                                                                .textTheme
-                                                                .bodyMedium,
-                                                          ),
-                                                        ],
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder:
+                                                                  (context) {
+                                                                return RandomUserFollowing(
+                                                                  id: FirebaseAuth
+                                                                      .instance
+                                                                      .currentUser!
+                                                                      .uid,
+                                                                );
+                                                              },
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Column(
+                                                          children: [
+                                                            Text(
+                                                                client["following"]
+                                                                    .length
+                                                                    .toString(),
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        19,
+                                                                    color: isDark(
+                                                                            context)
+                                                                        ? Colors
+                                                                            .white
+                                                                        : Colors
+                                                                            .black)),
+                                                            Text(
+                                                              "Following",
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium,
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ],
                                                   ),

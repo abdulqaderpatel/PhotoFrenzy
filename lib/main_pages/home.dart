@@ -246,7 +246,7 @@ class _HomeScreenState extends State<HomeScreen> {
           }));
     } catch (e) {
       if (context.mounted) {
-        showErrorDialog(context, e.toString());
+        //showErrorDialog(context, e.toString());
       }
     }
   }

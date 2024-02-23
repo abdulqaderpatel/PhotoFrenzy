@@ -270,6 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             "id": FirebaseAuth.instance.currentUser!.uid,
                             "name":
                                 FirebaseAuth.instance.currentUser!.displayName,
+                            "username":FirebaseAuth.instance.currentUser!.displayName,
                             "email": FirebaseAuth.instance.currentUser!.email,
                             "profile_picture": "",
                             "bio": "",

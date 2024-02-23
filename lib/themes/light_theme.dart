@@ -11,9 +11,9 @@ ThemeData lightTheme = ThemeData(
       error: Colors.red,
       errorContainer: Colors.yellow),
   scaffoldBackgroundColor: Colors.white,
-  cardColor: Color(0xffD7EAF1),
+  cardColor: const Color(0xffD7EAF1),
   dividerColor: Colors.grey[600],
-  appBarTheme: AppBarTheme(backgroundColor: Colors.white),
+  appBarTheme: const AppBarTheme(backgroundColor: Colors.white),
   iconTheme: const IconThemeData(color: Colors.black),
   textTheme: const TextTheme(
     displayLarge: TextStyle(
