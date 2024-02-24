@@ -63,7 +63,7 @@ Future<void> showReactionCount(BuildContext context, String message) async {
           ),
         ],
       );
-    },
+    }
   );
 }
 
@@ -73,7 +73,7 @@ showToast({required String message,bool error=false}) {
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,
-      backgroundColor: Colors.green,
+      backgroundColor:error?Colors.red: Colors.green,
       textColor: Colors.white,
       fontSize: 16.0);
 }

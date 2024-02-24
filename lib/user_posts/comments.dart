@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import 'package:photofrenzy/global/firebase_tables.dart';
+import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/user_posts/replies.dart';
 
@@ -59,73 +59,18 @@ class _CommentsScreenState extends State<CommentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: AppBar(title: const Text("Comments"),),
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.only(left: 10, right: 10, bottom: 7),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: TextField(
-                controller: commentController,
-                decoration: const InputDecoration(hintText: "Enter comment.."),
-              ),
-            ),
-            const SizedBox(
-              width: 15,
-            ),
-            InkWell(
-                onTap: () async {
-
-                  int time = DateTime.now().millisecondsSinceEpoch;
-                  await FirebaseTable().commentsTable.doc(time.toString()).set({
-                    "id": time.toString(),
-                    "creator_id": FirebaseAuth.instance.currentUser!.uid,
-                    "postId": widget.postId,
-                    "name": userinfo[0]["name"],
-                    "username": userinfo[0]["username"],
-                    "profile_picture": userinfo[0]["profile_picture"],
-                    "message": commentController.text,
-                    "likes": 0,
-                    "likers": [],
-                    "replies": 0
-                  });
-
-                  commentController.text = "";
-                  FocusManager.instance.primaryFocus?.unfocus();
-                  await FirebaseTable()
-                      .postsTable
-                      .doc(widget.postId)
-                      .update({"comments": FieldValue.increment(1)});
 
 
-                  for (int i = 0; i < userController.textposts.length; i++) {
-                    if (userController.textposts[i].post_id == widget.postId) {
-                      userController.textposts[i].comments++;
-                      break;
-                    }
-                  }
-
-                  for (int i = 0; i < userController.imageposts.length; i++) {
-                    if (userController.imageposts[i].post_id == widget.postId) {
-                      userController.imageposts[i].comments++;
-                      break;
-                    }
-                  }
-                },
-                child: const Icon(Icons.send)),
-          ],
-        ),
-      ),
-      resizeToAvoidBottomInset: false,
       body: isLoading
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : SafeArea(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    StreamBuilder<QuerySnapshot>(
+            child: Column(
+              children: [
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: StreamBuilder<QuerySnapshot>(
                         stream: FirebaseTable()
                             .commentsTable
                             .where("postId", isEqualTo: widget.postId)
@@ -243,10 +188,71 @@ class _CommentsScreenState extends State<CommentsScreen> {
                             children: clientWidgets,
                           );
                         }),
-                  ],
+                  ),
                 ),
-              ),
+                Container(
+                  margin: const EdgeInsets.only(left: 10, right: 10, bottom: 7),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: commentController,
+                          decoration: const InputDecoration(hintText: "Enter comment.."),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      InkWell(
+                          onTap: () async {
+                            if (commentController.text.isEmpty) {
+                                showToast(message: "Comment cannot be empty",error: true);
+                                return;
+                              }
+                              int time = DateTime.now().millisecondsSinceEpoch;
+                            await FirebaseTable().commentsTable.doc(time.toString()).set({
+                              "id": time.toString(),
+                              "creator_id": FirebaseAuth.instance.currentUser!.uid,
+                              "postId": widget.postId,
+                              "name": userinfo[0]["name"],
+                              "username": userinfo[0]["username"],
+                              "profile_picture": userinfo[0]["profile_picture"],
+                              "message": commentController.text,
+                              "likes": 0,
+                              "likers": [],
+                              "replies": 0
+                            });
+
+                            commentController.text = "";
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            await FirebaseTable()
+                                .postsTable
+                                .doc(widget.postId)
+                                .update({"comments": FieldValue.increment(1)});
+
+
+                            for (int i = 0; i < userController.textposts.length; i++) {
+                              if (userController.textposts[i].post_id == widget.postId) {
+                                userController.textposts[i].comments++;
+                                break;
+                              }
+                            }
+
+                            for (int i = 0; i < userController.imageposts.length; i++) {
+                              if (userController.imageposts[i].post_id == widget.postId) {
+                                userController.imageposts[i].comments++;
+                                break;
+                              }
+                            }
+                          },
+                          child: const Icon(Icons.send)),
+                    ],
+                  ),
+                )
+              ],
             ),
+          ),
     );
   }
 }

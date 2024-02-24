@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:photofrenzy/Chatbot/chatbot.dart';
 
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
@@ -23,12 +24,11 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         body: SafeArea(
-      child: Container(
-        child: Container(
-          height: Get.height,
-          margin: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-          child: SingleChildScrollView(
+          child: Container(
+            height: Get.height,
+            margin: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
             child: Column(
               children: [
                 const SizedBox(
@@ -40,7 +40,8 @@ class _SearchScreenState extends State<SearchScreen> {
                       title = value.toString();
                     });
                   },
-                  style:  TextStyle(color:isDark(context)?Colors.white: Colors.black),
+                  style: TextStyle(
+                      color: isDark(context) ? Colors.white : Colors.black),
                   controller: searchController,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
@@ -62,117 +63,126 @@ class _SearchScreenState extends State<SearchScreen> {
                       left: 5,
                     ),
                     errorStyle: const TextStyle(fontSize: 0),
-                    hintStyle:  TextStyle(
-                        color: isDark(context)?Colors.white:Colors.black, fontWeight: FontWeight.w400),
+                    hintStyle: TextStyle(
+                        color: isDark(context) ? Colors.white : Colors.black,
+                        fontWeight: FontWeight.w400),
                     hintText: "Search",
                   ),
                 ),
                 const SizedBox(height: 10),
-                SizedBox(
-                  height: Get.height * 0.8,
-                  child: ListView(
-                    children: [
-                      StreamBuilder<QuerySnapshot>(
-                          stream: FirebaseTable()
-                              .usersTable
-                              .where("id",
-                                  isNotEqualTo:
-                                      FirebaseAuth.instance.currentUser!.uid)
-                              .snapshots(),
-                          builder: (context, snapshot) {
-                            List<Container> clientWidgets = [];
-                            if (snapshot.hasData) {
-                              final clients = snapshot.data?.docs;
-                              for (var client in clients!) {
-                                final clientWidget = title.isEmpty
-                                    ? Container()
-                                    : client["username"]
-                                            .toString()
-                                            .toLowerCase()
-                                            .contains(title.toLowerCase())
-                                        ? Container(
-                                            child: InkWell(
-                                              onTap: () {
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) {
-                                                    return RandomUserProfileScreen(
-                                                      data: {
-                                                        "profile_picture": client[
-                                                            "profile_picture"],
-                                                        "id": client["id"],
-                                                        "name": client["name"],
-                                                        "username":
-                                                            client["username"],
-                                                        "followers":
-                                                            client["followers"],
-                                                        "following":
-                                                            client["following"],
-                                                        "bio": client["bio"],
-                                                        "email":
-                                                            client["email"],
-                                                        "phone_number": client[
-                                                            "phone_number"],
-                                                      },
-                                                    );
-                                                  }),
-                                                );
-                                              },
-                                              child: Card(
-                                                  margin: const EdgeInsets.only(
-                                                      bottom: 20),
-                                                  color:
-                                                       isDark(context)?Color(0xff1B1212):Color(0xffEDEADE),
-                                                  child: ListTile(
-                                                    leading:
-                                                        client["profile_picture"] ==
-                                                                ""
-                                                            ? const CircleAvatar(
-                                                                backgroundImage:
-                                                                    AssetImage(
-                                                                        "assets/images/profile_picture.png"),
-                                                              )
-                                                            : CircleAvatar(
-                                                                backgroundImage:
-                                                                    NetworkImage(
-                                                                        client[
-                                                                            "profile_picture"]),
-                                                              ),
-                                                    title: Text(
-                                                      client["name"],
-                                                      style: TextStyle(
-                                                          color: isDark(context)?Colors.white:Colors.black,
-                                                          fontSize: 20,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                    subtitle: Text(
-                                                      client["username"],
-                                                      style: const TextStyle(
-                                                          color: Colors.grey,
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                  )),
-                                            ),
-                                          )
-                                        : Container();
-                                clientWidgets.add(clientWidget);
-                              }
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseTable()
+                            .usersTable
+                            .where("id",
+                                isNotEqualTo:
+                                    FirebaseAuth.instance.currentUser!.uid)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          List<Container> clientWidgets = [];
+                          if (snapshot.hasData) {
+                            final clients = snapshot.data?.docs;
+                            for (var client in clients!) {
+                              final clientWidget = title.isEmpty
+                                  ? Container()
+                                  : client["username"]
+                                          .toString()
+                                          .toLowerCase()
+                                          .contains(title.toLowerCase())
+                                      ? Container(
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) {
+                                                  return RandomUserProfileScreen(
+                                                    data: {
+                                                      "profile_picture": client[
+                                                          "profile_picture"],
+                                                      "id": client["id"],
+                                                      "name": client["name"],
+                                                      "username":
+                                                          client["username"],
+                                                      "followers":
+                                                          client["followers"],
+                                                      "following":
+                                                          client["following"],
+                                                      "bio": client["bio"],
+                                                      "email": client["email"],
+                                                      "phone_number": client[
+                                                          "phone_number"],
+                                                    },
+                                                  );
+                                                }),
+                                              );
+                                            },
+                                            child: Card(
+                                                margin: const EdgeInsets.only(
+                                                    bottom: 20),
+                                                color: isDark(context)
+                                                    ? const Color(0xff1B1212)
+                                                    : const Color(0xffEDEADE),
+                                                child: ListTile(
+                                                  leading:
+                                                      client["profile_picture"] ==
+                                                              ""
+                                                          ? const CircleAvatar(
+                                                              backgroundImage:
+                                                                  AssetImage(
+                                                                      "assets/images/profile_picture.png"),
+                                                            )
+                                                          : CircleAvatar(
+                                                              backgroundImage:
+                                                                  NetworkImage(
+                                                                      client[
+                                                                          "profile_picture"]),
+                                                            ),
+                                                  title: Text(
+                                                    client["name"],
+                                                    style: TextStyle(
+                                                        color: isDark(context)
+                                                            ? Colors.white
+                                                            : Colors.black,
+                                                        fontSize: 20,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                  subtitle: Text(
+                                                    client["username"],
+                                                    style: const TextStyle(
+                                                        color: Colors.grey,
+                                                        fontWeight:
+                                                            FontWeight.w600),
+                                                  ),
+                                                )),
+                                          ),
+                                        )
+                                      : Container();
+                              clientWidgets.add(clientWidget);
                             }
-                            return Column(
-                              children: clientWidgets,
-                            );
-                          }),
-                    ],
+                          }
+                          return Column(
+                            children: clientWidgets,
+                          );
+                        }),
                   ),
                 ),
+                InkWell(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return Chatbot();
+                      }));
+                    },
+                    child: Container(
+                      height: 200,
+                      color: Colors.red,
+                    ))
               ],
             ),
           ),
-        ),
-      ),
-    ));
+        ));
   }
 }
