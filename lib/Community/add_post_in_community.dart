@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofrenzy/global/show_message.dart';
+import 'package:photofrenzy/global/theme_mode.dart';
 
 import '../global/firebase_tables.dart';
 
@@ -58,7 +59,12 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(appBar:AppBar(backgroundColor: Theme.of(context).cardColor,
+      title: const Text(
+        "Add Post to Community",
+      ),
+      centerTitle: true,
+    ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         margin: const EdgeInsets.only(bottom: 10),
@@ -225,17 +231,17 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                     padding: const EdgeInsets.symmetric(horizontal: 5),
                     width: Get.width * 0.4,
                     decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.background,
+                        color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(10)),
                     child: DropdownButtonHideUnderline(
                       child: DropdownButton<String>(
                         value: dropdownValue,
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.arrow_downward,
-                          color: Colors.white,
+                          color:isDark(context)? Colors.white:Colors.black,
                         ),
                         elevation: 16,
-                        style: const TextStyle(color: Colors.white),
+                        style:  TextStyle(color:isDark(context)? Colors.white:Colors.black),
                         onChanged: (String? value) {
                           // This is called when the user selects an item.
                           setState(() {
@@ -301,9 +307,9 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                                               postImage = File("");
                                             });
                                           },
-                                          child: const Icon(
+                                          child:  Icon(
                                             Icons.highlight_remove,
-                                            color: Colors.white,
+                                            color:isDark(context)? Colors.white:Colors.black,
                                           ),
                                         )),
                                   ],

@@ -154,7 +154,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
                 SizedBox(
                   height: Get.height * 0.25,
                   child:
-                      SvgPicture.asset(svgImage, semanticsLabel: 'Acme Logo'),
+                      SvgPicture.asset(svgImage),
                 ),
                 isVerified
                     ? Column(

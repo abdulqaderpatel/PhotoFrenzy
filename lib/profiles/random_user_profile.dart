@@ -8,6 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/Follow/random_user_followers.dart';
+import 'package:photofrenzy/Follow/random_user_following.dart';
 import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/individual_chat.dart';
@@ -250,7 +251,7 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                     ),
                                                   ),
                                                 ),
-                                                Gap(Get.width*0.1),
+                                                Gap(Get.width * 0.1),
                                                 Row(
                                                   mainAxisAlignment:
                                                   MainAxisAlignment
@@ -281,10 +282,14 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       ],
                                                     ),
                                                     const Gap(40),
-                                                    InkWell(onTap: (){
-                                                      Navigator.push(context, MaterialPageRoute(builder: (context){
-                                                        return RandomUserFollowers(id: client["id"]);
-                                                      }));
+                                                    InkWell(onTap: () {
+                                                      Navigator.push(context,
+                                                          MaterialPageRoute(
+                                                              builder: (
+                                                                  context) {
+                                                                return RandomUserFollowers(
+                                                                    id: client["id"]);
+                                                              }));
                                                     },
                                                       child: Column(
                                                         children: [
@@ -313,30 +318,40 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                                       ),
                                                     ),
                                                     const Gap(40),
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                            client["following"]
-                                                                .length
-                                                                .toString(),
-                                                            style: TextStyle(
-                                                                fontSize:
-                                                                19,
-                                                                color: isDark(
-                                                                    context)
-                                                                    ? Colors
-                                                                    .white
-                                                                    : Colors
-                                                                    .black)),
-                                                        Text(
-                                                          "Following",
-                                                          style: Theme
-                                                              .of(
-                                                              context)
-                                                              .textTheme
-                                                              .bodyMedium,
-                                                        ),
-                                                      ],
+                                                    InkWell(onTap: () {
+                                                      Navigator.push(context,
+                                                          MaterialPageRoute(
+                                                              builder: (
+                                                                  context) {
+                                                                return RandomUserFollowing(
+                                                                    id: client["id"]);
+                                                              }));
+                                                    },
+                                                      child: Column(
+                                                        children: [
+                                                          Text(
+                                                              client["following"]
+                                                                  .length
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                  19,
+                                                                  color: isDark(
+                                                                      context)
+                                                                      ? Colors
+                                                                      .white
+                                                                      : Colors
+                                                                      .black)),
+                                                          Text(
+                                                            "Following",
+                                                            style: Theme
+                                                                .of(
+                                                                context)
+                                                                .textTheme
+                                                                .bodyMedium,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -346,7 +361,7 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                             Row(
                                               children: [
                                                 AutoSizeText(
-                                                  client["name"],maxLines: 1,
+                                                  client["name"], maxLines: 1,
                                                   style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:
