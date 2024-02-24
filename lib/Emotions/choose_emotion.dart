@@ -25,12 +25,6 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
     Emoji("surprise", "😲")
   ];
 
-  @override
-  void initState() {
-    super.initState();
-    // TODO: implement initState
-    print(widget.posts);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +40,7 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
             )
           ],
         ),
-        automaticallyImplyLeading: false,
+
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -74,7 +68,7 @@ class _ChooseEmotionState extends State<ChooseEmotion> {
                             }));
                           },
                           child: Container(
-                            color: Theme.of(context).colorScheme.background,
+                            color: Theme.of(context).cardColor,
                             child: Center(
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,

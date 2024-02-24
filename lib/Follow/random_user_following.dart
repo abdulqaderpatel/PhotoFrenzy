@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
+import '../profiles/random_user_profile.dart';
 
 class RandomUserFollowing extends StatefulWidget {
   final String id;
@@ -41,56 +42,81 @@ class _RandomUserFollowingState extends State<RandomUserFollowing> {
                               .where("id", isNotEqualTo: widget.id)
                               .snapshots(),
                           builder: (context, snapshot) {
-                            List<Container> clientWidgets = [];
+                            List<Column> clientWidgets = [];
                             if (snapshot.hasData) {
                               final clients = snapshot.data?.docs;
                               for (var client in clients!) {
                                 final clientWidget = client["followers"]
                                         .contains(widget.id)
-                                    ? Container(
-                                        child: Card(
-                                            shape: RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                    color: isDark(context)
-                                                        ? Colors.black
-                                                        : Colors.grey,
-                                                    width: 0.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            margin: const EdgeInsets.only(
-                                                bottom: 20),
-                                            child: ListTile(
-                                              leading:
-                                                  client["profile_picture"] ==
-                                                          ""
-                                                      ? const CircleAvatar(
-                                                          backgroundImage:
-                                                              AssetImage(
-                                                                  "assets/images/profile_picture.png"),
-                                                        )
-                                                      : CircleAvatar(
-                                                          backgroundImage:
-                                                              NetworkImage(client[
-                                                                  "profile_picture"]),
-                                                        ),
-                                              title: Text(
-                                                client["username"],
-                                                style:  TextStyle(
-                                                    color:isDark(context)? Colors.white:Colors.black,
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                              subtitle: Text(
-                                                client["name"],
-                                                style: const TextStyle(
-                                                    color: Colors.grey,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                            )),
-                                      )
-                                    : Container();
+                                    ? Column(
+                                      children: [
+                                            InkWell(onTap: (){
+                                              Navigator.push(context, MaterialPageRoute(builder: (context){
+                                                return RandomUserProfileScreen(
+                                                  data: {
+                                                    "profile_picture": client[
+                                                    "profile_picture"],
+                                                    "id": client["id"],
+                                                    "name": client["name"],
+                                                    "username":
+                                                    client["username"],
+                                                    "followers":
+                                                    client["followers"],
+                                                    "following":
+                                                    client["following"],
+                                                    "bio": client["bio"],
+                                                    "email":
+                                                    client["email"],
+                                                    "phone_number": client[
+                                                    "phone_number"],
+                                                  },
+                                                );
+                                              },),);
+                                            },
+                                              child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: isDark(context)
+                                                          ? Colors.black
+                                                          : Colors.white,
+                                                      width: 0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10)),
+
+                                              child: ListTile(
+                                                leading:
+                                                    client["profile_picture"] ==
+                                                            ""
+                                                        ? const CircleAvatar(
+                                                            backgroundImage:
+                                                                AssetImage(
+                                                                    "assets/images/profile_picture.png"),
+                                                          )
+                                                        : CircleAvatar(
+                                                            backgroundImage:
+                                                                NetworkImage(client[
+                                                                    "profile_picture"]),
+                                                          ),
+                                                title: Text(
+                                                  client["username"],
+                                                  style:  TextStyle(
+                                                      color:isDark(context)? Colors.white:Colors.black,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                subtitle: Text(
+                                                  client["name"],
+                                                  style: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              )),
+                                            ),const SizedBox(height: 10,)
+                                          ],
+                                    )
+                                    : const Column();
                                 clientWidgets.add(clientWidget);
                               }
                             }

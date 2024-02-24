@@ -63,6 +63,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
                 onPressed: buttonLoading
                     ? null
                     : () async {
+                  if(textController.text.isEmpty)
+                    {
+                      showErrorDialog(context, "Post cannot be empty. Write something!!");
+                      return;
+                    }
                         List<Map<String, dynamic>> temp = [];
                         var data = await FirebaseTable()
                             .usersTable

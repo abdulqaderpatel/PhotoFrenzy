@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:photofrenzy/profiles/random_user_profile.dart';
 
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
@@ -51,49 +52,73 @@ class _RandomUserFollowersState extends State<RandomUserFollowers> {
                                 )
                                     ? Column(
                                       children: [
-                                        Card(
-                                            shape: RoundedRectangleBorder(
-                                                side: BorderSide(
-                                                    color: isDark(context)
-                                                        ? Colors.black
-                                                        : Colors.grey,
-                                                    width: 0.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            margin: const EdgeInsets.only(),
-                                            child: ListTile(
-                                              leading:
-                                                  client["profile_picture"] ==
-                                                          ""
-                                                      ? const CircleAvatar(
-                                                          backgroundImage:
-                                                              AssetImage(
-                                                                  "assets/images/profile_picture.png"),
-                                                        )
-                                                      : CircleAvatar(
-                                                          backgroundImage:
-                                                              NetworkImage(client[
-                                                                  "profile_picture"]),
-                                                        ),
-                                              title: Text(
+                                        InkWell(onTap: (){
+                                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                                            return RandomUserProfileScreen(
+                                              data: {
+                                                "profile_picture": client[
+                                                "profile_picture"],
+                                                "id": client["id"],
+                                                "name": client["name"],
+                                                "username":
                                                 client["username"],
-                                                style: TextStyle(
-                                                    color: isDark(context)
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                              subtitle: Text(
-                                                client["name"],
-                                                style: const TextStyle(
-                                                    color: Colors.grey,
-                                                    fontWeight:
-                                                        FontWeight.w500),
-                                              ),
-                                            ),),
-                                        const SizedBox(height: 20,),
+                                                "followers":
+                                                client["followers"],
+                                                "following":
+                                                client["following"],
+                                                "bio": client["bio"],
+                                                "email":
+                                                client["email"],
+                                                "phone_number": client[
+                                                "phone_number"],
+                                              },
+                                            );
+                                          }));
+                                        },
+                                          child: Card(
+                                              shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      color: isDark(context)
+                                                          ? Colors.black
+                                                          : Colors.white,
+                                                      width: 0.5),
+                                                  borderRadius:
+                                                      BorderRadius.circular(10)),
+                                              margin: const EdgeInsets.only(),
+                                              child: ListTile(
+                                                leading:
+                                                    client["profile_picture"] ==
+                                                            ""
+                                                        ? const CircleAvatar(
+                                                            backgroundImage:
+                                                                AssetImage(
+                                                                    "assets/images/profile_picture.png"),
+                                                          )
+                                                        : CircleAvatar(
+                                                            backgroundImage:
+                                                                NetworkImage(client[
+                                                                    "profile_picture"]),
+                                                          ),
+                                                title: Text(
+                                                  client["username"],
+                                                  style: TextStyle(
+                                                      color: isDark(context)
+                                                          ? Colors.white
+                                                          : Colors.black,
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                                ),
+                                                subtitle: Text(
+                                                  client["name"],
+                                                  style: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              ),),
+                                        ),
+                                        const SizedBox(height: 10,),
                                       ],
                                     )
                                     : const Column();

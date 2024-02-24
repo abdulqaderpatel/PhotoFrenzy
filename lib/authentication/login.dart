@@ -23,10 +23,11 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   var buttonLoading = false;
+  var googleButtonLoading=false;
 
   googleSignIn() async {
     setState(() {
-      buttonLoading = true;
+      googleButtonLoading = true;
     });
     final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
     final GoogleSignInAuthentication gAuth = await gUser!.authentication;
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
         accessToken: gAuth.accessToken, idToken: gAuth.idToken);
 
     setState(() {
-      buttonLoading = false;
+      googleButtonLoading = false;
     });
 
     return await FirebaseAuth.instance.signInWithCredential(credential);
@@ -64,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
       return false;
     }
 
-    if (users[0]["phone_number"] != "") {
+    if (users[0]["name"] != "") {
       return true;
     } else {
       return false;
@@ -297,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Image.asset("assets/images/google-logo.png"),
-                          Text(
+                         googleButtonLoading?const Center(child: CircularProgressIndicator(),): Text(
                             "Sign in with google",
                             style: GoogleFonts.lato(
                                 letterSpacing: 0,

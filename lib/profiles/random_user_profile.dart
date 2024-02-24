@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_emoji/flutter_emoji.dart';
 import 'package:flutter_reaction_button/flutter_reaction_button.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -172,7 +173,7 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(backgroundColor: Theme.of(context).cardColor,
         title: const Text("Profile"),
       ),
       body: isLoading
@@ -184,7 +185,7 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
           headerSliverBuilder:
               (BuildContext context, bool innerBoxIsScrolled) {
             return [
-              SliverAppBar(
+              SliverAppBar(backgroundColor: Theme.of(context).cardColor,
                 expandedHeight: 400.0,
                 floating: false,
                 pinned: false,
@@ -643,9 +644,24 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
           body: TabBarView(
             controller: _tabController,
             children: [
-              // Text Posts Tab
+              textPosts.isEmpty?SizedBox(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: Get.height * 0.01,
+                    ),
+
+                    SvgPicture.asset(
+                        "assets/images/no_text_posts.svg",
+                        height: Get.height * 0.2),
+                    SizedBox(height: Get.height*0.015,),
+                    Text("No text posts",style: Theme.of(context).textTheme.displayLarge,)
+                  ],
+                ),
+              ):
               CustomScrollView(
                 slivers: [
+
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
@@ -1446,7 +1462,21 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                 ],
               ),
 
-              // Image Posts Tab
+              imagePosts.isEmpty?SizedBox(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: Get.height * 0.01,
+                    ),
+
+                    SvgPicture.asset(
+                        "assets/images/no_image_posts.svg",
+                        height: Get.height * 0.2),
+                    SizedBox(height: Get.height*0.015,),
+                    Text("No image posts",style: Theme.of(context).textTheme.displayLarge,)
+                  ],
+                ),
+              ):
               CustomScrollView(
                 slivers: [
                   SliverGrid(

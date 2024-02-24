@@ -386,6 +386,8 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                     ),
                                     InkWell(
                                       onTap: () async {
+                                        FocusManager.instance.primaryFocus
+                                            ?.unfocus();
                                         if (messageController.text.isNotEmpty) {
                                           var messageText =
                                               messageController.text;
@@ -453,8 +455,7 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                           }
 
                                           messageController.text = "";
-                                          FocusManager.instance.primaryFocus
-                                              ?.unfocus();
+
                                         }
                                       },
                                       child: Icon(
