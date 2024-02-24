@@ -149,13 +149,13 @@ print("timepass");
                 child: FlexibleSpaceBar(
                   title: isAppBarExpanded
                       ? const SizedBox()
-                      : Container(padding: EdgeInsets.symmetric(horizontal: 10),
+                      : Container(padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("${widget.community["name"]} Photography",
-                          style: const TextStyle(
-                              color: Colors.white,
+                          style:  TextStyle(
+                              color: isDark(context)? Colors.white:Colors.black,
                               fontWeight: FontWeight.bold,
                               fontSize: 20),),
                         InkWell(
@@ -205,8 +205,8 @@ print("timepass");
                                   Text(
                                     "${widget
                                         .community["name"]} Photography",
-                                    style: const TextStyle(
-                                        color: Colors.white,
+                                    style:  TextStyle(
+                                        color:isDark(context)? Colors.white:Colors.black,
                                         fontWeight: FontWeight.bold,
                                         fontSize: 20),
                                   )

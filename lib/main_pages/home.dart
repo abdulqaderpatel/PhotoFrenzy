@@ -296,7 +296,8 @@ class _HomeScreenState extends State<HomeScreen> {
               canvasColor: Theme
                   .of(context)
                   .colorScheme
-                  .background,
+                  .onPrimary
+              ,
             ),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -304,18 +305,18 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                   color: Theme
                       .of(context)
-                      .colorScheme
-                      .background,
+                      .cardColor,
                   borderRadius: BorderRadius.circular(10)),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: dropdownValue,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_downward,
-                    color: Colors.white,
+                    color: isDark(context) ? Colors.white : Colors.black,
                   ),
                   elevation: 16,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(
+                      color: isDark(context) ? Colors.white : Colors.black),
                   onChanged: (String? value) {
                     // This is called when the user selects an item.
                     setState(() {
@@ -336,7 +337,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ) : Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           InkWell(onTap: () {
             Get.to(ChooseEmotion(posts: posts,));
-          }, child: const Icon(Icons.emoji_emotions)),
+          },
+              child: Icon(Icons.emoji_emotions,
+                color: isDark(context) ? Colors.white : Colors.black,)),
           Theme(
             data: Theme.of(context).copyWith(
               canvasColor: Theme
@@ -350,18 +353,17 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                   color: Theme
                       .of(context)
-                      .colorScheme
-                      .background,
+                      .cardColor,
                   borderRadius: BorderRadius.circular(10)),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   value: dropdownValue,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_downward,
-                    color: Colors.white,
+                    color: isDark(context) ? Colors.white : Colors.black,
                   ),
                   elevation: 16,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color:isDark(context)? Colors.white:Colors.black),
                   onChanged: (String? value) {
                     // This is called when the user selects an item.
                     setState(() {
@@ -817,7 +819,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       .styleFrom(
                                                     foregroundColor:
                                                     Colors
-                                                        .white, backgroundColor: Colors
+                                                        .white,
+                                                    backgroundColor: Colors
                                                         .green,
                                                     minimumSize:
                                                     Size(
@@ -870,7 +873,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   style: ElevatedButton
                                                       .styleFrom(
                                                     foregroundColor: Colors
-                                                        .white, backgroundColor: Colors
+                                                        .white,
+                                                    backgroundColor: Colors
                                                         .amber,
                                                     minimumSize:
                                                     Size(

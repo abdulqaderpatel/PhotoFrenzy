@@ -40,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       title = value.toString();
                     });
                   },
-                  style: const TextStyle(color: Colors.black),
+                  style:  TextStyle(color:isDark(context)?Colors.white: Colors.black),
                   controller: searchController,
                   textAlignVertical: TextAlignVertical.center,
                   decoration: InputDecoration(
