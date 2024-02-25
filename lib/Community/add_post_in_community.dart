@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/global/theme_mode.dart';
+import 'package:photofrenzy/main_pages/profile.dart';
 
 import '../global/firebase_tables.dart';
 
@@ -59,12 +60,14 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar:AppBar(backgroundColor: Theme.of(context).cardColor,
-      title: const Text(
-        "Add Post to Community",
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).cardColor,
+        title: const Text(
+          "Add Post to Community",
+        ),
+        centerTitle: true,
       ),
-      centerTitle: true,
-    ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         margin: const EdgeInsets.only(bottom: 10),
@@ -124,6 +127,27 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                             "disgust": [],
                             "surprise": [],
                           });
+
+                          userController.communityPosts.add({
+                            "creator_name": temp[0]["name"],
+                            "creator_username": temp[0]["username"],
+                            "creator_profile_picture": temp[0]
+                                ["profile_picture"],
+                            "post_id": id,
+                            "creator_id":
+                                FirebaseAuth.instance.currentUser!.uid,
+                            "type": "text",
+                            "text": textController.text,
+                            "likes": 0,
+                            "likers": [],
+                            "comments": 0,
+                            "happy": [],
+                            "sad": [],
+                            "anger": [],
+                            "fear": [],
+                            "disgust": [],
+                            "surprise": [],
+                          });
                         } else if (dropdownValue == "Image") {
                           Reference ref = FirebaseStorage.instance.ref(
                               "/${FirebaseAuth.instance.currentUser!.uid}/$id");
@@ -157,7 +181,29 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                               "disgust": [],
                               "surprise": [],
                             });
+                            userController.communityPosts.add({
+                              "creator_name": temp[0]["name"],
+                              "creator_username": temp[0]["username"],
+                              "creator_profile_picture": temp[0]
+                              ["profile_picture"],
+                              "post_id": id,
+                              "creator_id":
+                              FirebaseAuth.instance.currentUser!.uid,
+                              "type": "image",
+                              "text": textController.text,
+                              "imageurl": newUrl.toString(),
+                              "likes": 0,
+                              "likers": [],
+                              "comments": 0,
+                              "happy": [],
+                              "sad": [],
+                              "anger": [],
+                              "fear": [],
+                              "disgust": [],
+                              "surprise": [],
+                            });
                           });
+
                         } else {
                           Reference ref = FirebaseStorage.instance.ref(
                               "/${FirebaseAuth.instance.currentUser!.uid}/$id");
@@ -177,6 +223,27 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                               "post_id": id,
                               "creator_id":
                                   FirebaseAuth.instance.currentUser!.uid,
+                              "type": "video",
+                              "text": textController.text,
+                              "imageurl": newUrl.toString(),
+                              "likes": 0,
+                              "likers": [],
+                              "comments": 0,
+                              "happy": [],
+                              "sad": [],
+                              "anger": [],
+                              "fear": [],
+                              "disgust": [],
+                              "surprise": [],
+                            });
+                            userController.communityPosts.add({
+                              "creator_name": temp[0]["name"],
+                              "creator_username": temp[0]["username"],
+                              "creator_profile_picture": temp[0]
+                              ["profile_picture"],
+                              "post_id": id,
+                              "creator_id":
+                              FirebaseAuth.instance.currentUser!.uid,
                               "type": "video",
                               "text": textController.text,
                               "imageurl": newUrl.toString(),
@@ -238,10 +305,12 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                         value: dropdownValue,
                         icon: Icon(
                           Icons.arrow_downward,
-                          color:isDark(context)? Colors.white:Colors.black,
+                          color: isDark(context) ? Colors.white : Colors.black,
                         ),
                         elevation: 16,
-                        style:  TextStyle(color:isDark(context)? Colors.white:Colors.black),
+                        style: TextStyle(
+                            color:
+                                isDark(context) ? Colors.white : Colors.black),
                         onChanged: (String? value) {
                           // This is called when the user selects an item.
                           setState(() {
@@ -307,9 +376,11 @@ class _AddPostInCommunityState extends State<AddPostInCommunity> {
                                               postImage = File("");
                                             });
                                           },
-                                          child:  Icon(
+                                          child: Icon(
                                             Icons.highlight_remove,
-                                            color:isDark(context)? Colors.white:Colors.black,
+                                            color: isDark(context)
+                                                ? Colors.white
+                                                : Colors.black,
                                           ),
                                         )),
                                   ],

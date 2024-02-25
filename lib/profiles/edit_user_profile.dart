@@ -162,7 +162,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                 setState(() {
                   buttonLoader = false;
                 });
-              } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+              } else if (!RegExp(r'^[a-zA-Z]+(?:\s[a-zA-Z]+)+$')
                   .hasMatch(nameController.text)) {
                 showToast(message: "Please enter a valid name", error: true);
                 setState(() {
@@ -528,7 +528,6 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                               fillColor: Theme.of(context).cardColor,
                               border: InputBorder.none),
                         ),
-
                         Gap(Get.height * 0.013),
                         TextField(
                           controller: usernameController,

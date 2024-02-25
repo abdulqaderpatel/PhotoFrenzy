@@ -8,8 +8,8 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/Community/add_post_in_community.dart';
 import 'package:photofrenzy/components/chat/posts/video.dart';
+import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/constants.dart';
-
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
 import '../user_posts/comments.dart';
@@ -24,7 +24,8 @@ class CommunityDetails extends StatefulWidget {
 }
 
 class _CommunityDetailsState extends State<CommunityDetails> {
-  var textPosts = [];
+  UserController userController=Get.put(UserController());
+
   var isLoaded = false;
 
   getData() async {
@@ -44,13 +45,13 @@ class _CommunityDetailsState extends State<CommunityDetails> {
       });
     }
 print("timepass");
-    textPosts = temp;
+    userController.communityPosts.value = temp;
 
     setState(() {
       isLoaded = false;
     });
 
-    print(textPosts);
+    print(userController.communityPosts);
   }
 
   var parser = EmojiParser();
@@ -238,12 +239,12 @@ print("timepass");
               );
             }),
           ),
-          SliverList(
+          Obx(()=>SliverList(
             delegate: SliverChildBuilderDelegate(
                   (BuildContext context, int index) {
                 DateTime dateTime =
                 DateTime.fromMillisecondsSinceEpoch(
-                    int.parse(textPosts[index]["post_id"]));
+                    int.parse(userController.communityPosts[index]["post_id"]));
 
                 // Get current DateTime
                 DateTime now = DateTime.now();
@@ -263,7 +264,7 @@ print("timepass");
                 // Format time (e.g., 3pm)
                 formattedTime +=
                     ', ' + DateFormat.jm().format(dateTime);
-                return textPosts[index]["type"] == "text"
+                return userController.communityPosts[index]["type"] == "text"
                     ? Container(
                   margin: const EdgeInsets.symmetric(
                       horizontal: 10),
@@ -279,7 +280,7 @@ print("timepass");
                                     width: 0.8),
                                 borderRadius:
                                 BorderRadius.circular(80)),
-                            child: textPosts[index][
+                            child: userController.communityPosts[index][
                             "creator_profile_picture"] ==
                                 ""
                                 ? const CircleAvatar(
@@ -293,7 +294,7 @@ print("timepass");
                               radius: 23,
                               backgroundColor: Colors.white,
                               backgroundImage: NetworkImage(
-                                textPosts[index][
+                                userController.communityPosts[index][
                                 "creator_profile_picture"],
                               ),
                             ),
@@ -313,7 +314,7 @@ print("timepass");
                                   CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      textPosts[index]
+                                      userController.communityPosts[index]
                                       ["creator_name"],
                                       style: TextStyle(
                                           fontSize: 19,
@@ -325,7 +326,7 @@ print("timepass");
                                               : Colors.black),
                                     ),
                                     Text(
-                                      "@${textPosts[index]["creator_username"]}",
+                                      "@${userController.communityPosts[index]["creator_username"]}",
                                       style: const TextStyle(
                                           fontSize: 17,
                                           color: Colors.grey),
@@ -350,7 +351,7 @@ print("timepass");
                               children: [
                                 Flexible(
                                   child: Text(
-                                      textPosts[index]["text"],
+                                      userController.communityPosts[index]["text"],
                                       style: TextStyle(
                                           fontSize: 15,
                                           color: isDark(
@@ -369,15 +370,15 @@ print("timepass");
                               children: [
                                 InkWell(
                                   onTap: () async {
-                                    if (!textPosts[index]["likers"]
+                                    if (!userController.communityPosts[index]["likers"]
                                         .contains(FirebaseAuth
                                         .instance
                                         .currentUser!
                                         .uid)) {
                                       setState(() {
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likes"]++;
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likers"]
                                             .add(FirebaseAuth
                                             .instance
@@ -391,7 +392,7 @@ print("timepass");
                                               .community["name"])
                                           .collection("Posts")
                                           .doc(
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["post_id"])
                                           .update({
                                         "likes":
@@ -407,9 +408,9 @@ print("timepass");
                                       });
                                     } else {
                                       setState(() {
-                                        textPosts[index]["likes"]--;
+                                        userController.communityPosts[index]["likes"]--;
 
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likers"]
                                             .remove(
                                             FirebaseAuth
@@ -424,7 +425,7 @@ print("timepass");
                                               .community["name"])
                                           .collection("Posts")
                                           .doc(
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["post_id"])
                                           .update({
                                         "likes":
@@ -452,7 +453,7 @@ print("timepass");
                                           (Reaction<String>?
                                       reaction) async {
                                         if (!
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likers"]
                                             .contains(
                                             FirebaseAuth
@@ -460,7 +461,7 @@ print("timepass");
                                                 .currentUser!
                                                 .uid)) {
                                           setState(() {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["likers"]
                                                 .add(
@@ -469,7 +470,7 @@ print("timepass");
                                                     .currentUser!
                                                     .uid);
 
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["likes"]++;
                                           });
@@ -481,7 +482,7 @@ print("timepass");
                                               .collection(
                                               "Posts")
                                               .doc(
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["post_id"])
                                               .update({
@@ -500,7 +501,7 @@ print("timepass");
                                         var userReaction =
                                             "none";
                                         userReaction =
-                                        textPosts[
+                                        userController.communityPosts[
                                         index]
                                         ["happy"]
                                             .contains(
@@ -510,7 +511,7 @@ print("timepass");
                                                 .uid)
                                             ? "happy"
                                             :
-                                        textPosts[
+                                        userController.communityPosts[
                                         index]
                                         ["sad"]
                                             .contains(
@@ -520,7 +521,7 @@ print("timepass");
                                                 .uid)
                                             ? "sad"
                                             :
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["fear"]
                                             .contains(
                                             FirebaseAuth
@@ -528,21 +529,21 @@ print("timepass");
                                                 .currentUser!
                                                 .uid)
                                             ? "fear"
-                                            : textPosts[index]["anger"]
+                                            : userController.communityPosts[index]["anger"]
                                             .contains(
                                             FirebaseAuth
                                                 .instance
                                                 .currentUser!
                                                 .uid)
                                             ? "anger"
-                                            : textPosts[index]["disgust"]
+                                            : userController.communityPosts[index]["disgust"]
                                             .contains(
                                             FirebaseAuth
                                                 .instance
                                                 .currentUser!
                                                 .uid)
                                             ? "disgust"
-                                            : textPosts[index]["surprise"]
+                                            : userController.communityPosts[index]["surprise"]
                                             .contains(
                                             FirebaseAuth
                                                 .instance
@@ -560,7 +561,7 @@ print("timepass");
                                               .collection(
                                               "Posts")
                                               .doc(
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["post_id"])
                                               .update({
@@ -583,7 +584,7 @@ print("timepass");
                                               .collection(
                                               "Posts")
                                               .doc(
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["post_id"])
                                               .update({
@@ -607,7 +608,7 @@ print("timepass");
                                           });
                                         }
                                         if (!
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likers"]
                                             .contains(
                                             FirebaseAuth
@@ -617,7 +618,7 @@ print("timepass");
                                           if (reaction
                                               .value ==
                                               "happy") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["happy"]
                                                 .add(
@@ -628,7 +629,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "sad") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["sad"]
                                                 .add(
@@ -639,7 +640,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "fear") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["fear"]
                                                 .add(
@@ -650,7 +651,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "disgust") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["disgust"]
                                                 .add(
@@ -661,7 +662,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "anger") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["anger"]
                                                 .add(
@@ -672,7 +673,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "surprise") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["surprise"]
                                                 .add(
@@ -685,7 +686,7 @@ print("timepass");
                                           userReaction ==
                                               "happy"
                                               ?
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["happy"]
                                               .remove(
@@ -696,7 +697,7 @@ print("timepass");
                                               : userReaction ==
                                               "sad"
                                               ?
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["sad"]
                                               .remove(
@@ -707,7 +708,7 @@ print("timepass");
                                               : userReaction ==
                                               "disgust"
                                               ?
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["disgust"]
                                               .remove(
@@ -717,7 +718,7 @@ print("timepass");
                                                   .uid)
                                               : userReaction ==
                                               "anger"
-                                              ? textPosts[index]["anger"]
+                                              ? userController.communityPosts[index]["anger"]
                                               .remove(
                                               FirebaseAuth
                                                   .instance
@@ -725,13 +726,13 @@ print("timepass");
                                                   .uid)
                                               : userReaction ==
                                               "fear"
-                                              ? textPosts[index]["fear"]
+                                              ? userController.communityPosts[index]["fear"]
                                               .remove(
                                               FirebaseAuth
                                                   .instance
                                                   .currentUser!
                                                   .uid)
-                                              : textPosts[index]["surprise"]
+                                              : userController.communityPosts[index]["surprise"]
                                               .remove(
                                               FirebaseAuth
                                                   .instance
@@ -740,7 +741,7 @@ print("timepass");
                                           if (reaction
                                               .value ==
                                               "happy") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["happy"]
                                                 .add(
@@ -751,7 +752,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "sad") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["sad"]
                                                 .add(
@@ -762,7 +763,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "fear") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["fear"]
                                                 .add(
@@ -773,7 +774,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "disgust") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["disgust"]
                                                 .add(
@@ -784,7 +785,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "anger") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["anger"]
                                                 .add(
@@ -795,7 +796,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "surprise") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["surprise"]
                                                 .add(
@@ -811,7 +812,7 @@ print("timepass");
                                           String>(
                                           value: null,
                                           icon: !
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["likers"]
                                               .contains(
@@ -823,7 +824,7 @@ print("timepass");
                                               Icons
                                                   .thumb_up)
                                               :
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["happy"]
                                               .contains(
@@ -835,7 +836,7 @@ print("timepass");
                                               emojis[0].code,
                                               style: const TextStyle(
                                                   fontSize: 22))
-                                              : textPosts[index]["sad"]
+                                              : userController.communityPosts[index]["sad"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -845,7 +846,7 @@ print("timepass");
                                               emojis[1].code,
                                               style: const TextStyle(
                                                   fontSize: 22))
-                                              : textPosts[index]["fear"]
+                                              : userController.communityPosts[index]["fear"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -855,7 +856,7 @@ print("timepass");
                                               emojis[2].code,
                                               style: const TextStyle(
                                                   fontSize: 22))
-                                              : textPosts[index]["anger"]
+                                              : userController.communityPosts[index]["anger"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -865,7 +866,7 @@ print("timepass");
                                               emojis[3].code,
                                               style: const TextStyle(
                                                   fontSize: 22))
-                                              : textPosts[index]["disgust"]
+                                              : userController.communityPosts[index]["disgust"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -936,7 +937,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                         ["happy"]
                                                             .length
@@ -956,7 +957,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                         ["sad"]
                                                             .length
@@ -976,7 +977,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                         ["fear"]
                                                             .length
@@ -996,7 +997,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                         ["anger"]
                                                             .length
@@ -1016,7 +1017,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                         ["disgust"]
                                                             .length
@@ -1036,7 +1037,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                         ["surprise"]
                                                             .length
@@ -1070,7 +1071,7 @@ print("timepass");
                                   );
                                 },
                                   child: Text(
-                                      textPosts[index]["likes"]
+                                      userController.communityPosts[index]["likes"]
                                           .toString()),
                                 ),
                                 SizedBox(
@@ -1083,10 +1084,10 @@ print("timepass");
                                             builder: (context) {
                                               return CommentsScreen(
                                                 postId:
-                                                textPosts[index]
+                                                userController.communityPosts[index]
                                                 ["post_id"],
                                                 description:
-                                                textPosts[index]
+                                                userController.communityPosts[index]
                                                 ["text"],
                                               );
                                             },
@@ -1098,7 +1099,7 @@ print("timepass");
                                   width: 3,
                                 ),
                                 Text(
-                                  textPosts[index]["comments"]
+                                  userController.communityPosts[index]["comments"]
                                       .toString(),
                                 ),
                                 SizedBox(
@@ -1106,7 +1107,7 @@ print("timepass");
                                 ),
                                 InkWell(onTap: () {
                                   shareText(context,
-                                      textPosts[index]["text"]);
+                                      userController.communityPosts[index]["text"]);
                                 },
                                     child: const Icon(Icons
                                         .replay_outlined)),
@@ -1125,7 +1126,7 @@ print("timepass");
                     ],
                   ),
                 )
-                    : textPosts[index]["type"] == "image"
+                    : userController.communityPosts[index]["type"] == "image"
                     ? Container(
                   margin: const EdgeInsets.only(
                       left: 10, right: 10, bottom: 12),
@@ -1143,7 +1144,7 @@ print("timepass");
                                     .circular(
                                     80)),
                             child:
-                            textPosts[index]["creator_profile_picture"] ==
+                            userController.communityPosts[index]["creator_profile_picture"] ==
                                 ""
                                 ? const CircleAvatar(
                               radius: 23,
@@ -1156,7 +1157,7 @@ print("timepass");
                               radius: 23,
                               backgroundColor: Colors.white,
                               backgroundImage: NetworkImage(
-                                textPosts[index]
+                                userController.communityPosts[index]
                                 ["creator_profile_picture"],
                               ),
                             ),
@@ -1176,7 +1177,7 @@ print("timepass");
                                       .start,
                                   children: [
                                     Text(
-                                      textPosts[index]["creator_name"],
+                                      userController.communityPosts[index]["creator_name"],
                                       style: TextStyle(
                                           fontSize: 19,
                                           fontWeight: FontWeight
@@ -1187,7 +1188,7 @@ print("timepass");
                                               : Colors.black),
                                     ),
                                     Text(
-                                      "@${textPosts[index]["creator_username"]}",
+                                      "@${userController.communityPosts[index]["creator_username"]}",
                                       style: const TextStyle(
                                           fontSize: 17,
                                           color: Colors.grey),
@@ -1210,7 +1211,7 @@ print("timepass");
                           children: [
                             Row(
                               children: [
-                                Text(textPosts[index]["text"],
+                                Text(userController.communityPosts[index]["text"],
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: isDark(context)
@@ -1233,7 +1234,7 @@ print("timepass");
                                 borderRadius: BorderRadius
                                     .circular(10),
                                 child: Image.network(
-                                  textPosts[index]["imageurl"],
+                                  userController.communityPosts[index]["imageurl"],
                                   // Replace with the path to your image
                                   fit: BoxFit
                                       .fill, // Use BoxFit.fill to force the image to fill the container
@@ -1248,16 +1249,16 @@ print("timepass");
                                 InkWell(
                                   onTap: () async {
                                     if (!
-                                    textPosts[index]["likers"]
+                                    userController.communityPosts[index]["likers"]
                                         .contains(FirebaseAuth
                                         .instance
                                         .currentUser!
                                         .uid)) {
                                       setState(() {
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likes"]++;
 
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likers"]
                                             .add(FirebaseAuth
                                             .instance
@@ -1271,7 +1272,7 @@ print("timepass");
                                               .community["name"])
                                           .collection("Posts")
                                           .doc(
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["post_id"])
                                           .update({
                                         "likes":
@@ -1287,10 +1288,10 @@ print("timepass");
                                       });
                                     } else {
                                       setState(() {
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likes"]--;
 
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likers"]
                                             .remove(
                                             FirebaseAuth
@@ -1305,7 +1306,7 @@ print("timepass");
                                               .community["name"])
                                           .collection("Posts")
                                           .doc(
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["post_id"])
                                           .update({
                                         "likes":
@@ -1333,7 +1334,7 @@ print("timepass");
                                           (Reaction<String>?
                                       reaction) async {
                                         if (!
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likers"]
                                             .contains(
                                             FirebaseAuth
@@ -1341,7 +1342,7 @@ print("timepass");
                                                 .currentUser!
                                                 .uid)) {
                                           setState(() {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["likers"]
                                                 .add(
@@ -1350,7 +1351,7 @@ print("timepass");
                                                     .currentUser!
                                                     .uid);
 
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["likes"]++;
                                           });
@@ -1362,7 +1363,7 @@ print("timepass");
                                               .collection(
                                               "Posts")
                                               .doc(
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["post_id"])
                                               .update({
@@ -1381,7 +1382,7 @@ print("timepass");
                                         var userReaction =
                                             "none";
                                         userReaction =
-                                        textPosts[
+                                        userController.communityPosts[
                                         index]
                                         ["happy"]
                                             .contains(
@@ -1391,7 +1392,7 @@ print("timepass");
                                                 .uid)
                                             ? "happy"
                                             :
-                                        textPosts[
+                                        userController.communityPosts[
                                         index]
                                         ["sad"]
                                             .contains(
@@ -1401,7 +1402,7 @@ print("timepass");
                                                 .uid)
                                             ? "sad"
                                             :
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["fear"]
                                             .contains(
                                             FirebaseAuth
@@ -1409,21 +1410,21 @@ print("timepass");
                                                 .currentUser!
                                                 .uid)
                                             ? "fear"
-                                            : textPosts[index]["anger"]
+                                            : userController.communityPosts[index]["anger"]
                                             .contains(
                                             FirebaseAuth
                                                 .instance
                                                 .currentUser!
                                                 .uid)
                                             ? "anger"
-                                            : textPosts[index]["disgust"]
+                                            : userController.communityPosts[index]["disgust"]
                                             .contains(
                                             FirebaseAuth
                                                 .instance
                                                 .currentUser!
                                                 .uid)
                                             ? "disgust"
-                                            : textPosts[index]["surprise"]
+                                            : userController.communityPosts[index]["surprise"]
                                             .contains(
                                             FirebaseAuth
                                                 .instance
@@ -1441,7 +1442,7 @@ print("timepass");
                                               .collection(
                                               "Posts")
                                               .doc(
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["post_id"])
                                               .update({
@@ -1464,7 +1465,7 @@ print("timepass");
                                               .collection(
                                               "Posts")
                                               .doc(
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["post_id"])
                                               .update({
@@ -1488,7 +1489,7 @@ print("timepass");
                                           });
                                         }
                                         if (!
-                                        textPosts[index]
+                                        userController.communityPosts[index]
                                         ["likers"]
                                             .contains(
                                             FirebaseAuth
@@ -1498,7 +1499,7 @@ print("timepass");
                                           if (reaction
                                               .value ==
                                               "happy") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["happy"]
                                                 .add(
@@ -1509,7 +1510,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "sad") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["sad"]
                                                 .add(
@@ -1520,7 +1521,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "fear") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["fear"]
                                                 .add(
@@ -1531,7 +1532,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "disgust") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["disgust"]
                                                 .add(
@@ -1542,7 +1543,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "anger") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["anger"]
                                                 .add(
@@ -1553,7 +1554,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "surprise") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["surprise"]
                                                 .add(
@@ -1566,7 +1567,7 @@ print("timepass");
                                           userReaction ==
                                               "happy"
                                               ?
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["happy"]
                                               .remove(
@@ -1577,7 +1578,7 @@ print("timepass");
                                               : userReaction ==
                                               "sad"
                                               ?
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["sad"]
                                               .remove(
@@ -1588,7 +1589,7 @@ print("timepass");
                                               : userReaction ==
                                               "disgust"
                                               ?
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["disgust"]
                                               .remove(
@@ -1598,7 +1599,7 @@ print("timepass");
                                                   .uid)
                                               : userReaction ==
                                               "anger"
-                                              ? textPosts[index]["anger"]
+                                              ? userController.communityPosts[index]["anger"]
                                               .remove(
                                               FirebaseAuth
                                                   .instance
@@ -1606,13 +1607,13 @@ print("timepass");
                                                   .uid)
                                               : userReaction ==
                                               "fear"
-                                              ? textPosts[index]["fear"]
+                                              ? userController.communityPosts[index]["fear"]
                                               .remove(
                                               FirebaseAuth
                                                   .instance
                                                   .currentUser!
                                                   .uid)
-                                              : textPosts[index]["surprise"]
+                                              : userController.communityPosts[index]["surprise"]
                                               .remove(
                                               FirebaseAuth
                                                   .instance
@@ -1621,7 +1622,7 @@ print("timepass");
                                           if (reaction
                                               .value ==
                                               "happy") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["happy"]
                                                 .add(
@@ -1632,7 +1633,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "sad") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["sad"]
                                                 .add(
@@ -1643,7 +1644,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "fear") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["fear"]
                                                 .add(
@@ -1654,7 +1655,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "disgust") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["disgust"]
                                                 .add(
@@ -1665,7 +1666,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "anger") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["anger"]
                                                 .add(
@@ -1676,7 +1677,7 @@ print("timepass");
                                           } else if (reaction
                                               .value ==
                                               "surprise") {
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["surprise"]
                                                 .add(
@@ -1692,7 +1693,7 @@ print("timepass");
                                           String>(
                                           value: null,
                                           icon: !
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["likers"]
                                               .contains(
@@ -1704,7 +1705,7 @@ print("timepass");
                                               Icons
                                                   .thumb_up)
                                               :
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["happy"]
                                               .contains(
@@ -1716,7 +1717,7 @@ print("timepass");
                                               emojis[0].code,
                                               style: const TextStyle(
                                                   fontSize: 22))
-                                              : textPosts[index]["sad"]
+                                              : userController.communityPosts[index]["sad"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -1726,7 +1727,7 @@ print("timepass");
                                               emojis[1].code,
                                               style: const TextStyle(
                                                   fontSize: 22))
-                                              : textPosts[index]["fear"]
+                                              : userController.communityPosts[index]["fear"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -1736,7 +1737,7 @@ print("timepass");
                                               emojis[2].code,
                                               style: const TextStyle(
                                                   fontSize: 22))
-                                              : textPosts[index]["anger"]
+                                              : userController.communityPosts[index]["anger"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -1746,7 +1747,7 @@ print("timepass");
                                               emojis[3].code,
                                               style: const TextStyle(
                                                   fontSize: 22))
-                                              : textPosts[index]["disgust"]
+                                              : userController.communityPosts[index]["disgust"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -1817,7 +1818,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                         ["happy"]
                                                             .length
@@ -1837,7 +1838,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]["sad"]
 
                                                             .length
@@ -1857,7 +1858,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                             ["fear"]
                                                             .length
@@ -1877,7 +1878,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                             ["anger"]
                                                             .length
@@ -1897,7 +1898,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                            ["disgust"]
                                                             .length
@@ -1917,7 +1918,7 @@ print("timepass");
                                                           22),
                                                     ),
                                                     Text(
-                                                        textPosts[
+                                                        userController.communityPosts[
                                                         index]
                                                             ["surprise"]
                                                             .length
@@ -1951,7 +1952,7 @@ print("timepass");
                                   );
                                 },
                                   child: Text(
-                                    textPosts[index]["likes"]
+                                    userController.communityPosts[index]["likes"]
                                         .toString(),
                                   ),
                                 ),
@@ -1964,10 +1965,10 @@ print("timepass");
                                           MaterialPageRoute(
                                               builder: (context) {
                                                 return CommentsScreen(
-                                                  postId: textPosts[index]["post_id"],
-                                                  description: textPosts[index]["text"],
+                                                  postId: userController.communityPosts[index]["post_id"],
+                                                  description: userController.communityPosts[index]["text"],
                                                   imageurl:
-                                                  textPosts[index]["imageurl"],
+                                                  userController.communityPosts[index]["imageurl"],
                                                 );
                                               }));
                                     },
@@ -1978,7 +1979,7 @@ print("timepass");
                                   width: 3,
                                 ),
                                 Text(
-                                  textPosts[index]["comments"]
+                                  userController.communityPosts[index]["comments"]
                                       .toString(),
                                 ),
                                 SizedBox(
@@ -1986,8 +1987,8 @@ print("timepass");
                                 ),
                                 InkWell(onTap: () {
                                   shareImage(context,
-                                      textPosts[index]["text"],
-                                      textPosts[index]["imageurl"]);
+                                      userController.communityPosts[index]["text"],
+                                      userController.communityPosts[index]["imageurl"]);
                                 },
                                     child: const Icon(Icons
                                         .replay_outlined)),
@@ -2024,7 +2025,7 @@ print("timepass");
                                     width: 0.8),
                                 borderRadius:
                                 BorderRadius.circular(80)),
-                            child: textPosts[index][
+                            child: userController.communityPosts[index][
                             "creator_profile_picture"] ==
                                 ""
                                 ? const CircleAvatar(
@@ -2038,7 +2039,7 @@ print("timepass");
                               radius: 23,
                               backgroundColor: Colors.white,
                               backgroundImage: NetworkImage(
-                                textPosts[index][
+                                userController.communityPosts[index][
                                 "creator_profile_picture"],
                               ),
                             ),
@@ -2058,7 +2059,7 @@ print("timepass");
                                   CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      textPosts[index]
+                                      userController.communityPosts[index]
                                       ["creator_name"],
                                       style: TextStyle(
                                           fontSize: 19,
@@ -2070,7 +2071,7 @@ print("timepass");
                                               : Colors.black),
                                     ),
                                     Text(
-                                      "@${textPosts[index]["creator_username"]}",
+                                      "@${userController.communityPosts[index]["creator_username"]}",
                                       style: const TextStyle(
                                           fontSize: 17,
                                           color: Colors.grey),
@@ -2092,8 +2093,8 @@ print("timepass");
                           children: [
 
                             VideoCard(
-                              videoUrl: textPosts[index]["imageurl"],
-                              message: textPosts[index]["text"],),
+                              videoUrl: userController.communityPosts[index]["imageurl"],
+                              message: userController.communityPosts[index]["text"],),
                             const SizedBox(height: 10,),
                             Container(
                               padding: const EdgeInsets
@@ -2102,16 +2103,16 @@ print("timepass");
                                 children: [
                                   InkWell(
                                     onTap: () async {
-                                      if (!textPosts[index]["likers"]
+                                      if (!userController.communityPosts[index]["likers"]
                                           .contains(
                                           FirebaseAuth
                                               .instance
                                               .currentUser!
                                               .uid)) {
                                         setState(() {
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["likes"]++;
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["likers"]
                                               .add(
                                               FirebaseAuth
@@ -2127,7 +2128,7 @@ print("timepass");
                                             .collection(
                                             "Posts")
                                             .doc(
-                                            textPosts[index]
+                                            userController.communityPosts[index]
                                             ["post_id"])
                                             .update({
                                           "likes":
@@ -2144,9 +2145,9 @@ print("timepass");
                                         });
                                       } else {
                                         setState(() {
-                                          textPosts[index]["likes"]--;
+                                          userController.communityPosts[index]["likes"]--;
 
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["likers"]
                                               .remove(
                                               FirebaseAuth
@@ -2162,7 +2163,7 @@ print("timepass");
                                             .collection(
                                             "Posts")
                                             .doc(
-                                            textPosts[index]
+                                            userController.communityPosts[index]
                                             ["post_id"])
                                             .update({
                                           "likes":
@@ -2191,7 +2192,7 @@ print("timepass");
                                             (Reaction<String>?
                                         reaction) async {
                                           if (!
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["likers"]
                                               .contains(
                                               FirebaseAuth
@@ -2199,7 +2200,7 @@ print("timepass");
                                                   .currentUser!
                                                   .uid)) {
                                             setState(() {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["likers"]
                                                   .add(
@@ -2208,7 +2209,7 @@ print("timepass");
                                                       .currentUser!
                                                       .uid);
 
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["likes"]++;
                                             });
@@ -2220,7 +2221,7 @@ print("timepass");
                                                 .collection(
                                                 "Posts")
                                                 .doc(
-                                                textPosts[
+                                                userController.communityPosts[
                                                 index]
                                                 ["post_id"])
                                                 .update({
@@ -2241,7 +2242,7 @@ print("timepass");
                                           var userReaction =
                                               "none";
                                           userReaction =
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["happy"]
                                               .contains(
@@ -2251,7 +2252,7 @@ print("timepass");
                                                   .uid)
                                               ? "happy"
                                               :
-                                          textPosts[
+                                          userController.communityPosts[
                                           index]
                                           ["sad"]
                                               .contains(
@@ -2261,7 +2262,7 @@ print("timepass");
                                                   .uid)
                                               ? "sad"
                                               :
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["fear"]
                                               .contains(
                                               FirebaseAuth
@@ -2269,21 +2270,21 @@ print("timepass");
                                                   .currentUser!
                                                   .uid)
                                               ? "fear"
-                                              : textPosts[index]["anger"]
+                                              : userController.communityPosts[index]["anger"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
                                                   .currentUser!
                                                   .uid)
                                               ? "anger"
-                                              : textPosts[index]["disgust"]
+                                              : userController.communityPosts[index]["disgust"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
                                                   .currentUser!
                                                   .uid)
                                               ? "disgust"
-                                              : textPosts[index]["surprise"]
+                                              : userController.communityPosts[index]["surprise"]
                                               .contains(
                                               FirebaseAuth
                                                   .instance
@@ -2301,7 +2302,7 @@ print("timepass");
                                                 .collection(
                                                 "Posts")
                                                 .doc(
-                                                textPosts[
+                                                userController.communityPosts[
                                                 index]
                                                 ["post_id"])
                                                 .update({
@@ -2325,7 +2326,7 @@ print("timepass");
                                                 .collection(
                                                 "Posts")
                                                 .doc(
-                                                textPosts[
+                                                userController.communityPosts[
                                                 index]
                                                 ["post_id"])
                                                 .update({
@@ -2351,7 +2352,7 @@ print("timepass");
                                             });
                                           }
                                           if (!
-                                          textPosts[index]
+                                          userController.communityPosts[index]
                                           ["likers"]
                                               .contains(
                                               FirebaseAuth
@@ -2361,7 +2362,7 @@ print("timepass");
                                             if (reaction
                                                 .value ==
                                                 "happy") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["happy"]
                                                   .add(
@@ -2372,7 +2373,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "sad") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["sad"]
                                                   .add(
@@ -2383,7 +2384,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "fear") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["fear"]
                                                   .add(
@@ -2394,7 +2395,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "disgust") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["disgust"]
                                                   .add(
@@ -2405,7 +2406,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "anger") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["anger"]
                                                   .add(
@@ -2416,7 +2417,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "surprise") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["surprise"]
                                                   .add(
@@ -2429,7 +2430,7 @@ print("timepass");
                                             userReaction ==
                                                 "happy"
                                                 ?
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["happy"]
                                                 .remove(
@@ -2440,7 +2441,7 @@ print("timepass");
                                                 : userReaction ==
                                                 "sad"
                                                 ?
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["sad"]
                                                 .remove(
@@ -2451,7 +2452,7 @@ print("timepass");
                                                 : userReaction ==
                                                 "disgust"
                                                 ?
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["disgust"]
                                                 .remove(
@@ -2461,7 +2462,7 @@ print("timepass");
                                                     .uid)
                                                 : userReaction ==
                                                 "anger"
-                                                ? textPosts[index]["anger"]
+                                                ? userController.communityPosts[index]["anger"]
                                                 .remove(
                                                 FirebaseAuth
                                                     .instance
@@ -2469,13 +2470,13 @@ print("timepass");
                                                     .uid)
                                                 : userReaction ==
                                                 "fear"
-                                                ? textPosts[index]["fear"]
+                                                ? userController.communityPosts[index]["fear"]
                                                 .remove(
                                                 FirebaseAuth
                                                     .instance
                                                     .currentUser!
                                                     .uid)
-                                                : textPosts[index]["surprise"]
+                                                : userController.communityPosts[index]["surprise"]
                                                 .remove(
                                                 FirebaseAuth
                                                     .instance
@@ -2484,7 +2485,7 @@ print("timepass");
                                             if (reaction
                                                 .value ==
                                                 "happy") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["happy"]
                                                   .add(
@@ -2495,7 +2496,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "sad") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["sad"]
                                                   .add(
@@ -2506,7 +2507,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "fear") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["fear"]
                                                   .add(
@@ -2517,7 +2518,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "disgust") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["disgust"]
                                                   .add(
@@ -2528,7 +2529,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "anger") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["anger"]
                                                   .add(
@@ -2539,7 +2540,7 @@ print("timepass");
                                             } else if (reaction
                                                 .value ==
                                                 "surprise") {
-                                              textPosts[
+                                              userController.communityPosts[
                                               index]
                                               ["surprise"]
                                                   .add(
@@ -2555,7 +2556,7 @@ print("timepass");
                                             String>(
                                             value: null,
                                             icon: !
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["likers"]
                                                 .contains(
@@ -2567,7 +2568,7 @@ print("timepass");
                                                 Icons
                                                     .thumb_up)
                                                 :
-                                            textPosts[
+                                            userController.communityPosts[
                                             index]
                                             ["happy"]
                                                 .contains(
@@ -2580,7 +2581,7 @@ print("timepass");
                                                     .code,
                                                 style: const TextStyle(
                                                     fontSize: 22))
-                                                : textPosts[index]["sad"]
+                                                : userController.communityPosts[index]["sad"]
                                                 .contains(
                                                 FirebaseAuth
                                                     .instance
@@ -2591,7 +2592,7 @@ print("timepass");
                                                     .code,
                                                 style: const TextStyle(
                                                     fontSize: 22))
-                                                : textPosts[index]["fear"]
+                                                : userController.communityPosts[index]["fear"]
                                                 .contains(
                                                 FirebaseAuth
                                                     .instance
@@ -2602,7 +2603,7 @@ print("timepass");
                                                     .code,
                                                 style: const TextStyle(
                                                     fontSize: 22))
-                                                : textPosts[index]["anger"]
+                                                : userController.communityPosts[index]["anger"]
                                                 .contains(
                                                 FirebaseAuth
                                                     .instance
@@ -2613,7 +2614,7 @@ print("timepass");
                                                     .code,
                                                 style: const TextStyle(
                                                     fontSize: 22))
-                                                : textPosts[index]["disgust"]
+                                                : userController.communityPosts[index]["disgust"]
                                                 .contains(
                                                 FirebaseAuth
                                                     .instance
@@ -2686,7 +2687,7 @@ print("timepass");
                                                             22),
                                                       ),
                                                       Text(
-                                                          textPosts[
+                                                          userController.communityPosts[
                                                           index]
                                                           ["happy"]
                                                               .length
@@ -2706,7 +2707,7 @@ print("timepass");
                                                             22),
                                                       ),
                                                       Text(
-                                                          textPosts[
+                                                          userController.communityPosts[
                                                           index]
                                                           ["sad"]
                                                               .length
@@ -2726,7 +2727,7 @@ print("timepass");
                                                             22),
                                                       ),
                                                       Text(
-                                                          textPosts[
+                                                          userController.communityPosts[
                                                           index]
                                                           ["fear"]
                                                               .length
@@ -2746,7 +2747,7 @@ print("timepass");
                                                             22),
                                                       ),
                                                       Text(
-                                                          textPosts[
+                                                          userController.communityPosts[
                                                           index]
                                                           ["anger"]
                                                               .length
@@ -2766,7 +2767,7 @@ print("timepass");
                                                             22),
                                                       ),
                                                       Text(
-                                                          textPosts[
+                                                          userController.communityPosts[
                                                           index]
                                                           ["disgust"]
                                                               .length
@@ -2786,7 +2787,7 @@ print("timepass");
                                                             22),
                                                       ),
                                                       Text(
-                                                          textPosts[
+                                                          userController.communityPosts[
                                                           index]
                                                           ["surprise"]
                                                               .length
@@ -2821,7 +2822,7 @@ print("timepass");
                                     );
                                   },
                                     child: Text(
-                                        textPosts[index]["likes"]
+                                        userController.communityPosts[index]["likes"]
                                             .toString()),
                                   ),
                                   SizedBox(
@@ -2835,10 +2836,10 @@ print("timepass");
                                               builder: (context) {
                                                 return CommentsScreen(
                                                   postId:
-                                                  textPosts[index]
+                                                  userController.communityPosts[index]
                                                   ["post_id"],
                                                   description:
-                                                  textPosts[index]
+                                                  userController.communityPosts[index]
                                                   ["text"],
                                                 );
                                               },
@@ -2850,7 +2851,7 @@ print("timepass");
                                     width: 3,
                                   ),
                                   Text(
-                                    textPosts[index]["comments"]
+                                    userController.communityPosts[index]["comments"]
                                         .toString(),
                                   ),
                                   SizedBox(
@@ -2878,9 +2879,9 @@ print("timepass");
                   ),
                 );
               },
-              childCount: textPosts.length,
+              childCount: userController.communityPosts.length,
             ),
-          ),
+          ),),
 
         ],
       ),

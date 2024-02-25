@@ -14,9 +14,11 @@ class UserController extends GetxController {
   //for likes,comments,replies
   RxList<int> userLikes = <int>[].obs;
 
-  RxInt userPostCount=0.obs;
+  RxInt userPostCount = 0.obs;
 
-  RxBool isLoggedOut=true.obs;
+  RxBool isLoggedOut = true.obs;
+
+  RxList<Map<String, dynamic>> communityPosts = <Map<String, dynamic>>[].obs;
 
   void addTextPost(TextPost textPost) {
     textposts.add(textPost);
