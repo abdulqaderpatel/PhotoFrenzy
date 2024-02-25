@@ -19,6 +19,7 @@ import '../global/show_message.dart';
 import '../global/theme_mode.dart';
 import '../models/image_post.dart';
 import '../profiles/edit_user_profile.dart';
+import '../user_mention_text.dart';
 import '../user_posts/comments.dart';
 import '../user_posts/image_posts_list.dart';
 
@@ -198,6 +199,8 @@ class ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
+    List<InlineSpan> spans = [];
+    final pattern = RegExp(r'(@\w+)');
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(backgroundColor: Theme.of(context).cardColor,
@@ -716,20 +719,9 @@ class ProfileScreenState extends State<ProfileScreen>
                                                 Row(
                                                   children: [
                                                     Flexible(
-                                                      child: Text(
-                                                          userController
-                                                              .textposts[index]
-                                                              .text!,
-                                                          style: TextStyle(
-                                                              fontSize: 15,
-                                                              color: isDark(
-                                                                      context)
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500)),
+                                                      child: UserMentionText(text: userController
+                                                          .textposts[index]
+                                                          .text!,),
                                                     ),
                                                   ],
                                                 ),

@@ -10,6 +10,7 @@ import 'package:photofrenzy/Community/add_post_in_community.dart';
 import 'package:photofrenzy/components/chat/posts/video.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/constants.dart';
+import 'package:photofrenzy/user_mention_text.dart';
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
 import '../user_posts/comments.dart';
@@ -350,16 +351,9 @@ print("timepass");
                             Row(
                               children: [
                                 Flexible(
-                                  child: Text(
+                                  child: UserMentionText(text:
                                       userController.communityPosts[index]["text"],
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: isDark(
-                                              context)
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight:
-                                          FontWeight.w500)),
+                                      ),
                                 ),
                               ],
                             ),
@@ -1211,14 +1205,8 @@ print("timepass");
                           children: [
                             Row(
                               children: [
-                                Text(userController.communityPosts[index]["text"],
-                                    style: TextStyle(
-                                        fontSize: 15,
-                                        color: isDark(context)
-                                            ? Colors.white
-                                            : Colors.black,
-                                        fontWeight: FontWeight
-                                            .w500)),
+                                UserMentionText(text:userController.communityPosts[index]["text"],
+                                    ),
                               ],
                             ),
                             const SizedBox(
@@ -1992,12 +1980,7 @@ print("timepass");
                                 },
                                     child: const Icon(Icons
                                         .replay_outlined)),
-                                const SizedBox(
-                                  width: 3,
-                                ),
-                                const Text(
-                                  "0",
-                                ),
+
                               ],
                             ),
                           ],

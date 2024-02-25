@@ -15,6 +15,7 @@ import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/individual_chat.dart';
 import 'package:photofrenzy/models/user.dart' as user;
+import 'package:photofrenzy/user_mention_text.dart';
 import 'package:photofrenzy/user_posts/comments.dart';
 import '../global/constants.dart';
 import '../global/theme_mode.dart';
@@ -1099,14 +1100,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       Row(
                                         children: [
                                           Flexible(
-                                            child: Text(client["text"],
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: isDark(context)
-                                                        ? Colors.white
-                                                        : Colors.black,
-                                                    fontWeight:
-                                                    FontWeight.w500)),
+                                            child: UserMentionText(text:client["text"],
+                                                ),
                                           ),
                                         ],
                                       ),
@@ -1865,14 +1860,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Row(
                                     children: [
                                       Flexible(
-                                        child: Text(client["text"],
-                                            style: TextStyle(
-                                                fontSize: 15,
-                                                color: isDark(context)
-                                                    ? Colors.white
-                                                    : Colors.black,
-                                                fontWeight:
-                                                FontWeight.w500)),
+                                        child: UserMentionText(text:client["text"],
+                                           ),
                                       ),
                                     ],
                                   ),

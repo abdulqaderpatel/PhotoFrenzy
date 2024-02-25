@@ -12,6 +12,7 @@ import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/models/image_post.dart';
+import 'package:photofrenzy/user_mention_text.dart';
 import 'package:photofrenzy/user_posts/comments.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
@@ -236,15 +237,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                             children: [
                               Row(
                                 children: [
-                                  Text(
-                                      userController
-                                          .imageposts[index].text!,
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          color: isDark(context)
-                                              ? Colors.white
-                                              : Colors.black,
-                                          fontWeight: FontWeight.w500)),
+                                  UserMentionText(text: userController.imageposts[index].text!,),
                                 ],
                               ),
                               const SizedBox(
