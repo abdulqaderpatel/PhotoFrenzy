@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:photofrenzy/components/chat/sender_image.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
+import 'package:photofrenzy/global/show_message.dart';
 
 import 'package:photofrenzy/models/user.dart' as user;
 
+import 'components/chat/receiver_image.dart';
 import 'components/chat/receiver_text.dart';
 import 'components/chat/sender_text.dart';
 
@@ -57,6 +64,19 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
       isLoading = false;
     });
   }
+
+  File? postImage = File("");
+
+  Future getImageGallery() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        postImage = File(pickedFile.path);
+      });
+    }
+  }
+
+  final picker = ImagePicker();
 
   @override
   void initState() {
@@ -260,52 +280,108 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                         if (snapshot.hasData) {
                                           final clients = snapshot.data?.docs;
                                           for (var client in clients!) {
-                                            final clientWidget = client[
-                                                        "sender"] ==
-                                                    FirebaseAuth.instance
-                                                        .currentUser!.uid
-                                                ? Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      SenderText(
-                                                        time: client["time"],
-                                                        message:
-                                                            client["message"],
-                                                        textColor: Color(int
-                                                            .parse(firstClient[
-                                                                    "sender_chat_text"]
-                                                                .replaceAll("#",
-                                                                    "0xFF"))),
-                                                        bubbleColor: Color(int
-                                                            .parse(firstClient[
-                                                                    "sender_chat_bubble"]
-                                                                .replaceAll("#",
-                                                                    "0xFF"))),
-                                                      )
-                                                    ],
-                                                  )
-                                                : Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      ReceiverText(
-                                                        time: client["time"],
-                                                        message:
-                                                            client["message"],
-                                                        textColor: Color(int
-                                                            .parse(firstClient[
-                                                                    "receiver_chat_text"]
-                                                                .replaceAll("#",
-                                                                    "0xFF"))),
-                                                        bubbleColor: Color(int
-                                                            .parse(firstClient[
-                                                                    "receiver_chat_bubble"]
-                                                                .replaceAll("#",
-                                                                    "0xFF"))),
-                                                      )
-                                                    ],
-                                                  );
+                                            final clientWidget =
+                                                client["type"] == "image"
+                                                    ?client["sender"]==FirebaseAuth.instance.currentUser!.uid? Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
+                                                        children: [
+                                                          SenderImage(
+                                                            time:
+                                                                client["time"],
+                                                            message: client[
+                                                                "message"],
+                                                            imageurl: client[
+                                                                "imageurl"],
+                                                            textColor: Color(int
+                                                                .parse(firstClient[
+                                                                        "sender_chat_text"]
+                                                                    .replaceAll(
+                                                                        "#",
+                                                                        "0xFF"))),
+                                                            bubbleColor: Color(int
+                                                                .parse(firstClient[
+                                                                        "sender_chat_bubble"]
+                                                                    .replaceAll(
+                                                                        "#",
+                                                                        "0xFF"))),
+                                                          ),
+                                                        ],
+                                                      ):Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .start,
+                                                  children: [
+                                                    ReceiverImage(
+                                                      time: client[
+                                                      "time"],
+                                                      message: client[
+                                                      "message"],imageurl: client["imageurl"],
+                                                      textColor: Color(int.parse(firstClient[
+                                                      "receiver_chat_text"]
+                                                          .replaceAll(
+                                                          "#",
+                                                          "0xFF"))),
+                                                      bubbleColor: Color(int.parse(firstClient[
+                                                      "receiver_chat_bubble"]
+                                                          .replaceAll(
+                                                          "#",
+                                                          "0xFF"))),
+                                                    ),
+                                                  ],
+                                                )
+                                                    : client["sender"] ==
+                                                            FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid
+                                                        ? Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              SenderText(
+                                                                time: client[
+                                                                    "time"],
+                                                                message: client[
+                                                                    "message"],
+                                                                textColor: Color(int.parse(firstClient[
+                                                                        "sender_chat_text"]
+                                                                    .replaceAll(
+                                                                        "#",
+                                                                        "0xFF"))),
+                                                                bubbleColor: Color(int.parse(firstClient[
+                                                                        "sender_chat_bubble"]
+                                                                    .replaceAll(
+                                                                        "#",
+                                                                        "0xFF"))),
+                                                              )
+                                                            ],
+                                                          )
+                                                        : Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              ReceiverText(
+                                                                time: client[
+                                                                    "time"],
+                                                                message: client[
+                                                                    "message"],
+                                                                textColor: Color(int.parse(firstClient[
+                                                                        "receiver_chat_text"]
+                                                                    .replaceAll(
+                                                                        "#",
+                                                                        "0xFF"))),
+                                                                bubbleColor: Color(int.parse(firstClient[
+                                                                        "receiver_chat_bubble"]
+                                                                    .replaceAll(
+                                                                        "#",
+                                                                        "0xFF"))),
+                                                              )
+                                                            ],
+                                                          );
                                             clientWidgets.add(clientWidget);
                                           }
                                         }
@@ -343,11 +419,16 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Icon(
-                                      Icons.image,
-                                      size: 32,
-                                      color: Color(int.parse(client["icon"]
-                                          .replaceAll("#", "0xFF"))),
+                                    InkWell(
+                                      onTap: () {
+                                        getImageGallery();
+                                      },
+                                      child: Icon(
+                                        Icons.image,
+                                        size: 32,
+                                        color: Color(int.parse(client["icon"]
+                                            .replaceAll("#", "0xFF"))),
+                                      ),
                                     ),
                                     Flexible(
                                       child: SizedBox(
@@ -366,6 +447,14 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                           ),
                                           controller: messageController,
                                           decoration: InputDecoration(
+                                            suffixIcon: postImage!.path.isEmpty
+                                                ? null
+                                                : ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
+                                                    child:
+                                                        Image.file(postImage!)),
                                             contentPadding:
                                                 const EdgeInsets.only(
                                                     top: 5, left: 10),
@@ -396,6 +485,58 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                               .millisecondsSinceEpoch
                                               .toString();
 
+                                          if (postImage!.path.isNotEmpty) {
+                                            Reference ref =
+                                                FirebaseStorage.instance.ref(
+                                                    "/chats/${widget.combinedId}/$time");
+                                            UploadTask uploadTask = ref
+                                                .putFile(postImage!.absolute);
+                                            Future.value(uploadTask).then(
+                                              (value) async {
+                                                var newUrl =
+                                                    await ref.getDownloadURL();
+                                                await chatTable
+                                                    .doc(widget.combinedId)
+                                                    .collection("messages")
+                                                    .doc(time)
+                                                    .set({
+                                                  "type": "image",
+                                                  "imageurl": newUrl.toString(),
+                                                  "sender": FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid,
+                                                  "receiver":
+                                                      widget.receiverInfo["id"],
+                                                  "time": time,
+                                                  "message": messageText
+                                                });
+
+                                                await FirebaseFirestore.instance
+                                                    .collection("Users")
+                                                    .doc(FirebaseAuth.instance
+                                                        .currentUser!.uid)
+                                                    .collection("Chats")
+                                                    .doc(widget.combinedId)
+                                                    .set({
+                                                  "id": widget.combinedId,
+                                                  "name": widget
+                                                      .receiverInfo["name"],
+                                                  "username": widget
+                                                      .receiverInfo["username"],
+                                                  "imageurl":
+                                                      widget.receiverInfo[
+                                                          "profile_picture"]
+                                                });
+                                                setState(() {
+                                                  postImage=File("");
+                                                });
+                                                return;
+                                              },
+                                            );
+
+
+                                          }
                                           await chatTable
                                               .doc(widget.combinedId)
                                               .collection("messages")
@@ -455,7 +596,11 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                           }
 
                                           messageController.text = "";
-
+                                        } else {
+                                          showToast(
+                                              message:
+                                                  "please enter a message!",
+                                              error: true);
                                         }
                                       },
                                       child: Icon(
