@@ -14,7 +14,7 @@ class PdfPreviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Your Bill Preview'),
+        title: const Text('Bill'),
       ),
       body: InteractiveViewer(
         panEnabled: false,

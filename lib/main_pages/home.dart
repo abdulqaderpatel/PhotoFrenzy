@@ -935,7 +935,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       Text(
                                                           "Event Finished"),
                                                       Text(
-                                                        "View Details",
+                                                        "View Rankings",
                                                         style: TextStyle(
                                                             fontSize: 12,
                                                             color: Colors

@@ -593,7 +593,20 @@ class RandomTaggedUserProfileState extends State<RandomTaggedUserProfile>
                                                                     combinedId:
                                                                     chatId,
                                                                     receiverInfo:
-                                                                    userData[0]["id"],
+                                                                    {"profile_picture": client[
+                                                                      "profile_picture"],
+                                                                      "id": client["id"],
+                                                                      "name": client["name"],
+                                                                      "username":
+                                                                      client["username"],
+                                                                      "followers":
+                                                                      client["followers"],
+                                                                      "following":
+                                                                      client["following"],
+                                                                      "bio": client["bio"],
+                                                                      "email": client["email"],
+                                                                      "phone_number": client[
+                                                                      "phone_number"]},
                                                                   );
                                                                 }));
                                                       },

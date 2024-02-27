@@ -23,7 +23,47 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(bottomNavigationBar:  Container(margin: EdgeInsets.all(10),
+      child: InkWell(onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context){
+          return Chatbot();
+        }));
+      },
+        child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              height: 150,
+              width: Get.width,
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                image: DecorationImage(
+                  opacity: 0.75,
+                  image: AssetImage(
+                      "assets/images/chatbot.png"),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text(
+                    "Have questions related to photography?",
+                    style:
+                    TextStyle(color: Colors.black, fontSize: 17,fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    "Use the chatbot",
+                    style: TextStyle(
+                        color: isDark(context)
+                            ? Colors.white
+                            : Colors.black,
+                        fontSize: 22),
+                  )
+                ],
+              ),
+            )),
+      ),
+    ),
         resizeToAvoidBottomInset: false,
         body: SafeArea(
           child: Container(
@@ -169,17 +209,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         }),
                   ),
                 ),
-                InkWell(
-                    onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return Chatbot();
-                      }));
-                    },
-                    child: Container(
-                      height: 200,
-                      color: Colors.red,
-                    ))
+
               ],
             ),
           ),
