@@ -38,6 +38,7 @@ class _IndividualCompetitionsScreenState
   List<Map<String, dynamic>> items = [];
 
   var participants = [];
+  var completeList=[];
   var winners = [];
   var userResults = {};
   var userRank = 0;
@@ -89,6 +90,7 @@ class _IndividualCompetitionsScreenState
       });
     }
     participants = temp;
+    completeList=participants;
 
     for (int i = 0; i < participants.length; i++) {
       if (i == 3) {
@@ -185,6 +187,7 @@ class _IndividualCompetitionsScreenState
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+
                     SizedBox(
                       height: 220,
                       width: 300,
@@ -540,6 +543,7 @@ class _IndividualCompetitionsScreenState
                     child: SafeArea(
                       child: Column(
                         children: [
+
                           Container(
                             decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.only(
@@ -692,6 +696,8 @@ class _IndividualCompetitionsScreenState
                 : SafeArea(
                     child: ListView(
                       children: [
+                        Center(child:  Text("Event Finished",style: Theme.of(context).textTheme.displayLarge,)),
+                        SizedBox(height: 20,),
                         Container(
                           decoration: const BoxDecoration(
                               borderRadius: BorderRadius.only(
@@ -783,7 +789,7 @@ class _IndividualCompetitionsScreenState
                                             if (userResults.isNotEmpty)
                                               //
                                               Text(
-                                                userResults["id"],
+                                                userResults["name"],
                                                 style: TextStyle(
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.w600,
@@ -889,7 +895,7 @@ class _IndividualCompetitionsScreenState
                                             Column(
                                               children: [
                                                 Text(
-                                                  winners[index]["id"],
+                                                  completeList[index]["name"],
                                                   style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:
@@ -899,7 +905,7 @@ class _IndividualCompetitionsScreenState
                                                           : Colors.black),
                                                 ),
                                                 Text(
-                                                    "votes: ${winners[index]["votes"]}",
+                                                    "votes: ${completeList[index]["votes"]}",
                                                     style: const TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:
@@ -932,7 +938,7 @@ class _IndividualCompetitionsScreenState
                                                 const BorderRadius.all(
                                                     Radius.circular(10)),
                                             child: Image.network(
-                                              winners[index]["image"],
+                                              completeList[index]["image"],
                                               fit: BoxFit.fill,
                                             ),
                                           ),
@@ -984,91 +990,96 @@ class _IndividualCompetitionsScreenState
                                                     Expanded(
                                                       child: ListView.builder(
                                                           itemCount:
-                                                              participants
+                                                              completeList
                                                                   .length,
                                                           itemBuilder:
                                                               (context, index) {
-                                                            return Container(
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      bottom:
-                                                                          10),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                children: [
-                                                                  Container(
-                                                                    width: 40,
-                                                                    height: 40,
-                                                                    decoration:
-                                                                        const BoxDecoration(
-                                                                      gradient:
-                                                                          LinearGradient(
-                                                                        colors: [
-                                                                          Colors
-                                                                              .grey,
-                                                                          Colors
-                                                                              .blue
-                                                                        ],
-                                                                        begin: Alignment
-                                                                            .topCenter,
-                                                                        end: Alignment
-                                                                            .bottomCenter,
-                                                                      ),
-                                                                    ),
-                                                                    child:
-                                                                        Column(
-                                                                      mainAxisSize:
-                                                                          MainAxisSize
-                                                                              .min,
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        Text(
-                                                                          (index + 1)
-                                                                              .toString(),
-                                                                          style: const TextStyle(
-                                                                              color: Colors.black,
-                                                                              fontSize: 24,
-                                                                              fontWeight: FontWeight.w600),
-                                                                        )
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  Column(
+                                                            return Column(
+                                                              children: [
+                                                                Container(
+                                                                  margin:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          bottom:
+                                                                              10),
+                                                                  child: Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
                                                                     children: [
-                                                                      Text(
-                                                                        winners[index]
-                                                                            [
-                                                                            "id"],
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                20,
-                                                                            fontWeight: FontWeight
-                                                                                .w600,
-                                                                            color: isDark(context)
-                                                                                ? Colors.white
-                                                                                : Colors.black),
+                                                                      Container(
+                                                                        width: 40,
+                                                                        height: 40,
+                                                                        decoration:
+                                                                            const BoxDecoration(
+                                                                          gradient:
+                                                                              LinearGradient(
+                                                                            colors: [
+                                                                              Colors
+                                                                                  .grey,
+                                                                              Colors
+                                                                                  .blue
+                                                                            ],
+                                                                            begin: Alignment
+                                                                                .topCenter,
+                                                                            end: Alignment
+                                                                                .bottomCenter,
+                                                                          ),
+                                                                        ),
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize
+                                                                                  .min,
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment
+                                                                                  .center,
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment
+                                                                                  .center,
+                                                                          children: [
+                                                                            Text(
+                                                                              (index + 1)
+                                                                                  .toString(),
+                                                                              style: const TextStyle(
+                                                                                  color: Colors.black,
+                                                                                  fontSize: 24,
+                                                                                  fontWeight: FontWeight.w600),
+                                                                            )
+                                                                          ],
+                                                                        ),
                                                                       ),
-                                                                      Text(
-                                                                          "votes: ${winners[index]["votes"]}",
-                                                                          style: const TextStyle(
-                                                                              fontSize: 16,
-                                                                              fontWeight: FontWeight.w500,
-                                                                              color: Colors.grey))
+                                                                      Column(
+                                                                        children: [
+                                                                          Text(
+                                                                            completeList[index]
+                                                                                [
+                                                                                "name"],
+                                                                            style: TextStyle(
+                                                                                fontSize:
+                                                                                    20,
+                                                                                fontWeight: FontWeight
+                                                                                    .w600,
+                                                                                color: isDark(context)
+                                                                                    ? Colors.white
+                                                                                    : Colors.black),
+                                                                          ),
+                                                                          Text(
+                                                                              "votes: ${completeList[index]["votes"]}",
+                                                                              style: const TextStyle(
+                                                                                  fontSize: 16,
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                  color: Colors.grey))
+                                                                        ],
+                                                                      ),
+                                                                      Container(
+                                                                        width: 40,
+                                                                      )
                                                                     ],
                                                                   ),
-                                                                  Container(
-                                                                    width: 40,
-                                                                  )
-                                                                ],
-                                                              ),
+                                                                ),Image.network(completeList[index]["image"]),
+                                                                SizedBox(height: 40,),
+                                                              ],
                                                             );
                                                           }),
                                                     )

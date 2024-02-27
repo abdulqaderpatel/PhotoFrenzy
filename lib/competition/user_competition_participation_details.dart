@@ -87,7 +87,7 @@ class _UserCompetitionParticipationDetailsState
                             creator: widget.competitionSubmission["creator"],
                             votes: widget.competitionSubmission["votes"],
                             prize_money:
-                                widget.competitionSubmission["prize_money"])),
+                                widget.competitionSubmission["price"])),
                   );
                 },
                 child: const Text("View Receipt"),
