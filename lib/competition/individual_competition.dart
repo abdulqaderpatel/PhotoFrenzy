@@ -38,7 +38,7 @@ class _IndividualCompetitionsScreenState
   List<Map<String, dynamic>> items = [];
 
   var participants = [];
-  var completeList=[];
+  var completeList = [];
   var winners = [];
   var userResults = {};
   var userRank = 0;
@@ -90,7 +90,7 @@ class _IndividualCompetitionsScreenState
       });
     }
     participants = temp;
-    completeList=participants;
+    completeList = participants;
 
     for (int i = 0; i < participants.length; i++) {
       if (i == 3) {
@@ -140,7 +140,11 @@ class _IndividualCompetitionsScreenState
     items.clear();
     winners.clear();
     List<Map<String, dynamic>> temp = [];
-    var data = await FirebaseTable().competitionSubmissionsTable.get();
+    var data = await FirebaseTable()
+        .competitionSubmissionsTable
+        .where("competition_id",
+            isEqualTo: widget.competitionDetails["id"])
+        .get();
 
     for (var element in data.docs) {
       setState(() {
@@ -187,7 +191,6 @@ class _IndividualCompetitionsScreenState
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-
                     SizedBox(
                       height: 220,
                       width: 300,
@@ -278,8 +281,8 @@ class _IndividualCompetitionsScreenState
                               Future<void> fetchData(File? image) async {
                                 imageResponse.clear();
                                 for (var element in effects) {
-                                  var request = http.MultipartRequest('POST',
-                                      Uri.parse("$BASE_URL/user/$element"));
+                                  var request = http.MultipartRequest(
+                                      'POST', Uri.parse("$BASE_URL/$element"));
                                   request.files.add(
                                       await http.MultipartFile.fromPath(
                                           'file', image!.path));
@@ -430,7 +433,8 @@ class _IndividualCompetitionsScreenState
                                       const Gap(30),
                                       ElevatedButton(
                                           style: ElevatedButton.styleFrom(
-                                            foregroundColor: Colors.white, backgroundColor: Colors.blue,
+                                            foregroundColor: Colors.white,
+                                            backgroundColor: Colors.blue,
                                             minimumSize: Size(Get.width, 40),
 
                                             textStyle: const TextStyle(
@@ -469,7 +473,10 @@ class _IndividualCompetitionsScreenState
                                                     await FirebaseTable()
                                                         .competitionSubmissionsTable
                                                         .doc(time.toString())
-                                                        .set({"competition_name":widget.competitionDetails["name"],
+                                                        .set({
+                                                      "competition_name": widget
+                                                              .competitionDetails[
+                                                          "name"],
                                                       "competition_image": widget
                                                               .competitionDetails[
                                                           "image"],
@@ -494,7 +501,9 @@ class _IndividualCompetitionsScreenState
                                                           .currentUser!
                                                           .uid,
                                                       "votes": 0,
-                                                      "price":widget.competitionDetails["prize_money"]
+                                                      "price": widget
+                                                              .competitionDetails[
+                                                          "prize_money"]
                                                     });
 
                                                     await FirebaseTable()
@@ -512,7 +521,7 @@ class _IndividualCompetitionsScreenState
 
                                                     showToast(
                                                         message:
-                                                            "Post created successfully");
+                                                            "Image Submitted successfully");
                                                     if (context.mounted) {
                                                       Navigator.pop(context);
                                                     }
@@ -543,7 +552,6 @@ class _IndividualCompetitionsScreenState
                     child: SafeArea(
                       child: Column(
                         children: [
-
                           Container(
                             decoration: const BoxDecoration(
                                 borderRadius: BorderRadius.only(
@@ -696,8 +704,14 @@ class _IndividualCompetitionsScreenState
                 : SafeArea(
                     child: ListView(
                       children: [
-                        Center(child:  Text("Event Finished",style: Theme.of(context).textTheme.displayLarge,)),
-                        SizedBox(height: 20,),
+                        Center(
+                            child: Text(
+                          "Event Finished",
+                          style: Theme.of(context).textTheme.displayLarge,
+                        )),
+                        SizedBox(
+                          height: 20,
+                        ),
                         Container(
                           decoration: const BoxDecoration(
                               borderRadius: BorderRadius.only(
@@ -1008,43 +1022,36 @@ class _IndividualCompetitionsScreenState
                                                                             .spaceBetween,
                                                                     children: [
                                                                       Container(
-                                                                        width: 40,
-                                                                        height: 40,
+                                                                        width:
+                                                                            40,
+                                                                        height:
+                                                                            40,
                                                                         decoration:
                                                                             const BoxDecoration(
                                                                           gradient:
                                                                               LinearGradient(
                                                                             colors: [
-                                                                              Colors
-                                                                                  .grey,
-                                                                              Colors
-                                                                                  .blue
+                                                                              Colors.grey,
+                                                                              Colors.blue
                                                                             ],
-                                                                            begin: Alignment
-                                                                                .topCenter,
-                                                                            end: Alignment
-                                                                                .bottomCenter,
+                                                                            begin:
+                                                                                Alignment.topCenter,
+                                                                            end:
+                                                                                Alignment.bottomCenter,
                                                                           ),
                                                                         ),
                                                                         child:
                                                                             Column(
                                                                           mainAxisSize:
-                                                                              MainAxisSize
-                                                                                  .min,
+                                                                              MainAxisSize.min,
                                                                           mainAxisAlignment:
-                                                                              MainAxisAlignment
-                                                                                  .center,
+                                                                              MainAxisAlignment.center,
                                                                           crossAxisAlignment:
-                                                                              CrossAxisAlignment
-                                                                                  .center,
+                                                                              CrossAxisAlignment.center,
                                                                           children: [
                                                                             Text(
-                                                                              (index + 1)
-                                                                                  .toString(),
-                                                                              style: const TextStyle(
-                                                                                  color: Colors.black,
-                                                                                  fontSize: 24,
-                                                                                  fontWeight: FontWeight.w600),
+                                                                              (index + 1).toString(),
+                                                                              style: const TextStyle(color: Colors.black, fontSize: 24, fontWeight: FontWeight.w600),
                                                                             )
                                                                           ],
                                                                         ),
@@ -1052,33 +1059,32 @@ class _IndividualCompetitionsScreenState
                                                                       Column(
                                                                         children: [
                                                                           Text(
-                                                                            completeList[index]
-                                                                                [
-                                                                                "name"],
+                                                                            completeList[index]["name"],
                                                                             style: TextStyle(
-                                                                                fontSize:
-                                                                                    20,
-                                                                                fontWeight: FontWeight
-                                                                                    .w600,
-                                                                                color: isDark(context)
-                                                                                    ? Colors.white
-                                                                                    : Colors.black),
+                                                                                fontSize: 20,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: isDark(context) ? Colors.white : Colors.black),
                                                                           ),
                                                                           Text(
                                                                               "votes: ${completeList[index]["votes"]}",
-                                                                              style: const TextStyle(
-                                                                                  fontSize: 16,
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                  color: Colors.grey))
+                                                                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.grey))
                                                                         ],
                                                                       ),
                                                                       Container(
-                                                                        width: 40,
+                                                                        width:
+                                                                            40,
                                                                       )
                                                                     ],
                                                                   ),
-                                                                ),Image.network(completeList[index]["image"]),
-                                                                SizedBox(height: 40,),
+                                                                ),
+                                                                Image.network(
+                                                                    completeList[
+                                                                            index]
+                                                                        [
+                                                                        "image"]),
+                                                                SizedBox(
+                                                                  height: 40,
+                                                                ),
                                                               ],
                                                             );
                                                           }),

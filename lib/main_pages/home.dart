@@ -153,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   void loadData() async {
-    items = [];
+items=[];
     FirebaseFirestore firestore = FirebaseFirestore.instance;
     CollectionReference collectionReference =
     firestore.collection('Competitions');
@@ -227,6 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isLoading = false;
     });
+    print(items);
   }
 
 
@@ -283,8 +284,6 @@ class _HomeScreenState extends State<HomeScreen> {
               .uid
         ])
       });
-      loadData();
-
       const serviceId = 'service_mvh1mfq';
       const templateId = 'template_1h0pxtb';
       const userid = "D7BfmJv7IK0otiGd6";
@@ -305,11 +304,16 @@ class _HomeScreenState extends State<HomeScreen> {
               "event": items[index]["name"]
             }
           }));
+      loadData();
+
+
     } catch (e) {
       if (context.mounted) {
         //showErrorDialog(context, e.toString());
       }
     }
+
+
   }
 
   createPaymentIntent(int index) async {
