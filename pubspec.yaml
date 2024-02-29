@@ -66,6 +66,7 @@ dependencies:
   printing:
   google_sign_in:
   auto_size_text:
+  flutter_local_notifications: 
 
 
   cupertino_icons: ^1.0.2

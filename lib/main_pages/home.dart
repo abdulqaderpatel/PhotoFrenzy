@@ -16,6 +16,7 @@ import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/individual_chat.dart';
 import 'package:photofrenzy/models/user.dart' as user;
 import 'package:photofrenzy/user_mention_text.dart';
+import '../Notifications/notification_service.dart';
 import '../global/constants.dart';
 import '../global/theme_mode.dart';
 import 'package:http/http.dart' as http;
@@ -304,6 +305,8 @@ items=[];
               "event": items[index]["name"]
             }
           }));
+      NotificationService().showNotification(
+          1, "Payment successful", "Goodluck for the competition!", (1000));
       loadData();
 
 

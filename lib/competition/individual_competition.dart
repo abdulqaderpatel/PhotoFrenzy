@@ -214,7 +214,7 @@ class _IndividualCompetitionsScreenState
                                   FirebaseAuth.instance.currentUser!.uid) {
                                 showToast(
                                     message:
-                                        "You cannot vote for your own pictures!");
+                                        "You cannot vote for your own pictures!",error: true);
                               } else {
                                 await FirebaseTable()
                                     .competitionSubmissionsTable

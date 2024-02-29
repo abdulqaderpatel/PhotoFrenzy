@@ -8,13 +8,17 @@ import 'package:photofrenzy/authentication/verify_email.dart';
 import 'package:photofrenzy/main_pages/user_navigation_bar.dart';
 import 'package:photofrenzy/themes/dark_theme.dart';
 import 'package:photofrenzy/themes/light_theme.dart';
+import 'Notifications/notification_service.dart';
 import 'controllers/user_controller.dart';
 import 'firebase_options.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey =
       "pk_test_51NjJbkSDqOoAu1YvgQpN7weD8MzoNFW7rCOPBMnAZaJlWnpXkW2EvauiTP8PYpnQC73YJbX9K3jnkMBqVKTHqdTE00frWxNHzF";
+  NotificationService().initNotification();
+  tz.initializeTimeZones();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

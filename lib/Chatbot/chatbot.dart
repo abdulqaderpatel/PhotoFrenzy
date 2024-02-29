@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:photofrenzy/global/constants.dart';
 import 'dart:convert';
 
 import '../global/firebase_tables.dart';
@@ -25,7 +26,7 @@ class _ChatbotState extends State<Chatbot> {
     });
 
     final response = await http.post(
-      Uri.parse('http://10.0.2.2:5000/answer'),
+      Uri.parse('$BASE_URL/answer'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
