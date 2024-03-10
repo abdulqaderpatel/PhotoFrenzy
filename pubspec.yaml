@@ -57,7 +57,6 @@ dependencies:
   flutter_stripe:
   video_player:
   cached_network_image:
-  cached_video_player:
   share_plus:
   dio:
   path_provider:
@@ -66,7 +65,8 @@ dependencies:
   printing:
   google_sign_in:
   auto_size_text:
-  flutter_local_notifications: 
+  flutter_local_notifications:
+  cached_video_player_fork:
 
 
   cupertino_icons: ^1.0.2

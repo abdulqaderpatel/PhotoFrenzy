@@ -1,6 +1,4 @@
-
-
-import 'package:cached_video_player/cached_video_player.dart';
+import 'package:cached_video_player_fork/cached_video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:photofrenzy/user_mention_text.dart';
 import 'package:video_player/video_player.dart';

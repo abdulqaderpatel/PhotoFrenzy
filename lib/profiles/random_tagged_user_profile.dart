@@ -13,6 +13,7 @@ import 'package:photofrenzy/Follow/random_user_following.dart';
 import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/individual_chat.dart';
+import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/user_posts/random_image_posts_list.dart';
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
@@ -1468,7 +1469,7 @@ class RandomTaggedUserProfileState extends State<RandomTaggedUserProfile>
                                               Navigator.push(context,
                                                   MaterialPageRoute(
                                                     builder: (context) {
-                                                      return CommentsScreen(
+                                                      return CommentsScreen(comments: userController.imageposts[index].comments,
                                                         postId:
                                                         textPosts[index]
                                                         ["post_id"],

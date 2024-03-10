@@ -376,8 +376,7 @@ class ProfileScreenState extends State<ProfileScreen>
                                                     children: [
                                                       Column(
                                                         children: [
-                                                          Obx(
-                                                            () => Text(
+                                                         Text(
                                                                 userController
                                                                     .userPostCount
                                                                     .value
@@ -391,7 +390,7 @@ class ProfileScreenState extends State<ProfileScreen>
                                                                             .white
                                                                         : Colors
                                                                             .black)),
-                                                          ),
+
                                                           Text(
                                                             "Posts",
                                                             style: Theme.of(
@@ -590,8 +589,7 @@ class ProfileScreenState extends State<ProfileScreen>
                         )
                       : CustomScrollView(
                           slivers: [
-                            Obx(
-                              () => SliverList(
+                           SliverList(
                                 delegate: SliverChildBuilderDelegate(
                                   (BuildContext context, int index) {
                                     DateTime dateTime =
@@ -1332,7 +1330,7 @@ class ProfileScreenState extends State<ProfileScreen>
                                                               context,
                                                               MaterialPageRoute(
                                                             builder: (context) {
-                                                              return CommentsScreen(
+                                                              return CommentsScreen(comments: userController.textposts[index].comments,
                                                                 postId: userController
                                                                     .textposts[
                                                                         index]
@@ -1341,7 +1339,11 @@ class ProfileScreenState extends State<ProfileScreen>
                                                                     userController
                                                                         .textposts[
                                                                             index]
-                                                                        .text!,
+                                                                        .text!, commentAdded: (){
+                                                                  userController.textposts[index].comments++;
+                                                                 userController.textposts.refresh();
+
+                                                                },
                                                               );
                                                             },
                                                           ));
@@ -1392,7 +1394,7 @@ class ProfileScreenState extends State<ProfileScreen>
                                       .length, // Replace with your actual post count
                                 ),
                               ),
-                            ),
+
                           ],
                         ),
 
@@ -1413,8 +1415,7 @@ class ProfileScreenState extends State<ProfileScreen>
                    ),
                  ):CustomScrollView(
                     slivers: [
-                      Obx(
-                        () => SliverGrid(
+                      SliverGrid(
                           gridDelegate:
                               const SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 3,
@@ -1447,7 +1448,7 @@ class ProfileScreenState extends State<ProfileScreen>
                                 .length, // Replace with your actual post count
                           ),
                         ),
-                      ),
+
                     ],
                   ),
                 ],

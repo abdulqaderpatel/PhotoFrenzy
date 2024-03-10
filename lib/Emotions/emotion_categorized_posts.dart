@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/global/constants.dart';
+import 'package:photofrenzy/main_pages/profile.dart';
 
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
@@ -945,7 +946,7 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                               builder: (context) {
-                                                return CommentsScreen(
+                                                return CommentsScreen(comments: userController.imageposts[index].comments,
                                                   postId: emotionSpecificPosts[index]
                                                   ["post_id"],
                                                   description: emotionSpecificPosts[index]

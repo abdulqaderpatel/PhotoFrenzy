@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/global/firebase_tables.dart';
+import 'package:photofrenzy/main_pages/profile.dart';
 import 'package:photofrenzy/models/image_post.dart';
 import 'package:photofrenzy/user_posts/comments.dart';
 import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
@@ -853,7 +854,7 @@ class _RandomImagePostsListScreenState
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) {
-                                                  return CommentsScreen(
+                                                  return CommentsScreen(comments: userController.imageposts[index].comments,
                                                     postId: widget.images[index]
                                                         .post_id!,
                                                     description: widget

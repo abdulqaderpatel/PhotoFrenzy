@@ -899,7 +899,7 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                         Navigator.push(context,
                                             MaterialPageRoute(
                                                 builder: (context) {
-                                                  return CommentsScreen(
+                                                  return CommentsScreen(comments: userController.imageposts[index].comments,
                                                     postId: widget.images[index]
                                                         .post_id!,
                                                     description: widget
@@ -907,7 +907,14 @@ class _ImagePostsListScreenState extends State<ImagePostsListScreen> {
                                                     imageurl:
                                                     widget.images[index]
                                                         .imageurl!,
-                                                  );
+                                                    commentAdded: (){
+                                                    setState(() {
+                                                      widget.images[index].comments++;
+                                                    });
+
+
+
+                                                    },);
                                                 }));
                                       },
                                       child: const Icon(

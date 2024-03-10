@@ -33,6 +33,8 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
   final messageController = TextEditingController();
   var isLoading = false;
 
+  var textfieldText = "";
+
   void getData() async {
     setState(() {
       isLoading = true;
@@ -282,55 +284,61 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                           for (var client in clients!) {
                                             final clientWidget =
                                                 client["type"] == "image"
-                                                    ?client["sender"]==FirebaseAuth.instance.currentUser!.uid? Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .end,
-                                                        children: [
-                                                          SenderImage(
-                                                            time:
-                                                                client["time"],
-                                                            message: client[
-                                                                "message"],
-                                                            imageurl: client[
-                                                                "imageurl"],
-                                                            textColor: Color(int
-                                                                .parse(firstClient[
+                                                    ? client["sender"] ==
+                                                            FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid
+                                                        ? Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .end,
+                                                            children: [
+                                                              SenderImage(
+                                                                time: client[
+                                                                    "time"],
+                                                                message: client[
+                                                                    "message"],
+                                                                imageurl: client[
+                                                                    "imageurl"],
+                                                                textColor: Color(int.parse(firstClient[
                                                                         "sender_chat_text"]
                                                                     .replaceAll(
                                                                         "#",
                                                                         "0xFF"))),
-                                                            bubbleColor: Color(int
-                                                                .parse(firstClient[
+                                                                bubbleColor: Color(int.parse(firstClient[
                                                                         "sender_chat_bubble"]
                                                                     .replaceAll(
                                                                         "#",
                                                                         "0xFF"))),
-                                                          ),
-                                                        ],
-                                                      ):Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    ReceiverImage(
-                                                      time: client[
-                                                      "time"],
-                                                      message: client[
-                                                      "message"],imageurl: client["imageurl"],
-                                                      textColor: Color(int.parse(firstClient[
-                                                      "receiver_chat_text"]
-                                                          .replaceAll(
-                                                          "#",
-                                                          "0xFF"))),
-                                                      bubbleColor: Color(int.parse(firstClient[
-                                                      "receiver_chat_bubble"]
-                                                          .replaceAll(
-                                                          "#",
-                                                          "0xFF"))),
-                                                    ),
-                                                  ],
-                                                )
+                                                              ),
+                                                            ],
+                                                          )
+                                                        : Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              ReceiverImage(
+                                                                time: client[
+                                                                    "time"],
+                                                                message: client[
+                                                                    "message"],
+                                                                imageurl: client[
+                                                                    "imageurl"],
+                                                                textColor: Color(int.parse(firstClient[
+                                                                        "receiver_chat_text"]
+                                                                    .replaceAll(
+                                                                        "#",
+                                                                        "0xFF"))),
+                                                                bubbleColor: Color(int.parse(firstClient[
+                                                                        "receiver_chat_bubble"]
+                                                                    .replaceAll(
+                                                                        "#",
+                                                                        "0xFF"))),
+                                                              ),
+                                                            ],
+                                                          )
                                                     : client["sender"] ==
                                                             FirebaseAuth
                                                                 .instance
@@ -435,6 +443,11 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                         height: Get.height * 0.05,
                                         width: Get.width * 0.76,
                                         child: TextField(
+                                          onChanged: (text) {
+                                            setState(() {
+                                              textfieldText = text;
+                                            });
+                                          },
                                           style: TextStyle(
                                             color: Color(
                                               int.parse(
@@ -529,13 +542,11 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                                           "profile_picture"]
                                                 });
                                                 setState(() {
-                                                  postImage=File("");
+                                                  postImage = File("");
                                                 });
                                                 return;
                                               },
                                             );
-
-
                                           }
                                           await chatTable
                                               .doc(widget.combinedId)
@@ -603,11 +614,16 @@ class _IndividualChatScreenState extends State<IndividualChatScreen> {
                                               error: true);
                                         }
                                       },
-                                      child: Icon(
-                                        Icons.send,
-                                        size: 32,
-                                        color: Color(int.parse(client["icon"]
-                                            .replaceAll("#", "0xFF"))),
+                                      child: ColorFiltered(
+                                        colorFilter: ColorFilter.mode(
+                                            Colors.black.withOpacity(textfieldText.isEmpty?0.5:1),
+                                            BlendMode.dstIn),
+                                        child: Icon(
+                                          Icons.send,
+                                          size: 32,
+                                          color: Color(int.parse(client["icon"]
+                                              .replaceAll("#", "0xFF"))),
+                                        ),
                                       ),
                                     )
                                   ],

@@ -1076,7 +1076,7 @@ print("timepass");
                                       Navigator.push(context,
                                           MaterialPageRoute(
                                             builder: (context) {
-                                              return CommentsScreen(
+                                              return CommentsScreen(comments: userController.textposts[index].comments,
                                                 postId:
                                                 userController.communityPosts[index]
                                                 ["post_id"],
@@ -1952,7 +1952,7 @@ print("timepass");
                                       Navigator.push(context,
                                           MaterialPageRoute(
                                               builder: (context) {
-                                                return CommentsScreen(
+                                                return CommentsScreen(comments: userController.imageposts[index].comments,
                                                   postId: userController.communityPosts[index]["post_id"],
                                                   description: userController.communityPosts[index]["text"],
                                                   imageurl:
@@ -2817,7 +2817,7 @@ print("timepass");
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) {
-                                                return CommentsScreen(
+                                                return CommentsScreen(comments: userController.imageposts[index].comments,
                                                   postId:
                                                   userController.communityPosts[index]
                                                   ["post_id"],
