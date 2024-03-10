@@ -94,13 +94,13 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
     super.initState();
     if (widget.emotion == "happy") {
       for (int i = 0; i < widget.posts.length; i++) {
-        if (widget.posts[i]["happy"].length >= widget.posts[i]["sad"].length &&
-            widget.posts[i]["happy"].length >=
+        if (widget.posts[i]["happy"].length > widget.posts[i]["sad"].length &&
+            widget.posts[i]["happy"].length >
                 widget.posts[i]["anger"].length &&
-            widget.posts[i]["happy"].length >= widget.posts[i]["fear"].length &&
-            widget.posts[i]["happy"].length >=
+            widget.posts[i]["happy"].length > widget.posts[i]["fear"].length &&
+            widget.posts[i]["happy"].length >
                 widget.posts[i]["disgust"].length &&
-            widget.posts[i]["happy"].length >=
+            widget.posts[i]["happy"].length >
                 widget.posts[i]["surprise"].length) {
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
@@ -113,13 +113,13 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
     }
     else if (widget.emotion == "sad") {
       for (int i = 0; i < widget.posts.length; i++) {
-        if (widget.posts[i]["sad"].length >= widget.posts[i]["happy"].length &&
-            widget.posts[i]["sad"].length >=
+        if (widget.posts[i]["sad"].length > widget.posts[i]["happy"].length &&
+            widget.posts[i]["sad"].length >
                 widget.posts[i]["anger"].length &&
-            widget.posts[i]["sad"].length >= widget.posts[i]["fear"].length &&
-            widget.posts[i]["sad"].length >=
+            widget.posts[i]["sad"].length > widget.posts[i]["fear"].length &&
+            widget.posts[i]["sad"].length >
                 widget.posts[i]["disgust"].length &&
-            widget.posts[i]["sad"].length >=
+            widget.posts[i]["sad"].length >
                 widget.posts[i]["surprise"].length) {
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
@@ -130,13 +130,13 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
     }
     else if (widget.emotion == "anger") {
       for (int i = 0; i < widget.posts.length; i++) {
-        if (widget.posts[i]["anger"].length >= widget.posts[i]["sad"].length &&
-            widget.posts[i]["anger"].length >=
+        if (widget.posts[i]["anger"].length > widget.posts[i]["sad"].length &&
+            widget.posts[i]["anger"].length >
                 widget.posts[i]["happy"].length &&
-            widget.posts[i]["anger"].length >= widget.posts[i]["fear"].length &&
-            widget.posts[i]["anger"].length >=
+            widget.posts[i]["anger"].length > widget.posts[i]["fear"].length &&
+            widget.posts[i]["anger"].length >
                 widget.posts[i]["disgust"].length &&
-            widget.posts[i]["anger"].length >=
+            widget.posts[i]["anger"].length >
                 widget.posts[i]["surprise"].length) {
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
@@ -149,13 +149,13 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
     }
     else if (widget.emotion == "fear") {
       for (int i = 0; i < widget.posts.length; i++) {
-        if (widget.posts[i]["fear"].length >= widget.posts[i]["sad"].length &&
-            widget.posts[i]["fear"].length >=
+        if (widget.posts[i]["fear"].length > widget.posts[i]["sad"].length &&
+            widget.posts[i]["fear"].length >
                 widget.posts[i]["anger"].length &&
-            widget.posts[i]["fear"].length >= widget.posts[i]["happy"].length &&
-            widget.posts[i]["fear"].length >=
+            widget.posts[i]["fear"].length > widget.posts[i]["happy"].length &&
+            widget.posts[i]["fear"].length >
                 widget.posts[i]["disgust"].length &&
-            widget.posts[i]["fear"].length >=
+            widget.posts[i]["fear"].length >
                 widget.posts[i]["surprise"].length) {
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
@@ -166,15 +166,15 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
     }
     else if (widget.emotion == "disgust") {
       for (int i = 0; i < widget.posts.length; i++) {
-        if (widget.posts[i]["disgust"].length >=
+        if (widget.posts[i]["disgust"].length >
             widget.posts[i]["sad"].length &&
-            widget.posts[i]["disgust"].length >=
+            widget.posts[i]["disgust"].length >
                 widget.posts[i]["anger"].length &&
-            widget.posts[i]["disgust"].length >=
+            widget.posts[i]["disgust"].length >
                 widget.posts[i]["fear"].length &&
-            widget.posts[i]["disgust"].length >=
+            widget.posts[i]["disgust"].length >
                 widget.posts[i]["happy"].length &&
-            widget.posts[i]["disgust"].length >=
+            widget.posts[i]["disgust"].length >
                 widget.posts[i]["surprise"].length) {
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
@@ -185,15 +185,15 @@ class _EmotionCategorizedPostsState extends State<EmotionCategorizedPosts> {
     }
     else {
       for (int i = 0; i < widget.posts.length; i++) {
-        if (widget.posts[i]["surprise"].length >=
+        if (widget.posts[i]["surprise"].length >
             widget.posts[i]["sad"].length &&
-            widget.posts[i]["surprise"].length >=
+            widget.posts[i]["surprise"].length >
                 widget.posts[i]["anger"].length &&
-            widget.posts[i]["surprise"].length >=
+            widget.posts[i]["surprise"].length >
                 widget.posts[i]["fear"].length &&
-            widget.posts[i]["surprise"].length >=
+            widget.posts[i]["surprise"].length >
                 widget.posts[i]["disgust"].length &&
-            widget.posts[i]["surprise"].length >=
+            widget.posts[i]["surprise"].length >
                 widget.posts[i]["happy"].length) {
           setState(() {
             emotionSpecificPosts.add(widget.posts[i]);
