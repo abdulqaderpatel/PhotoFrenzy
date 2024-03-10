@@ -18,6 +18,7 @@ import 'package:photofrenzy/user_posts/random_image_posts_list.dart';
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
 import '../models/image_post.dart';
+import '../user_mention_text.dart';
 import '../user_posts/comments.dart';
 
 class RandomTaggedUserProfile extends StatefulWidget {
@@ -831,15 +832,9 @@ class RandomTaggedUserProfileState extends State<RandomTaggedUserProfile>
                                     Row(
                                       children: [
                                         Flexible(
-                                          child: Text(
-                                              textPosts[index]["text"],
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: isDark(context)
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                  fontWeight:
-                                                  FontWeight.w500)),
+                                          child: UserMentionText(
+                                              text:textPosts[index]["text"],
+                                            ),
                                         ),
                                       ],
                                     ),

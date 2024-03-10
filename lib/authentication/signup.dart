@@ -7,6 +7,7 @@ import 'package:photofrenzy/authentication/login.dart';
 import 'package:photofrenzy/authentication/verify_email.dart';
 import 'package:photofrenzy/global/show_message.dart';
 
+import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -34,6 +35,30 @@ class _SignupScreenState extends State<SignupScreen> {
     user!.updateDisplayName(nameController.text);
     //added this line
     return user;
+  }
+
+  Future<bool> checkIfUsernameIsUnique(String username) async {
+
+    var userData = await FirebaseTable()
+        .usersTable
+        .where('username', isEqualTo: username)
+        .get();
+
+
+    List<Map<String, dynamic>> userTemp = [];
+
+
+    for (var element in userData.docs) {
+      setState(() {
+        userTemp.add(element.data());
+      });
+    }
+
+    if (userTemp.isEmpty) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   @override
@@ -176,7 +201,15 @@ class _SignupScreenState extends State<SignupScreen> {
                                 setState(() {
                                   buttonLoading = false;
                                 });
-                              } else if (!emailRegExp
+                              }
+                              else if (!await checkIfUsernameIsUnique(usernameController.text)) {
+                                showErrorDialog(context,
+                                    "The username is already taken!");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
+                              }
+                              else if (!emailRegExp
                                   .hasMatch(emailController.text)) {
                                 showErrorDialog(
                                     context, "The email entered is not valid");

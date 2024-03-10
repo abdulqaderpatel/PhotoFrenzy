@@ -948,7 +948,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     child: const Column(
                                                       children: [
                                                         Text(
-                                                            "Competition"),
+                                                            "Competition Finished"),
                                                         Text(
                                                           "View Rankings",
                                                           style: TextStyle(
@@ -1403,7 +1403,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   child: const Column(
                                                     children: [
                                                       Text(
-                                                          "Event Finished"),
+                                                          "Competition Finished"),
                                                       Text(
                                                         "View Rankings",
                                                         style: TextStyle(

@@ -11,7 +11,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photofrenzy/controllers/user_controller.dart';
 import 'package:photofrenzy/global/show_message.dart';
-
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
 import '../models/image_post.dart';
@@ -82,13 +81,15 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
   }
 
   Future<bool> checkIfUsernameIsUnique(String username) async {
+
     var userData = await FirebaseTable()
         .usersTable
         .where('username', isEqualTo: username)
         .get();
 
-    List<Map<String, dynamic>> adminTemp = [];
+
     List<Map<String, dynamic>> userTemp = [];
+
 
     for (var element in userData.docs) {
       setState(() {
@@ -102,6 +103,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
       return false;
     }
   }
+
 
   @override
   void initState() {

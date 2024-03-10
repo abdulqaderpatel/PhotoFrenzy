@@ -14,6 +14,7 @@ import 'package:photofrenzy/global/constants.dart';
 import 'package:photofrenzy/global/show_message.dart';
 import 'package:photofrenzy/individual_chat.dart';
 import 'package:photofrenzy/main_pages/profile.dart';
+import 'package:photofrenzy/user_mention_text.dart';
 import 'package:photofrenzy/user_posts/random_image_posts_list.dart';
 import '../global/firebase_tables.dart';
 import '../global/theme_mode.dart';
@@ -773,15 +774,9 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                     Row(
                                       children: [
                                         Flexible(
-                                          child: Text(
-                                              textPosts[index]["text"],
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  color: isDark(context)
-                                                      ? Colors.white
-                                                      : Colors.black,
-                                                  fontWeight:
-                                                  FontWeight.w500)),
+                                          child: UserMentionText(
+                                              text:textPosts[index]["text"],
+                                        ),
                                         ),
                                       ],
                                     ),

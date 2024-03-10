@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-const String BASE_URL="http://10.0.2.2:5000";
+const String BASE_URL="https://abdulqaderpatel2002.pythonanywhere.com";
 
     // "https://photofrenzy-flask-backend.vercel.app";
 

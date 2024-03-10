@@ -237,6 +237,7 @@ class _IndividualCompetitionsScreenState
                                 });
                                 getData();
                                 getUserData();
+                                showToast(message: "Voted image successfully");
                                 if (context.mounted) {
                                   Navigator.pop(context);
                                 }
