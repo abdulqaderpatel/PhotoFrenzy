@@ -701,16 +701,18 @@ class RandomTaggedUserProfileState extends State<RandomTaggedUserProfile>
           body: TabBarView(
             controller: _tabController,
             children: [
-              textPosts.isEmpty ? SizedBox(
+              textPosts.isEmpty ? Container(margin: const EdgeInsets.all(10),
                 child: Column(
                   children: [
                     SizedBox(
                       height: Get.height * 0.01,
                     ),
 
-                    SvgPicture.asset(
-                        "assets/images/no_text_posts.svg",
-                        height: Get.height * 0.2),
+                    Flexible(
+                      child: SvgPicture.asset(
+                          "assets/images/no_text_posts.svg",
+                          ),
+                    ),
                     SizedBox(height: Get.height * 0.015,),
                     Text("No text posts", style: Theme
                         .of(context)
@@ -1516,7 +1518,7 @@ class RandomTaggedUserProfileState extends State<RandomTaggedUserProfile>
                 ],
               ),
 
-              imagePosts.isEmpty ? SizedBox(
+              imagePosts.isEmpty ? Container(margin: const EdgeInsets.all(10),
                 child: Column(
                   children: [
                     SizedBox(

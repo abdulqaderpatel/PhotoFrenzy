@@ -8,6 +8,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:photofrenzy/Follow/random_user_followers.dart';
+import 'package:photofrenzy/Follow/random_user_followers.dart';
 import 'package:photofrenzy/Follow/random_user_following.dart';
 import 'package:photofrenzy/models/text_post.dart';
 import 'package:share_plus/share_plus.dart';
@@ -572,16 +573,18 @@ class ProfileScreenState extends State<ProfileScreen>
                 children: [
                   // Text Posts Tab
                   userController.textposts.isEmpty
-                      ? SizedBox(
+                      ? Container(margin: EdgeInsets.all(10),
                           child: Column(
                             children: [
                               SizedBox(
                                 height: Get.height * 0.01,
                               ),
 
-                              SvgPicture.asset(
-                                  "assets/images/no_text_posts.svg",
-                                  height: Get.height * 0.2),
+                              Flexible(
+                                child: SvgPicture.asset(
+                                    "assets/images/no_text_posts.svg",
+                                ),
+                              ),
                               SizedBox(height: Get.height*0.015,),
                               Text("No text posts",style: Theme.of(context).textTheme.displayLarge,)
                             ],
@@ -1399,16 +1402,18 @@ class ProfileScreenState extends State<ProfileScreen>
                         ),
 
                   // Image Posts Tab
-                 userController.imageposts.isEmpty? SizedBox(
+                 userController.imageposts.isEmpty? Container(margin: EdgeInsets.all(10),
                    child: Column(
                      children: [
                        SizedBox(
                          height: Get.height * 0.01,
                        ),
 
-                       SvgPicture.asset(
-                           "assets/images/no_image_posts.svg",
-                           height: Get.height * 0.2),
+                       Flexible(
+                         child: SvgPicture.asset(
+                             "assets/images/no_image_posts.svg",
+                                          ),
+                       ),
                        SizedBox(height: Get.height*0.015,),
                        Text("No image posts",style: Theme.of(context).textTheme.displayLarge,)
                      ],
