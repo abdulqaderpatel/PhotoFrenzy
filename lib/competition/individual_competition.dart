@@ -455,6 +455,14 @@ class _IndividualCompetitionsScreenState
                                                   setModalState(() {
                                                     buttonLoading = true;
                                                   });
+                                                  if(postImage!.path.isEmpty)
+                                                    {
+                                                      showToast(message: "Please upload an image first",error: true);
+                                                      setModalState((){
+                                                        buttonLoading=false;
+                                                      });
+                                                      return ;
+                                                    }
                                                   int time = DateTime.now()
                                                       .millisecondsSinceEpoch;
 

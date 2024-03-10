@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
@@ -23,7 +25,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   var buttonLoading = false;
-  var googleButtonLoading=false;
+  var googleButtonLoading = false;
+
+  var emailRegExp = RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   googleSignIn() async {
     setState(() {
@@ -40,6 +45,19 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     return await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  String generateRandomUsername() {
+    String letters = '';
+    final random = Random();
+    for (int i = 0; i < 4; i++) {
+      letters += String.fromCharCode(random.nextInt(26) + 65);
+    }
+    String numbers = '';
+    for (int i = 0; i < 4; i++) {
+      numbers += random.nextInt(10).toString();
+    }
+    return letters + numbers;
   }
 
   Future<bool> checkIfUserCreatedProfile() async {
@@ -160,6 +178,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                 setState(() {
                                   buttonLoading = false;
                                 });
+                              } else if (!emailRegExp
+                                  .hasMatch(emailController.text)) {
+                                showErrorDialog(
+                                    context, "The email entered is not valid");
+                                setState(() {
+                                  buttonLoading = false;
+                                });
                               } else {
                                 try {
                                   await FirebaseAuth.instance
@@ -271,7 +296,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             "id": FirebaseAuth.instance.currentUser!.uid,
                             "name":
                                 FirebaseAuth.instance.currentUser!.displayName,
-                            "username":FirebaseAuth.instance.currentUser!.displayName,
+                            "username":
+                                generateRandomUsername(),
                             "email": FirebaseAuth.instance.currentUser!.email,
                             "profile_picture": "",
                             "bio": "",
@@ -298,14 +324,18 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Image.asset("assets/images/google-logo.png"),
-                         googleButtonLoading?const Center(child: CircularProgressIndicator(),): Text(
-                            "Sign in with google",
-                            style: GoogleFonts.lato(
-                                letterSpacing: 0,
-                                color: Colors.black87,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 20),
-                          ),
+                          googleButtonLoading
+                              ? const Center(
+                                  child: CircularProgressIndicator(),
+                                )
+                              : Text(
+                                  "Sign in with google",
+                                  style: GoogleFonts.lato(
+                                      letterSpacing: 0,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 20),
+                                ),
                           Container(
                             width: 35,
                           )

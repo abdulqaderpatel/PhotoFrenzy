@@ -162,7 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 setState(() {
                                   buttonLoading = false;
                                 });
-                              } else if (!RegExp(r'^[a-zA-Z0-9]+$')
+                              } else if (!RegExp(r'^[a-zA-Z ]+$')
                                   .hasMatch(nameController.text)) {
                                 showErrorDialog(
                                     context, "The name entered is not valid");

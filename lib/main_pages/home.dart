@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   var isLoading = false;
   var items = [];
 
+
   List<Map<String, dynamic>> posts = [];
   UserController userController = Get.put(UserController());
 
@@ -228,7 +229,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       isLoading = false;
     });
-    print(items);
   }
 
 
@@ -305,12 +305,16 @@ class _HomeScreenState extends State<HomeScreen> {
               "event": items[index]["name"]
             }
           }));
+
+
       NotificationService().showNotification(
-          1, "Payment successful", "Goodluck for the competition!", (1000));
+          1, "Payment successful", "Good luck for the competition!", (1000));
+
+      showToast(message: "Payment Successful");
       loadData();
     } catch (e) {
       if (context.mounted) {
-        //showErrorDialog(context, e.toString());
+
       }
     }
   }
@@ -584,10 +588,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                         20,
                                       ),
                                     ),
-                                    child:DateTime.now()
-                          .isAfter(DateTime.parse(
-                      items[index]["end_time"]))?Banner(message: "Competition over",location: BannerLocation.topStart,
-                        child: Column(
+                                    child: DateTime.now()
+                                        .isAfter(DateTime.parse(
+                                        items[index]["end_time"])) ? Banner(
+                                      message: "Competition over",
+                                      location: BannerLocation.topStart,
+                                      child: Column(
                                         children: [
                                           Stack(
                                             children: [
@@ -1042,7 +1048,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ),
                                         ],
                                       ),
-                      ):Column(
+                                    ) : Column(
                                       children: [
                                         Stack(
                                           children: [
@@ -1491,7 +1497,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     makePayment(index);
                                                   },
                                                   child: const Text(
-                                                      "Compete")),
+                                                      "Compete"))
+                                              ,
                                             ],
                                           ),
                                         ),
@@ -1545,7 +1552,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         20,
                                       ),
                                     ),
-                                    child: Banner(message: "Competition over",location: BannerLocation.topStart,
+                                    child: Banner(message: "Competition over",
+                                      location: BannerLocation.topStart,
                                       child: Column(
                                         children: [
                                           Stack(
@@ -1567,7 +1575,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             20),
                                                         topLeft: Radius
                                                             .circular(
-                                                             20)),
+                                                            20)),
                                                     child:
                                                     Image.network(
                                                       items[index]

@@ -162,7 +162,7 @@ class _EditUserProfileScreenState extends State<EditUserProfileScreen> {
                 setState(() {
                   buttonLoader = false;
                 });
-              } else if (!RegExp(r'^[a-zA-Z]+(?:\s[a-zA-Z]+)+$')
+              } else if (!RegExp(r'^[a-zA-Z ]+$')
                   .hasMatch(nameController.text)) {
                 showToast(message: "Please enter a valid name", error: true);
                 setState(() {
