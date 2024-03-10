@@ -92,6 +92,9 @@ class _IndividualCompetitionsScreenState
     participants = temp;
     completeList = participants;
 
+    completeList.removeWhere((map) => map['competition_id'] != widget.competitionDetails["id"]);
+
+
     for (int i = 0; i < participants.length; i++) {
       if (i == 3) {
         break;
@@ -110,6 +113,10 @@ class _IndividualCompetitionsScreenState
         break;
       }
     }
+   for(var element in winners)
+     {
+       print(element["name"]);
+     }
   }
 
   void checkUserDetails() async {
@@ -709,7 +716,7 @@ class _IndividualCompetitionsScreenState
                           "Event Finished",
                           style: Theme.of(context).textTheme.displayLarge,
                         )),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         Container(
@@ -863,104 +870,106 @@ class _IndividualCompetitionsScreenState
                                     fontSize: 25),
                               ),
                               const Gap(10),
-                              Container(
-                                height: 300,
-                                child: ListView(
-                                    children:
-                                        winners.mapIndexed((index, winner) {
-                                  return Container(
-                                    margin: const EdgeInsets.only(bottom: 25),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              width: 80,
-                                              height: 80,
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  colors: [
-                                                    winnerPrimaryColor[index],
-                                                    winnerSecondaryColor[index]
+                           Container(height:Get.height*0.8,
+                                child: Container(
+                                
+                                  child: ListView(
+                                      children:
+                                          winners.mapIndexed((index, winner) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 25),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                width: 80,
+                                                height: 80,
+                                                decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    colors: [
+                                                      winnerPrimaryColor[index],
+                                                      winnerSecondaryColor[index]
+                                                    ],
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      (index + 1).toString(),
+                                                      style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontSize: 24,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    )
                                                   ],
-                                                  begin: Alignment.topCenter,
-                                                  end: Alignment.bottomCenter,
                                                 ),
                                               ),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
+                                              Column(
                                                 children: [
                                                   Text(
-                                                    (index + 1).toString(),
-                                                    style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 24,
+                                                   winner["name"],
+                                                    style: TextStyle(
+                                                        fontSize: 20,
                                                         fontWeight:
-                                                            FontWeight.w600),
-                                                  )
+                                                            FontWeight.w600,
+                                                        color: isDark(context)
+                                                            ? Colors.white
+                                                            : Colors.black),
+                                                  ),
+                                                  Text(
+                                                      "votes: ${winner["votes"]}",
+                                                      style: const TextStyle(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: Colors.grey))
                                                 ],
                                               ),
-                                            ),
-                                            Column(
-                                              children: [
-                                                Text(
-                                                  completeList[index]["name"],
-                                                  style: TextStyle(
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: isDark(context)
-                                                          ? Colors.white
-                                                          : Colors.black),
-                                                ),
-                                                Text(
-                                                    "votes: ${completeList[index]["votes"]}",
-                                                    style: const TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: Colors.grey))
-                                              ],
-                                            ),
-                                            Container(
-                                              width: 80,
-                                            )
-                                          ],
-                                        ),
-                                        const Gap(15),
-                                        Container(
-                                          width: Get.width,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: Colors.blue,
-                                                  width: items[index]
-                                                              ["creator"] ==
-                                                          FirebaseAuth.instance
-                                                              .currentUser!.uid
-                                                      ? 2
-                                                      : 0.5),
+                                              Container(
+                                                width: 80,
+                                              )
+                                            ],
+                                          ),
+                                          const Gap(15),
+                                          Container(
+                                            width: Get.width,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: Colors.blue,
+                                                    width: winner
+                                                                ["creator"] ==
+                                                            FirebaseAuth.instance
+                                                                .currentUser!.uid
+                                                        ? 3
+                                                        : 0.5),
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(10))),
+                                            child: ClipRRect(
                                               borderRadius:
                                                   const BorderRadius.all(
-                                                      Radius.circular(10))),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(10)),
-                                            child: Image.network(
-                                              completeList[index]["image"],
-                                              fit: BoxFit.fill,
+                                                      Radius.circular(10)),
+                                              child: Image.network(
+                                               winner["image"],
+                                                fit: BoxFit.fill,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }).toList()),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList()),
+                                ),
                               ),
                               const Gap(10),
                               SizedBox(
@@ -1082,7 +1091,7 @@ class _IndividualCompetitionsScreenState
                                                                             index]
                                                                         [
                                                                         "image"]),
-                                                                SizedBox(
+                                                                const SizedBox(
                                                                   height: 40,
                                                                 ),
                                                               ],
