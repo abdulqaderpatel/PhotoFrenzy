@@ -67,6 +67,7 @@ dependencies:
   auto_size_text:
   flutter_local_notifications:
   cached_video_player_fork:
+  badges:
 
 
   cupertino_icons: ^1.0.2

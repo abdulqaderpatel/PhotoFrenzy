@@ -1411,7 +1411,7 @@ class RandomUserProfileScreenState extends State<RandomUserProfileScreen>
                                               Navigator.push(context,
                                                   MaterialPageRoute(
                                                     builder: (context) {
-                                                      return CommentsScreen(comments: userController.imageposts[index].comments,
+                                                      return CommentsScreen(comments: 0,
                                                         postId:
                                                         textPosts[index]
                                                         ["post_id"],

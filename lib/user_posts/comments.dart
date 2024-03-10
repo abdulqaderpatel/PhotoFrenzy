@@ -16,7 +16,7 @@ class CommentsScreen extends StatefulWidget {
   CommentsScreen(
       {required this.postId,
       required this.description,
-      required this.comments,
+       this.comments=0,
       super.key,
       this.commentAdded,
       this.imageurl = ""});
